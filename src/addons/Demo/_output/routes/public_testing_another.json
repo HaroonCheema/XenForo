@@ -1,0 +1,11 @@
+{
+    "route_type": "public",
+    "route_prefix": "testing",
+    "sub_name": "another",
+    "format": "another/",
+    "build_class": "",
+    "build_method": "",
+    "controller": "XF:Member",
+    "context": "",
+    "action_prefix": "Hello"
+}

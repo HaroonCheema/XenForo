@@ -1,0 +1,10 @@
+<?php
+
+$config['db']['host'] = 'localhost';
+$config['db']['port'] = 3306;
+$config['db']['username'] = 'root';
+$config['db']['password'] = 'newpassword';
+$config['db']['dbname'] = 'xenforo';
+$config['db']['socket'] = null;
+
+$config['fullUnicode'] = true;
