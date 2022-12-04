@@ -3,13 +3,24 @@
 <div class="block">
     <div class="block-container">
         <div class="block-body">
-            <div class="block-row">
+            <xf:foreach loop="$posts" value="$post">
+                <div class="block-row">
+                    <ul class="listInline listInline--bullet">
+                        <li>Post ID = {$post.post_id}</li>
+                        <li>Thread - {$post.Thread.title}</li>
+                        <li>Username = {$post.username}</li>
+                        <li>Location = {$post.User.Profile.location}</li>
+                        <li>Email address = {$post.User.email}</li>
+                    </ul>
+                </div>
+            </xf:foreach>
+            <!-- <div class="block-row">
                 <p>Here is some content</p>
                 <p>Here is some more content</p>
                 <p>
                     <a href="{{link('notes')}}">Back to the index page</a>
                 </p>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
