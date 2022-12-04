@@ -1,0 +1,11 @@
+{
+    "route_type": "public",
+    "route_prefix": "notes",
+    "sub_name": "",
+    "format": "",
+    "build_class": "",
+    "build_method": "",
+    "controller": "Demo\\Pad:Note",
+    "context": "demoPadNotes",
+    "action_prefix": ""
+}

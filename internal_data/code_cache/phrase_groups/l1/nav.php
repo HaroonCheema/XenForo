@@ -9,6 +9,8 @@ return array (
   'nav.defaultRegister' => 'Register',
   'nav.defaultYourAccount' => 'Your account',
   'nav.defaultYourProfile' => 'Your profile',
+  'nav.demoPadNote' => 'Test Note',
+  'nav.demoPadNotes' => 'Notes',
   'nav.findThreads' => 'Find threads',
   'nav.forumList' => 'Forum list',
   'nav.forums' => 'Forums',

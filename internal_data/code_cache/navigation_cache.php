@@ -376,6 +376,28 @@ return function($__templater, $__selectedNav, array $__vars)
 		}
 	}
 
+	$__navTemp = [
+		'title' => \XF::phrase('nav.demoPadNotes'),
+		'href' => $__templater->func('link', array('notes', ), false),
+		'attributes' => [],
+	];
+	if ($__navTemp) {
+		$__tree['demoPadNotes'] = $__navTemp;
+		$__flat['demoPadNotes'] =& $__tree['demoPadNotes'];
+		if (empty($__tree['demoPadNotes']['children'])) { $__tree['demoPadNotes']['children'] = []; }
+
+		$__navTemp = [
+		'title' => \XF::phrase('nav.demoPadNote'),
+		'href' => $__templater->func('link', array('notes/test', ), false),
+		'attributes' => [],
+	];
+		if ($__navTemp) {
+			$__tree['demoPadNotes']['children']['demoPadNote'] = $__navTemp;
+			$__flat['demoPadNote'] =& $__tree['demoPadNotes']['children']['demoPadNote'];
+		}
+
+	}
+
 
 
 	return [
