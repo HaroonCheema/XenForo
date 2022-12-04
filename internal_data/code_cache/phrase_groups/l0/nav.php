@@ -11,6 +11,7 @@ return array (
   'nav.defaultYourProfile' => 'Your profile',
   'nav.demoPadNote' => 'Test Note',
   'nav.demoPadNotes' => 'Notes',
+  'nav.demoPadPassParams' => 'Print Param Template',
   'nav.findThreads' => 'Find threads',
   'nav.forumList' => 'Forum list',
   'nav.forums' => 'Forums',

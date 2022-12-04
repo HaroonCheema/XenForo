@@ -1,0 +1,40 @@
+<xf:title>Get parameters and use below</xf:title>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-body">
+                <div class="block-row">
+                    <p>{$string} Here is some content</p>
+                    <p>The number is {$number|number}</p>
+                    <p>I have {$money|currency('usd')}</p>
+                    <p>Here is some more content</p>
+                    <p>
+                        <a href="{{ link('notes')}}">Back to the index</a>
+                    </p>
+                    <p>I have an array and the third element is {$array.2}</p>
+                    <ol>
+                        <xf:foreach loop="$array" key="$key" value="$value">
+                            <li>{$value}</li>
+                        </xf:foreach>
+                    </ol>
+                    <hr />
+                    <ol>
+                        <xf:foreach loop="$array1" key="$key" value="$value">
+                            <li>
+                                The <i>{$key}</i> is <b>{$value}</b>
+                            </li>
+                        </xf:foreach>
+                    </ol>
+                    <p>The current date and time in unix is : {$xf.time}</p>
+                    <p>The current date and time is : {{ date_time($xf.time)}}</p>
+                    <xf:if is="$xf.visitor.user_id">
+                        You are logged in, with user name <b>{$xf.visitor.username}</b>.
+                    <xf:else />
+                        You are our guest.
+                    </xf:if>
+
+                    {{ dump($xf)}}
+                </div>
+        </div>
+    </div>
+</div>

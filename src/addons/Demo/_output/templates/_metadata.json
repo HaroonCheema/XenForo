@@ -9,6 +9,11 @@
         "version_string": "1.0.0 Alpha",
         "hash": "2f333bbd1598457f543126fef2c6fa2b"
     },
+    "public/demo_pad_pass_param.html": {
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "3e3db8a19c722899a603fd6fb42e00dd"
+    },
     "public/demo_pad_test.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",

@@ -10,5 +10,11 @@
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
         "hash": "f4c6f851b00d5518bf888815de279aba"
+    },
+    "nav.demoPadPassParams.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "c84344117b2e3831ea26d3a3827c0e23"
     }
 }

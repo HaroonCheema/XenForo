@@ -396,6 +396,16 @@ return function($__templater, $__selectedNav, array $__vars)
 			$__flat['demoPadNote'] =& $__tree['demoPadNotes']['children']['demoPadNote'];
 		}
 
+		$__navTemp = [
+		'title' => \XF::phrase('nav.demoPadPassParams'),
+		'href' => $__templater->func('link', array('notes/pass-params', ), false),
+		'attributes' => [],
+	];
+		if ($__navTemp) {
+			$__tree['demoPadNotes']['children']['demoPadPassParams'] = $__navTemp;
+			$__flat['demoPadPassParams'] =& $__tree['demoPadNotes']['children']['demoPadPassParams'];
+		}
+
 	}
 
 

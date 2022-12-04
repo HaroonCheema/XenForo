@@ -99,4 +99,32 @@ class Note extends AbstractController
 
         return $this->view('Demo\Pad:Note\Index','demo_pad_index');
     }
+
+    //          ider se hm koch parameters ko pass krein gey template me phir uder print kerwaien gey
+
+    //    Route is : http://localhost/xenforo/index.php?notes/pass-params
+
+    public function actionPassParams()
+    {
+        $string = 'Hello';
+        $number = 11234;
+        $money = 10.1;
+        $array = ['one', 'two', 'there'];
+        $array1 = ['name' => 'Mr Haroon', 'email' => 'example@example.com'];
+
+        foreach ($array as $key => $value) {
+            # code...
+        }
+
+        $viewParams = [
+            'string' => $string,
+            'number' => $number,
+            'money' => $money,
+            'array' => $array,
+            'array1' => $array1
+        ];
+
+        return $this->view('Demo\Pad:Note\PassParam','demo_pad_pass_param',$viewParams);
+
+    }
 }
