@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: 6ddb22234475b9931ea0da4a372a0bf7
+// FROM HASH: e6c4b9c6a1a68f16d65e4d6499269e15
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
@@ -7,11 +7,15 @@ return array(
 	$__templater->pageParams['pageTitle'] = $__templater->preEscaped('Demo pad index page');
 	$__finalCompiled .= '
 
+';
+	$__templater->includeCss('demo_pad.less');
+	$__finalCompiled .= '
+
 <div class="block">
     <div class="block-container">
         <div class="block-body">
             <div class="block-row">
-                <p>Hello There!</p>
+                <p class="chColor">Hello There!</p>
                 <p>
                     <a href="' . $__templater->func('link', array('notes/test', ), true) . '">Open the test page</a>
                 </p>
