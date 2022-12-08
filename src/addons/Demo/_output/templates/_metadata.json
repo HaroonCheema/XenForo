@@ -4,10 +4,20 @@
         "version_string": "1.0.0 Alpha",
         "hash": "bfdad01a05e08e4f1f6d8895c0986045"
     },
+    "public/demo_pad_edit.html": {
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "7ae766ebff03dfa928b69281fb54a210"
+    },
+    "public/demo_pad_fetch.html": {
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "7d25df1062f3574dc07249ba85072276"
+    },
     "public/demo_pad_index.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "2f333bbd1598457f543126fef2c6fa2b"
+        "hash": "6ddb22234475b9931ea0da4a372a0bf7"
     },
     "public/demo_pad_pass_param.html": {
         "version_id": 1000010,

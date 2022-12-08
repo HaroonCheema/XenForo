@@ -2,6 +2,7 @@
 
 namespace Demo\Pad\Pub\Controller;
 
+use XF\Mvc\ParameterBag;
 use XF\Pub\Controller\AbstractController;
 
 class Note extends AbstractController
@@ -13,6 +14,77 @@ class Note extends AbstractController
     {
         return $this->view('Demo\Pad:Note\Index','demo_pad_index');
     }
+
+    // http://localhost/xenforo/index.php?notes/
+
+    public function actionCreateInsert()
+    {
+
+        /** @var \Demo\Pad\Entity\Note $note */
+        $note = $this->em()->create('Demo\Pad:Note');
+
+        $note->title = 'This is my first note title';
+        $note->content = 'Here is the content of my first note...';
+
+        
+        $note->save();
+        var_dump($note);exit;
+        $viewParams= [
+            'note' => $note
+        ];
+
+        return $this->view('Demo\Pad:Note\Index','demo_pad_index', $viewParams);
+    }
+
+
+
+    // http://localhost/xenforo/index.php?notes/
+
+    public function actionUpdateNote()
+    {
+
+        $notes = $this->finder('Demo\Pad:Note')->whereId(3);
+
+        /** @var \Demo\Pad\Entity\Note $note */
+        $note = $notes->fetchOne();
+
+        $note->title = 'This is my update note title';
+        $note->content = 'Here is the ontent of my first note...';
+
+        
+        $note->save();
+        var_dump($note);exit;
+        $viewParams= [
+            'note' => $note
+        ];
+
+        return $this->view('Demo\Pad:Note\Index','demo_pad_index', $viewParams);
+    }
+
+
+    // http://localhost/xenforo/index.php?notes/
+
+    public function actionDeleteNote()
+    {
+
+        $notes = $this->finder('Demo\Pad:Note')->whereId(2);
+
+        /** @var \Demo\Pad\Entity\Note $note */
+        $note = $notes->fetchOne();
+
+        // $note->title = 'This is my update note title';
+        // $note->content = 'Here is the ontent of my first note...';
+
+        
+        $note->delete();
+        var_dump($note);exit;
+        $viewParams= [
+            'note' => $note
+        ];
+
+        return $this->view('Demo\Pad:Note\Index','demo_pad_index', $viewParams);
+    }
+
 
     // http://localhost/xenforo/index.php?notes/test/
 
@@ -30,6 +102,26 @@ class Note extends AbstractController
         ];
 
         return $this->view('Demo\Pad:Note\Test','demo_pad_test',$viewParams);
+    }
+
+    public function actionFetchtestdata()
+    {
+        // $postFinder = $this->finder('Demo\Pad:Note');
+
+        // $finder = \XF::finder('Demo\Pad:Note');
+        // $user = $finder->where('user_id', 0);
+
+        $db = \XF::db();
+        $user = $db->fetchAll('SELECT * FROM demo_pad_note WHERE user_id = ?', 0);
+
+        $viewParams = [
+            'posts' => $user
+        ];
+        echo "<pre>";
+        print_r($user);
+        echo "</pre>";
+
+        return $this->view('Demo\Pad:Note\Fetchtestdata','demo_pad_fetch',$viewParams);
     }
 
 
@@ -60,13 +152,13 @@ class Note extends AbstractController
     public function actionQueryupdatebyid()
     {
 
-        $userFinder = $this->finder('XF:User')->wherId(2);
+        $userFinder = $this->finder('XF:User')->whereId(5);
 
         /** @var \XF\Entity\User $user */
         $users = $userFinder->fetchOne();
 
-        $user->email = 'hello@example.com';
-        $user->username = 'mister';
+        $users->email = 'helo@example.com';
+        $users->username = 'mister';
 
         //                 Or
 
@@ -75,7 +167,7 @@ class Note extends AbstractController
         //     'username' => 'mister',
         // ]);
 
-        $user->save();
+        $users->save();
 
         return $this->view('Demo\Pad:Note\Index','demo_pad_index');
     }
@@ -85,17 +177,17 @@ class Note extends AbstractController
     {
         $users = $this->em()->create('XF:User');
 
-        $user->email = 'hello@example.com';
-        $user->username = 'mister';
+        $users->email = 'helqwert@example.com';
+        $users->username = 'qwerty';
 
         //                 Or
 
-        // $user->bulkset([
+        // $users->bulkset([
         //     'email' => 'hello@example.com',
         //     'username' => 'mister',
         // ]);
 
-        $user->save();
+        $users->save();
 
         return $this->view('Demo\Pad:Note\Index','demo_pad_index');
     }
@@ -127,4 +219,58 @@ class Note extends AbstractController
         return $this->view('Demo\Pad:Note\PassParam','demo_pad_pass_param',$viewParams);
 
     }
+
+    public function actionAdd()
+    {
+        $note = $this->em()->create('Demo\Pad:Note');
+        return $this->noteAddEdit($note);
+    }
+
+
+    public function actionEdit(ParameterBag $params)
+    {
+        $note = $this->assertNoteExists($params->note_id);
+        return $this->noteAddEdit($note);
+    }
+
+    protected function noteAddEdit(\Demo\Pad\Entity\Note $note)
+    {
+        $viewParams = [
+            'note' => $note
+        ];
+
+        return $this->view('Demo\Pad:Note\Edit', 'demo_pad_edit', $viewParams);
+    }
+
+    public function actionSave(ParameterBag $params)
+    {
+        if ($params->note_id) {
+            $note = $this->assertNoteExists($params->note_id);
+        }
+        else {
+            $note = $this->em()->create('Demo\Pad:Note');
+        }
+
+        $this->noteSaveProcess($note)->run();
+
+        return $this->redirect($this->buildLink('notes'));
+    }
+
+    protected function noteSaveProcess(\Demo\Pad\Entity\Note $note)
+    {
+        $input = $this->filter([
+            'title' => 'str',
+            'content' => 'str',
+        ]);
+
+        $form = $this->formAction();
+        $form->basicEntitySave($note, $input);
+    }
+
+    protected function assertNoteExists($id, $with = null, $phraseKey = null)
+    {
+        return $this->assertRecordExists('Demo\Pad:Note', $id, $with, $phraseKey);
+    }
+
+
 }

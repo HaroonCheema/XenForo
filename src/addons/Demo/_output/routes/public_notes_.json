@@ -2,7 +2,7 @@
     "route_type": "public",
     "route_prefix": "notes",
     "sub_name": "",
-    "format": "",
+    "format": ":int<note_id,title>/:page",
     "build_class": "",
     "build_method": "",
     "controller": "Demo\\Pad:Note",
