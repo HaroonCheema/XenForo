@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: 7ae766ebff03dfa928b69281fb54a210
+// FROM HASH: 37a36540a56bf6309de1cafdfbb0e216
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
@@ -44,7 +44,7 @@ return array(
 	)) . '
     </div>
 ', array(
-		'action' => $__templater->func('link', array('notes/save', $__vars['note'], ), false),
+		'action' => $__templater->func('link', array('notes/create-insert', $__vars['note'], ), false),
 		'class' => 'block',
 		'ajax' => '1',
 	));

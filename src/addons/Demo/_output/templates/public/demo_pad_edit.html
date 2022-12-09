@@ -6,7 +6,7 @@
     </xf:if>
 </xf:title>
 
-<xf:form action="{{ link('notes/save', $note) }}" class="block" ajax="1">
+<xf:form action="{{ link('notes/create-insert', $note) }}" class="block" ajax="1">
     <div class="block-container">
         <div class="block-body">
             <xf:textboxrow name="title" value="{$note.title}" label="Title" />

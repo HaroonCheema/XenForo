@@ -12,8 +12,15 @@ class Note extends AbstractController
 
     public function actionIndex()
     {
-        return $this->view('Demo\Pad:Note\Index','demo_pad_index');
+        return $this->view('Demo\Pad:Note\Index','demo_pad_edit');
     }
+
+    // public function actionIndex()
+    // {
+    //     return $this->view('Demo\Pad:Note\Index','demo_pad_index');
+    // }
+
+    
 
     // http://localhost/xenforo/index.php?notes/
 
@@ -23,17 +30,22 @@ class Note extends AbstractController
         /** @var \Demo\Pad\Entity\Note $note */
         $note = $this->em()->create('Demo\Pad:Note');
 
-        $note->title = 'This is my first note title';
-        $note->content = 'Here is the content of my first note...';
+        $input = $this->filter([
+            'title' => 'str',
+            'content' => 'str',
+        ]);
+
+        $note->title = $input['title'];
+        $note->content = $input['content'];
 
         
         $note->save();
-        var_dump($note);exit;
+        // var_dump($note);exit;
         $viewParams= [
             'note' => $note
         ];
 
-        return $this->view('Demo\Pad:Note\Index','demo_pad_index', $viewParams);
+        return $this->view('Demo\Pad:Note\CreateInsert','demo_pad_index', $viewParams);
     }
 
 
@@ -246,12 +258,19 @@ class Note extends AbstractController
     {
         if ($params->note_id) {
             $note = $this->assertNoteExists($params->note_id);
+            var_dump($params);
         }
         else {
             $note = $this->em()->create('Demo\Pad:Note');
+            $input = $this->filter([
+                'title' => 'str',
+                'content' => 'str',
+            ]);
+
+            echo $input['content'];
         }
 
-        $this->noteSaveProcess($note)->run();
+        // $this->noteSaveProcess($note)->run();
 
         return $this->redirect($this->buildLink('notes'));
     }

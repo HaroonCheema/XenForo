@@ -1,24 +1,9 @@
 <?php
-// FROM HASH: f4619f2c18586a77ed32e393dc79ff66
+// FROM HASH: e6c4b9c6a1a68f16d65e4d6499269e15
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
 	$__finalCompiled = '';
-	$__finalCompiled .= '<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-  </head>
-  <body>
-    <h1 class="text-danger">Hello, world!</h1>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-  </body>
-</html>
-
-<!-- ';
 	$__templater->pageParams['pageTitle'] = $__templater->preEscaped('Demo pad index page');
 	$__finalCompiled .= '
 
@@ -38,7 +23,7 @@ return array(
 				
         </div>
     </div>
-</div> -->';
+</div>';
 	return $__finalCompiled;
 }
 );

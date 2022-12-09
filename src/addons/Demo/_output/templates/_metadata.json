@@ -12,7 +12,7 @@
     "public/demo_pad_edit.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "7ae766ebff03dfa928b69281fb54a210"
+        "hash": "37a36540a56bf6309de1cafdfbb0e216"
     },
     "public/demo_pad_fetch.html": {
         "version_id": 1000010,
@@ -22,7 +22,7 @@
     "public/demo_pad_index.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "f4619f2c18586a77ed32e393dc79ff66"
+        "hash": "e6c4b9c6a1a68f16d65e4d6499269e15"
     },
     "public/demo_pad_pass_param.html": {
         "version_id": 1000010,
