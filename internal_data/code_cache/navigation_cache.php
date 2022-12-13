@@ -377,6 +377,28 @@ return function($__templater, $__selectedNav, array $__vars)
 	}
 
 	$__navTemp = [
+		'title' => \XF::phrase('nav.createCrud'),
+		'href' => $__templater->func('link', array('crud', ), false),
+		'attributes' => [],
+	];
+	if ($__navTemp) {
+		$__tree['createCrud'] = $__navTemp;
+		$__flat['createCrud'] =& $__tree['createCrud'];
+		if (empty($__tree['createCrud']['children'])) { $__tree['createCrud']['children'] = []; }
+
+		$__navTemp = [
+		'title' => \XF::phrase('nav.addRecord'),
+		'href' => $__templater->func('link', array('crud/add', ), false),
+		'attributes' => [],
+	];
+		if ($__navTemp) {
+			$__tree['createCrud']['children']['addRecord'] = $__navTemp;
+			$__flat['addRecord'] =& $__tree['createCrud']['children']['addRecord'];
+		}
+
+	}
+
+	$__navTemp = [
 		'title' => \XF::phrase('nav.demoPadNotes'),
 		'href' => $__templater->func('link', array('notes', ), false),
 		'attributes' => [],
@@ -387,16 +409,6 @@ return function($__templater, $__selectedNav, array $__vars)
 		if (empty($__tree['demoPadNotes']['children'])) { $__tree['demoPadNotes']['children'] = []; }
 
 		$__navTemp = [
-		'title' => \XF::phrase('nav.demoPadNote'),
-		'href' => $__templater->func('link', array('notes/test', ), false),
-		'attributes' => [],
-	];
-		if ($__navTemp) {
-			$__tree['demoPadNotes']['children']['demoPadNote'] = $__navTemp;
-			$__flat['demoPadNote'] =& $__tree['demoPadNotes']['children']['demoPadNote'];
-		}
-
-		$__navTemp = [
 		'title' => \XF::phrase('nav.demoPadPassParams'),
 		'href' => $__templater->func('link', array('notes/pass-params', ), false),
 		'attributes' => [],
@@ -404,6 +416,16 @@ return function($__templater, $__selectedNav, array $__vars)
 		if ($__navTemp) {
 			$__tree['demoPadNotes']['children']['demoPadPassParams'] = $__navTemp;
 			$__flat['demoPadPassParams'] =& $__tree['demoPadNotes']['children']['demoPadPassParams'];
+		}
+
+		$__navTemp = [
+		'title' => \XF::phrase('nav.demoPadNote'),
+		'href' => $__templater->func('link', array('notes/test', ), false),
+		'attributes' => [],
+	];
+		if ($__navTemp) {
+			$__tree['demoPadNotes']['children']['demoPadNote'] = $__navTemp;
+			$__flat['demoPadNote'] =& $__tree['demoPadNotes']['children']['demoPadNote'];
 		}
 
 	}

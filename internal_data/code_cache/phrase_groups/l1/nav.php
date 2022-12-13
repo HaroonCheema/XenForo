@@ -1,7 +1,9 @@
 <?php
 return array (
   'nav._default' => 'Default (no selected tab)',
+  'nav.addRecord' => 'Add',
   'nav.contributedThreads' => 'Threads with your posts',
+  'nav.createCrud' => 'CRUD',
   'nav.currentVisitors' => 'Current visitors',
   'nav.defaultLatestActivity' => 'Latest activity',
   'nav.defaultLogOut' => 'Log out',

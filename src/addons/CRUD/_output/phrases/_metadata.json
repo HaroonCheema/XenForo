@@ -1,0 +1,14 @@
+{
+    "nav.addRecord.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "ec211f7c20af43e742bf2570c3cb84f9"
+    },
+    "nav.createCrud.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "8ecfde6cfb333d8f81de0672a75b159c"
+    }
+}

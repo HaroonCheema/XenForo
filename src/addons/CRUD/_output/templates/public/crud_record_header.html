@@ -1,0 +1,28 @@
+<xf:css src="style.less" />
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <xf:title>CRUD</xf:title>
+  </head>
+
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <h1>Crud</h1>
+      </div>
+      <div id="menu">
+        <center>
+          <ul>
+            <li>
+              <a href="{{ link('crud')}}">Home</a>
+            </li>
+            <li>
+              <a href="{{ link('crud/add/')}}">Add</a>
+            </li>
+          </ul>
+        </center>
+      </div>

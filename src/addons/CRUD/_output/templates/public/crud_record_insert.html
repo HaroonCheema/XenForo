@@ -1,0 +1,33 @@
+<xf:include template="crud_record_header" />
+
+<div id="main-content">
+  <h2>Add New Record</h2>
+
+  <xf:form
+    action="{{ link('crud/insert', $crud) }}"
+    class="block post-form"
+    ajax="1"
+  >
+    <div class="block-container">
+      <div class="block-body">
+        <xf:textboxrow name="name" label="Name" autosize="true" row="5" />
+
+        <xf:textboxrow name="class" label="Class" autosize="true" row="5" />
+
+        <xf:numberboxrow
+          name="rollNo"
+          label="Roll No"
+          autosize="true"
+          row="5"
+        />
+      </div>
+
+      <xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" />
+    </div>
+  </xf:form>
+</div>
+
+</div>
+</body>
+
+</html>

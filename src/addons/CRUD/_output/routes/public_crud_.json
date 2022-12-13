@@ -1,0 +1,11 @@
+{
+    "route_type": "public",
+    "route_prefix": "crud",
+    "sub_name": "",
+    "format": ":int<id>/:page",
+    "build_class": "",
+    "build_method": "",
+    "controller": "CRUD\\XF:Crud",
+    "context": "createCrud",
+    "action_prefix": ""
+}
