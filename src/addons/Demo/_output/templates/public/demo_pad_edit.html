@@ -1,17 +1,24 @@
 <xf:title>
-    <xf:if is ="$note.note_id">
-        Edit note {$note.title}
-    <xf:else />
-        Add new note
-    </xf:if>
+  <xf:if is ="$note.note_id"> Edit note {$note.title} <xf:else /> Add new note
+  </xf:if>
 </xf:title>
 
-<xf:form action="{{ link('notes/create-insert', $note) }}" class="block" ajax="1">
-    <div class="block-container">
-        <div class="block-body">
-            <xf:textboxrow name="title" value="{$note.title}" label="Title" />
-            <xf:textarearow name="content" value="{$note.content}" label="Your note" autosize="true" row="5" />
-        </div>
-        <xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" />
+<xf:form
+  action="{{ link('notes/create-insert', $note) }}"
+  class="block"
+  ajax="1"
+>
+  <div class="block-container">
+    <div class="block-body">
+      <xf:textboxrow name="title" value="{$note.title}" label="Title" />
+      <xf:textarearow
+        name="content"
+        value="{$note.content}"
+        label="Your note"
+        autosize="true"
+        row="5"
+      />
     </div>
+    <xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" />
+  </div>
 </xf:form>

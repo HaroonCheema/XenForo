@@ -2,26 +2,11 @@
     "public/crud_record_all.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "5ee9ff1db8d94fbb53315cb0106ce241"
-    },
-    "public/crud_record_header.html": {
-        "version_id": 1000010,
-        "version_string": "1.0.0 Alpha",
-        "hash": "733045a852bfbc16d04093c822a154b1"
+        "hash": "dc2afb445f597552d985897164aba11f"
     },
     "public/crud_record_insert.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "8d5bd276a770d8d752fcbcd10dd775b6"
-    },
-    "public/crud_record_update.html": {
-        "version_id": 1000010,
-        "version_string": "1.0.0 Alpha",
-        "hash": "1d65b63821074fe74017b2c96addfa82"
-    },
-    "public/style.less": {
-        "version_id": 1000010,
-        "version_string": "1.0.0 Alpha",
-        "hash": "44bb3d3a6eeeeeccb12701dc01864d11"
+        "hash": "ee12056ebba402deebcae413c914ca7e"
     }
 }

@@ -1,35 +1,123 @@
-<xf:include template="crud_record_header" />
+<xf:title>{{ phrase('CRUD') }}</xf:title>
 
-<div id="main-content">
-  <h2>All Records</h2>
-  <br />
-  <table cellpadding="7px">
-    <thead>
-      <th>Id</th>
-      <th>Name</th>
-      <th>Class</th>
-      <th>Roll No</th>
-      <th>Edit</th>
-      <th>Delete</th>
-    </thead>
-    <tbody>
-      <xf:foreach loop="$data" value="$val">
-        <tr>
-          <td>{$val.id}</td>
-          <td>{$val.name}</td>
-          <td>{$val.class}</td>
-          <td>{$val.rollNo}</td>
-          <td>
-            <a href="{{ link('crud/edit-view',$val) }}">Edit</a>
-          </td>
-          <td>
-            <a href="{{ link('crud/delete', $val) }}">Delete</a>
-          </td>
-        </tr>
-      </xf:foreach>
-    </tbody>
-  </table>
+<xf:pageaction>
+  <xf:button href="{{ link('crud/add') }}" icon="add"
+    >{{ phrase('Add Record') }}</xf:button
+  >
+
+  <!--       < Search >  -->
+
+  <xf:if is="$xf.visitor.canSearch()">
+    <a
+      href="{{ link('search') }}"
+      class="p-navgroup-link p-navgroup-link--iconic p-navgroup-link--search"
+      data-xf-click="menu"
+      data-xf-key="{{ phrase('shortcut.search_menu')|for_attr }}"
+      aria-label="{{ phrase('search')|for_attr }}"
+      aria-expanded="false"
+      aria-haspopup="true"
+      title="{{ phrase('search')|for_attr }}"
+      style="
+        float: right;
+        background-color: #2577b1;
+        color: #fff;
+        margin-left: 15px;
+      "
+    >
+      <i aria-hidden="true"></i>
+      <span class="p-navgroup-linkText">{{ phrase('search') }}</span>
+    </a>
+    <div
+      class="menu menu--structural menu--wide"
+      data-menu="menu"
+      aria-hidden="true"
+    >
+      <form
+        action="{{ link('search/search') }}"
+        method="post"
+        class="menu-content"
+        data-xf-init="quick-search"
+      >
+        <h3 class="menu-header">{{ phrase('search') }}</h3>
+        <!--[XF:search_menu:above_input]-->
+        <div class="menu-row">
+          <xf:if is="$searchConstraints">
+            <div class="inputGroup inputGroup--joined">
+              <xf:textbox
+                name="keywords"
+                placeholder="{{ phrase('search...') }}"
+                aria-label="{{ phrase('search') }}"
+                data-menu-autofocus="true"
+              />
+              <xf:select
+                name="constraints"
+                class="js-quickSearch-constraint"
+                aria-label="{{ phrase('search_within') }}"
+              >
+                <xf:option value="">{{ phrase('everywhere') }}</xf:option>
+                <xf:foreach
+                  loop="$searchConstraints"
+                  key="$constraintName"
+                  value="$constraint"
+                >
+                  <xf:option value="{$constraint|json}"
+                    >{$constraintName}</xf:option
+                  >
+                </xf:foreach>
+              </xf:select>
+            </div>
+            <xf:else />
+            <xf:textbox
+              name="keywords"
+              placeholder="{{ phrase('search...') }}"
+              aria-label="{{ phrase('search') }}"
+              data-menu-autofocus="true"
+            />
+          </xf:if>
+        </div>
+
+        <div class="menu-footer">
+          <span class="menu-footer-controls">
+            <xf:button type="submit" class="button--primary" icon="search" />
+          </span>
+        </div>
+
+        <xf:csrf />
+      </form>
+    </div>
+  </xf:if>
+
+  <!--       </ Search > -->
+</xf:pageaction>
+
+<!--       < Records >  -->
+
+<div class="block">
+  <div class="block-container">
+    <div class="block-body">
+      <xf:datalist data-xf-init="responsive-data-list">
+        <xf:datarow rowtype="header">
+          <xf:cell> Name </xf:cell>
+          <xf:cell> Class </xf:cell>
+          <xf:cell> Roll No </xf:cell>
+          <xf:cell class="dataList-cell--min"> Action </xf:cell>
+        </xf:datarow>
+        <xf:foreach loop="$data" value="$val">
+          <xf:datarow>
+            <xf:cell href="{{ link('crud/edit', $val) }}">
+              {{$val.name}}
+            </xf:cell>
+            <xf:cell> {{$val.class}} </xf:cell>
+            <xf:cell> {{$val.rollNo}} </xf:cell>
+            <xf:delete
+              href="{{ link('crud/delete-record', $val) }}"
+              overlay="true"
+            />
+          </xf:datarow>
+        </xf:foreach>
+      </xf:datalist>
+    </div>
+  </div>
 </div>
-</div>
-</body>
-</html>
+
+<!--       </ Records > -->

@@ -12,7 +12,7 @@ class Note extends AbstractController
 
     public function actionIndex()
     {
-        return $this->view('Demo\Pad:Note\Index','demo_pad_edit');
+        return $this->view('Demo\Pad:Note\Index', 'demo_pad_edit');
     }
 
     // public function actionIndex()
@@ -20,7 +20,7 @@ class Note extends AbstractController
     //     return $this->view('Demo\Pad:Note\Index','demo_pad_index');
     // }
 
-    
+
 
     // http://localhost/xenforo/index.php?notes/
 
@@ -38,14 +38,14 @@ class Note extends AbstractController
         $note->title = $input['title'];
         $note->content = $input['content'];
 
-        
+
         $note->save();
         // var_dump($note);exit;
-        $viewParams= [
+        $viewParams = [
             'note' => $note
         ];
 
-        return $this->view('Demo\Pad:Note\CreateInsert','demo_pad_index', $viewParams);
+        return $this->view('Demo\Pad:Note\CreateInsert', 'demo_pad_index', $viewParams);
     }
 
 
@@ -63,14 +63,15 @@ class Note extends AbstractController
         $note->title = 'This is my update note title';
         $note->content = 'Here is the ontent of my first note...';
 
-        
+
         $note->save();
-        var_dump($note);exit;
-        $viewParams= [
+        var_dump($note);
+        exit;
+        $viewParams = [
             'note' => $note
         ];
 
-        return $this->view('Demo\Pad:Note\Index','demo_pad_index', $viewParams);
+        return $this->view('Demo\Pad:Note\Index', 'demo_pad_index', $viewParams);
     }
 
 
@@ -87,14 +88,15 @@ class Note extends AbstractController
         // $note->title = 'This is my update note title';
         // $note->content = 'Here is the ontent of my first note...';
 
-        
+
         $note->delete();
-        var_dump($note);exit;
-        $viewParams= [
+        var_dump($note);
+        exit;
+        $viewParams = [
             'note' => $note
         ];
 
-        return $this->view('Demo\Pad:Note\Index','demo_pad_index', $viewParams);
+        return $this->view('Demo\Pad:Note\Index', 'demo_pad_index', $viewParams);
     }
 
 
@@ -103,17 +105,17 @@ class Note extends AbstractController
     public function actionTest()
     {
         $postFinder = $this->finder('XF:Post')
-        // JOIN lgane k liye use hota hai ->with is se user waley table ka data b postFinder me a jaye ga
-        ->with('User')
-        ->with('User.Profile')
-        ->with('Thread')
-        ->where('user_id','<>',0);
+            // JOIN lgane k liye use hota hai ->with is se user waley table ka data b postFinder me a jaye ga
+            ->with('User')
+            ->with('User.Profile')
+            ->with('Thread')
+            ->where('user_id', '<>', 0);
 
         $viewParams = [
             'posts' => $postFinder
         ];
 
-        return $this->view('Demo\Pad:Note\Test','demo_pad_test',$viewParams);
+        return $this->view('Demo\Pad:Note\Test', 'demo_pad_test', $viewParams);
     }
 
     public function actionFetchtestdata()
@@ -133,7 +135,7 @@ class Note extends AbstractController
         print_r($user);
         echo "</pre>";
 
-        return $this->view('Demo\Pad:Note\Fetchtestdata','demo_pad_fetch',$viewParams);
+        return $this->view('Demo\Pad:Note\Fetchtestdata', 'demo_pad_fetch', $viewParams);
     }
 
 
@@ -144,20 +146,18 @@ class Note extends AbstractController
         // $userFinder = $this->finder('XF:User')->wherId(2);
 
         $userFinder = $this->finder('XF:User')
-        // ->where('user_id','<',4)
-        // ->where('username','LIKE','h%')
-        ->whereOr(['user_id','<',4],['username','LIKE','h%'])
-        ->order('user_id', 'desc');
+            // ->where('user_id','<',4)
+            // ->where('username','LIKE','h%')
+            ->whereOr(['user_id', '<', 4], ['username', 'LIKE', 'h%'])
+            ->order('user_id', 'desc');
 
         $total = $userFinder->total();
 
         // $users = $userFinder->fetchOne();
         $users = $userFinder->fetch();
 
-        $viewParams = [
-
-        ];
-        return $this->view('Demo\Pad:Note\Index','demo_pad_index',$viewParams);
+        $viewParams = [];
+        return $this->view('Demo\Pad:Note\Index', 'demo_pad_index', $viewParams);
     }
 
 
@@ -181,7 +181,7 @@ class Note extends AbstractController
 
         $users->save();
 
-        return $this->view('Demo\Pad:Note\Index','demo_pad_index');
+        return $this->view('Demo\Pad:Note\Index', 'demo_pad_index');
     }
 
 
@@ -201,7 +201,7 @@ class Note extends AbstractController
 
         $users->save();
 
-        return $this->view('Demo\Pad:Note\Index','demo_pad_index');
+        return $this->view('Demo\Pad:Note\Index', 'demo_pad_index');
     }
 
     //          ider se hm koch parameters ko pass krein gey template me phir uder print kerwaien gey
@@ -228,9 +228,25 @@ class Note extends AbstractController
             'array1' => $array1
         ];
 
-        return $this->view('Demo\Pad:Note\PassParam','demo_pad_pass_param',$viewParams);
-
+        return $this->view('Demo\Pad:Note\PassParam', 'demo_pad_pass_param', $viewParams);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //                      Note Add Edit code
 
     public function actionAdd()
     {
@@ -258,19 +274,18 @@ class Note extends AbstractController
     {
         if ($params->note_id) {
             $note = $this->assertNoteExists($params->note_id);
-            var_dump($params);
-        }
-        else {
+            // var_dump($params);
+        } else {
             $note = $this->em()->create('Demo\Pad:Note');
-            $input = $this->filter([
-                'title' => 'str',
-                'content' => 'str',
-            ]);
+            // $input = $this->filter([
+            //     'title' => 'str',
+            //     'content' => 'str',
+            // ]);
 
-            echo $input['content'];
+            // echo $input['content'];
         }
 
-        // $this->noteSaveProcess($note)->run();
+        $this->noteSaveProcess($note)->run();
 
         return $this->redirect($this->buildLink('notes'));
     }
@@ -284,12 +299,12 @@ class Note extends AbstractController
 
         $form = $this->formAction();
         $form->basicEntitySave($note, $input);
+
+        return $form;
     }
 
     protected function assertNoteExists($id, $with = null, $phraseKey = null)
     {
         return $this->assertRecordExists('Demo\Pad:Note', $id, $with, $phraseKey);
     }
-
-
 }

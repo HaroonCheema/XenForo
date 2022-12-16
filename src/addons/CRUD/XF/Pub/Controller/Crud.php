@@ -14,7 +14,10 @@ class Crud extends AbstractController
 
     public function actionIndex()
     {
-        $data = $this->finder('CRUD\XF:Crud')->where('id', '<>', 0);
+        $data = $this->finder('CRUD\XF:Crud')->order('id', 'DESC')->fetch();
+
+        // \XF::dump($data);
+        // exit;
 
         $viewParams = [
             'data' => $data
@@ -28,9 +31,66 @@ class Crud extends AbstractController
 
     // http://localhost/xenforo/index.php?crud/add/
 
+    // public function actionAdd()
+    // {
+    //     return $this->view('CRUD\XF:Crud\Add', 'crud_record_insert');
+    // }
+
+
     public function actionAdd()
     {
-        return $this->view('CRUD\XF:Crud\Add', 'crud_record_insert');
+        $crud = $this->em()->create('CRUD\XF:Crud');
+        return $this->crudAddEdit($crud);
+    }
+
+    public function actionEdit(ParameterBag $params)
+    {
+        $crud = $this->assertDataExists($params->id);
+        return $this->crudAddEdit($crud);
+    }
+
+    protected function crudAddEdit(\CRUD\XF\Entity\Crud $crud)
+    {
+        $viewParams = [
+            'crud' => $crud
+        ];
+
+        return $this->view('CRUD\XF:Crud\Add', 'crud_record_insert', $viewParams);
+    }
+
+    public function actionSave(ParameterBag $params)
+    {
+        if ($params->id) {
+            $crud = $this->assertDataExists($params->id);
+            // var_dump($params);
+        } else {
+            $crud = $this->em()->create('CRUD\XF:Crud');
+            // $input = $this->filter([
+            //     'title' => 'str',
+            //     'content' => 'str',
+            // ]);
+
+            // echo $input['content'];
+        }
+
+        $this->crudSaveProcess($crud)->run();
+
+        return $this->redirect($this->buildLink('crud'));
+    }
+
+
+    protected function crudSaveProcess(\CRUD\XF\Entity\Crud $crud)
+    {
+        $input = $this->filter([
+            'name' => 'str',
+            'class' => 'str',
+            'rollNo' => 'int',
+        ]);
+
+        $form = $this->formAction();
+        $form->basicEntitySave($crud, $input);
+
+        return $form;
     }
 
     // to save data in data base using this method
@@ -38,88 +98,42 @@ class Crud extends AbstractController
     // http://localhost/xenforo/index.php?crud/insert/    
 
 
-    public function actionInsert()
-    {
-
-        /** @var \CRUD\XF\Entity\Crud $crud */
-        $crud = $this->em()->create('CRUD\XF:Crud');
-
-        $input = $this->filter([
-            'name' => 'str',
-            'class' => 'str',
-            'rollNo' => 'int',
-        ]);
-
-        $crud->name = $input['name'];
-        $crud->class = $input['class'];
-        $crud->rollNo = $input['rollNo'];
-
-
-        $crud->save();
-
-        return $this->redirect($this->buildLink('crud'));
-    }
-
-    // To delete record from data base using this method
-
-    // http://localhost/xenforo/index.php?crud/id/deletes/ 
-
-
-    public function actionDelete(ParameterBag $params)
-    {
-        $cruds = $this->finder('CRUD\XF:Crud')->whereId($params->id);
-
-        /** @var \CRUD\XF\Entity\Crud $crud */
-        $crud = $cruds->fetchOne();
-
-        $crud->delete();
-
-        return $this->redirect($this->buildLink('crud'));
-    }
-
-    // To edit record from data base using this method
-
-    // http://localhost/xenforo/index.php?crud/id/edit-view/ 
-
-    public function actionEditView(ParameterBag $params)
-    {
-        $cruds = $this->finder('CRUD\XF:Crud')->whereId($params->id);
-
-        /** @var \CRUD\XF\Entity\Crud $crud */
-        $crud = $cruds->fetchOne();
-
-        $viewParams = [
-            'data' => $crud
-        ];
-
-        return $this->view('CRUD\XF:Crud\EditView', 'crud_record_update', $viewParams);
-    }
-
     // To update record in data base using this method
 
     // http://localhost/xenforo/index.php?crud/update/
 
-    public function actionUpdate()
+
+    // To delete record from data base using this method
+
+    // http://localhost/xenforo/index.php?crud/id/delete-record/ 
+
+
+    public function actionDeleteRecord(ParameterBag $params)
     {
-        $input = $this->filter([
-            'id' => 'int',
-            'name' => 'str',
-            'class' => 'str',
-            'rollNo' => 'int',
-        ]);
+        $replyExists = $this->assertDataExists($params->id);
 
-        $recordFinder = $this->finder('CRUD\XF:Crud')->whereId($input['id']);
+        /** @var \XF\ControllerPlugin\Delete $plugin */
+        $plugin = $this->plugin('XF:Delete');
+        return $plugin->actionDelete(
+            $replyExists,
+            $this->buildLink('crud/delete-record', $replyExists),
+            null,
+            $this->buildLink('crud'),
+            "{$replyExists->id} - {$replyExists->name}"
+        );
+    }
 
-        /** @var \CRUD\XF\Entity\Crud $crud */
-        $crud = $recordFinder->fetchOne();
+    // plugin for check id exists or not 
 
-        $crud->name = $input['name'];
-        $crud->class = $input['class'];
-        $crud->rollNo = $input['rollNo'];
-
-
-        $crud->save();
-
-        return $this->redirect($this->buildLink('crud'));
+    /**
+     * @param string $id
+     * @param array|string|null $with
+     * @param null|string $phraseKey
+     *
+     * @return \CRUD\XF\Entity\Crud
+     */
+    protected function assertDataExists($id, array $extraWith = [], $phraseKey = null)
+    {
+        return $this->assertRecordExists('CRUD\XF:Crud', $id, $extraWith, $phraseKey);
     }
 }
