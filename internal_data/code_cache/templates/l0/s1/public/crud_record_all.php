@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: 730ffe26222d702bdde6233f1323ef2a
+// FROM HASH: 89b23de57ec88b936373b1c7d1989608
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
@@ -23,7 +23,7 @@ return array(
   <div class="block">
     <div class="block-outer">
       ' . $__templater->callMacro('filter_macro', 'quick_filter', array(
-			'key' => 'crd',
+			'key' => 'crud',
 			'class' => 'block-outer-opposite',
 		), $__vars) . '
     </div>
@@ -85,6 +85,13 @@ return array(
         ', array(
 			'data-xf-init' => 'responsive-data-list',
 		)) . '
+        ' . $__templater->func('page_nav', array(array(
+			'page' => $__vars['page'],
+			'total' => $__vars['total'],
+			'link' => 'crud',
+			'wrapperclass' => 'block',
+			'perPage' => $__vars['perPage'],
+		))) . '
         <!--       </ Records > -->
       </div>
 

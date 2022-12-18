@@ -41,6 +41,13 @@
             </xf:datarow>
           </xf:foreach>
         </xf:datalist>
+        <xf:pagenav
+          page="{$page}"
+          perpage="{$perPage}"
+          total="{$total}"
+          link="crud"
+          wrapperclass="block"
+        />
         <!--       </ Records > -->
       </div>
 

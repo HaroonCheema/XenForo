@@ -12,15 +12,27 @@ class Crud extends AbstractController
 
     // http://localhost/xenforo/index.php?crud/
 
-    public function actionIndex()
+    public function actionIndex(ParameterBag $params)
     {
-        $data = $this->finder('CRUD\XF:Crud')->order('id', 'DESC')->fetch();
+        $data = $this->finder('CRUD\XF:Crud')->order('id', 'DESC');
+        //                          or
+        // $data = $this->finder('CRUD\XF:Crud')->order('id', 'DESC')->fetch();
 
         // \XF::dump($data);
         // exit;
 
+        $page = $params->page;
+        $perPage = 3;
+
+        $data->limitByPage($page, $perPage);
+
+
         $viewParams = [
-            'data' => $data
+            'data' => $data->fetch(),
+
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => $data->total()
         ];
 
         return $this->view('CRUD\XF:Crud\Index', 'crud_record_all', $viewParams);
