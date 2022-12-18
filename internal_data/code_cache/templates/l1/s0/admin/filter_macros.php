@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: 749c6903bfa6483be121f64699c9f483
+// FROM HASH: 4b145dbcf5956ad991e2d1cb991e63a7
 return array(
 'macros' => array('quick_filter' => array(
 'arguments' => function($__templater, array $__vars) { return array(
@@ -39,8 +39,7 @@ return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
 	$__finalCompiled = '';
-	$__finalCompiled .= '
-';
+
 	return $__finalCompiled;
 }
 );
