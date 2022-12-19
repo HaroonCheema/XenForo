@@ -1,10 +1,15 @@
 <?php
-// FROM HASH: 89b23de57ec88b936373b1c7d1989608
+// FROM HASH: d4e33524ad28495b21f23c654dce5bfb
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
 	$__finalCompiled = '';
 	$__templater->pageParams['pageTitle'] = $__templater->preEscaped('CRUD');
+	$__finalCompiled .= '
+
+';
+	$__templater->breadcrumb($__templater->preEscaped('CRUD'), '#', array(
+	));
 	$__finalCompiled .= '
 
 ';

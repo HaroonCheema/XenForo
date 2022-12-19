@@ -2,12 +2,12 @@
     "public/crud_record_all.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "89b23de57ec88b936373b1c7d1989608"
+        "hash": "d4e33524ad28495b21f23c654dce5bfb"
     },
     "public/crud_record_insert.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "ee12056ebba402deebcae413c914ca7e"
+        "hash": "07520d85838d0d67deb97f4fadbf6a0d"
     },
     "public/filter_macro.html": {
         "version_id": 1000010,

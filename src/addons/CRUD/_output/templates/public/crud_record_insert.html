@@ -1,6 +1,7 @@
 <xf:title>
-  <xf:if is="$crud.id"> Edit Record {$crud.name} <xf:else /> Add new Record
-  </xf:if>
+  <xf:if is="$crud.id"> Edit Record {$crud.name} <xf:breadcrumb href="#">{{
+  phrase('Edit Record') }}</xf:breadcrumb> <xf:else /> Add new Record
+  <xf:breadcrumb href="#">{{ phrase('Add Record') }}</xf:breadcrumb> </xf:if>
 </xf:title>
 
 <xf:form action="{{ link('crud/save', $crud) }}" class="block" ajax="1">

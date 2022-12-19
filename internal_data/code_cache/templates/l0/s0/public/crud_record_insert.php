@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: ee12056ebba402deebcae413c914ca7e
+// FROM HASH: 07520d85838d0d67deb97f4fadbf6a0d
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
@@ -7,9 +7,15 @@ return array(
 	$__compilerTemp1 = '';
 	if ($__vars['crud']['id']) {
 		$__compilerTemp1 .= ' Edit Record ' . $__templater->escape($__vars['crud']['name']) . ' ';
+		$__templater->breadcrumb($__templater->preEscaped('Edit Record'), '#', array(
+		));
+		$__compilerTemp1 .= ' ';
 	} else {
 		$__compilerTemp1 .= ' Add new Record
   ';
+		$__templater->breadcrumb($__templater->preEscaped('Add Record'), '#', array(
+		));
+		$__compilerTemp1 .= ' ';
 	}
 	$__templater->pageParams['pageTitle'] = $__templater->preEscaped('
   ' . $__compilerTemp1 . '
