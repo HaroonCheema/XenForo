@@ -1,0 +1,11 @@
+{
+    "route_type": "admin",
+    "route_prefix": "nodeUrl",
+    "sub_name": "",
+    "format": ":int<node_id>/:page",
+    "build_class": "",
+    "build_method": "",
+    "controller": "FS\\NodeUrl\\XF:NodeUrl",
+    "context": "",
+    "action_prefix": ""
+}

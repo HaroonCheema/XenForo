@@ -1,0 +1,28 @@
+<xf:title>{{ phrase('add_node_url') }}</xf:title>
+
+<xf:breadcrumb href="{{ link('nodeUrl')}}">{{ phrase('Home') }}</xf:breadcrumb>
+<xf:breadcrumb href="{{ link('#')}}">{{ phrase('add_node_url') }}</xf:breadcrumb>
+
+
+<xf:form action="{{ link('nodeUrl/save') }}" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textboxrow
+        name="nodeUrl"
+        label="Node Url"
+		type="url"
+        autosize="true"
+        row="5"
+      />
+	<ul class="inputList">
+		<li><xf:selectrow name="listData[]" value="{$nodeIds}" multiple="multiple" size="7"
+			label="{{ phrase('applicable_forums') }}">
+			<xf:foreach loop="$forums" value="$forum">
+				<xf:option value="{$forum.value}" disabled="{$forum.disabled}">{$forum.label}</xf:option>
+			</xf:foreach>
+		</xf:selectrow></li>
+	</ul>
+		</div>
+		    <xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" sticky="true" />
+	</div>
+</xf:form>

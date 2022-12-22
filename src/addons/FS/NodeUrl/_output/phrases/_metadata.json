@@ -1,0 +1,50 @@
+{
+    "add_node_url.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "80dd963abe26b31666fcaa597dd3ea07"
+    },
+    "admin_navigation.allNodes.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "80dd963abe26b31666fcaa597dd3ea07"
+    },
+    "admin_navigation.fsNodeUrl.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "592bddbf338e0e1561213c1bdd4470b0"
+    },
+    "edit_node_url.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "458191e28c52750590eea05e6782116b"
+    },
+    "fs_add_url.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "0317553251469214e22b1bcc0a4602b6"
+    },
+    "node_name.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "1fb08dab9edd179c62a53f9cc041b09e"
+    },
+    "node_url.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "02a3a357710cc2a5dfdfb74ed012fb59"
+    },
+    "node_url_all_records.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "a7766874b251ae9d9546f3fcc87a4517"
+    }
+}

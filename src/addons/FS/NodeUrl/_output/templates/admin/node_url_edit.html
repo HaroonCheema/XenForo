@@ -1,0 +1,21 @@
+<xf:title>{{ phrase('edit_node_url') }} : {$data.title}</xf:title>
+
+<xf:breadcrumb href="{{ link('nodeUrl')}}">{{ phrase('Home') }}</xf:breadcrumb>
+<xf:breadcrumb href="{{ link('#')}}">{{ phrase('edit_node_url') }}</xf:breadcrumb>
+
+
+<xf:form action="{{ link('nodeUrl/edit' ,$data)}}" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textboxrow
+        name="nodeUrl"
+		value="{$data.node_url}"
+        label="Edit Url"
+        autosize="true"
+		type="url"
+        row="5"
+      />
+		</div>
+		    <xf:submitrow submit="{{ phrase('Update') }}" fa="fa-edit" sticky="true" />
+	</div>
+</xf:form>
