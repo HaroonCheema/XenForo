@@ -19,8 +19,7 @@ class Template extends AbstractController
 		$style = $this->plugin('XF:Style')->getActiveEditStyle();
 
 		$type = $this->filter('type', 'string');
-		if (!$type)
-		{
+		if (!$type) {
 			$type = 'public';
 		}
 
@@ -29,34 +28,27 @@ class Template extends AbstractController
 
 	protected function templateAddEdit(\XF\Entity\Template $template)
 	{
-		if ($template->exists() && !$this->request->exists('style_id'))
-		{
+		if ($template->exists() && !$this->request->exists('style_id')) {
 			$styleId = $template->style_id;
-		}
-		else
-		{
+		} else {
 			$styleId = $this->filter('style_id', 'uint');
 
-			if (empty($template->title) && $prefix = $this->filter('prefix', 'str'))
-			{
+			if (empty($template->title) && $prefix = $this->filter('prefix', 'str')) {
 				$template->set('title', $prefix);
 			}
 		}
 
 		$style = $this->assertStyleExists($styleId);
-		if (!$style->canEdit())
-		{
+		if (!$style->canEdit()) {
 			return $this->error(\XF::phrase('templates_in_this_style_can_not_be_modified'));
 		}
 
 		$types = $this->getTemplateRepo()->getTemplateTypes($style);
-		if (!isset($types[$template->type]))
-		{
+		if (!isset($types[$template->type])) {
 			return $this->error(\XF::phrase('templates_in_this_style_can_not_be_modified'));
 		}
 
-		if (!$template->exists() && $style->style_id)
-		{
+		if (!$template->exists() && $style->style_id) {
 			$template->addon_id = '';
 		}
 
@@ -106,10 +98,8 @@ class Template extends AbstractController
 			'addon_id' => 'str'
 		]);
 
-		$form->setup(function() use ($template)
-		{
-			if ($template->style_id > 0)
-			{
+		$form->setup(function () use ($template) {
+			if ($template->style_id > 0) {
 				// force an update to resolve any out of date issues
 				$template->updateVersionId();
 				$template->last_edit_date = \XF::$time;
@@ -125,51 +115,39 @@ class Template extends AbstractController
 	{
 		$this->assertPostOnly();
 
-		if ($params->template_id)
-		{
+		if ($params->template_id) {
 			$template = $this->assertTemplateExists($params->template_id);
 
 			$styleId = $this->filter('style_id', 'uint');
-			if ($template->style_id != $styleId)
-			{
+			if ($template->style_id != $styleId) {
 				$template = $this->finder('XF:Template')->where([
 					'style_id' => $styleId,
 					'title' => $template->title,
 					'type' => $template->type
 				])->fetchOne();
-				if (!$template)
-				{
+				if (!$template) {
 					$template = $this->em()->create('XF:Template');
 				}
 			}
-		}
-		else
-		{
+		} else {
 			$template = $this->em()->create('XF:Template');
 		}
 
 		$this->templateSaveProcess($template)->run();
 
 		$dynamicRedirect = $this->getDynamicRedirect('invalid', false);
-		if ($dynamicRedirect == 'invalid' || !preg_match('#(styles|templates)/#', $dynamicRedirect))
-		{
+		if ($dynamicRedirect == 'invalid' || !preg_match('#(styles|templates)/#', $dynamicRedirect)) {
 			$dynamicRedirect = null;
 		}
 
-		if ($this->request->exists('exit'))
-		{
-			if ($dynamicRedirect)
-			{
+		if ($this->request->exists('exit')) {
+			if ($dynamicRedirect) {
 				$redirect = $dynamicRedirect;
-			}
-			else
-			{
+			} else {
 				$redirect = $this->buildLink('styles/templates', $template->Style, ['type' => $template->type]);
 			}
 			$redirect .= $this->buildLinkHash($template->template_id);
-		}
-		else
-		{
+		} else {
 			$redirect = $this->buildLink('templates/edit', $template, ['_xfRedirect' => $dynamicRedirect]);
 		}
 
@@ -185,43 +163,33 @@ class Template extends AbstractController
 
 		$list = [];
 
-		if ($template->History)
-		{
+		if ($template->History) {
 			$list = $template->History;
 			$list = $list->toArray();
 			arsort($list);
 		}
 		$newestHistory = reset($list);
 
-		if ($oldId)
-		{
+		if ($oldId) {
 			// doing a comparison
 			$oldText = isset($list[$oldId]) ? $list[$oldId]['template'] : '';
 
-			if ($newId)
-			{
+			if ($newId) {
 				$newText = isset($list[$newId]) ? $list[$newId]['template'] : '';
-			}
-			else
-			{
+			} else {
 				$newText = $template['template'];
 			}
 
 			$diff = new Diff();
 			$diffs = $diff->findDifferences($oldText, $newText);
-		}
-		else
-		{
+		} else {
 			$diffs = [];
 		}
 
 		$viewId = $this->filter('view', 'uint');
-		if ($viewId)
-		{
+		if ($viewId) {
 			$history = $list[$viewId] ?? false;
-		}
-		else
-		{
+		} else {
 			$history = false;
 		}
 
@@ -234,16 +202,11 @@ class Template extends AbstractController
 			'history' => $history
 		];
 
-		if ($history)
-		{
+		if ($history) {
 			return $this->view('XF:Template\History\View', 'template_history_view', $viewParams);
-		}
-		else if ($oldId)
-		{
+		} else if ($oldId) {
 			return $this->view('XF:Template\History\Compare', 'template_history_compare', $viewParams);
-		}
-		else
-		{
+		} else {
 			return $this->view('XF:Template\History', 'template_history', $viewParams);
 		}
 	}
@@ -251,24 +214,19 @@ class Template extends AbstractController
 	public function actionDelete(ParameterBag $params)
 	{
 		$template = $this->assertTemplateExists($params->template_id);
-		if (!$template->Style || !$template->Style->canEdit())
-		{
+		if (!$template->Style || !$template->Style->canEdit()) {
 			return $this->error(\XF::phrase('templates_in_this_style_can_not_be_modified'));
 		}
 
-		if ($this->isPost())
-		{
+		if ($this->isPost()) {
 			$template->delete();
 
 			$redirect = $this->getDynamicRedirect('invalid', false);
-			if ($redirect == 'invalid' || !preg_match('#(styles|templates)/#', $redirect))
-			{
+			if ($redirect == 'invalid' || !preg_match('#(styles|templates)/#', $redirect)) {
 				$redirect = $this->buildLink('styles/templates', $template->Style, ['type' => $template->type]);
 			}
 			return $this->redirect($redirect);
-		}
-		else
-		{
+		} else {
 			$viewParams = [
 				'template' => $template
 			];
@@ -295,8 +253,7 @@ class Template extends AbstractController
 		$templateRepo = $this->getTemplateRepo();
 
 		$availableTypes = $templateRepo->getTemplateTypes($style);
-		if (!isset($availableTypes[$conditions['type']]))
-		{
+		if (!isset($availableTypes[$conditions['type']])) {
 			$conditions['type'] = 'public';
 		}
 
@@ -309,25 +266,20 @@ class Template extends AbstractController
 
 		$finder->isTemplateState($conditions['state']);
 
-		if ($conditions['type'])
-		{
+		if ($conditions['type']) {
 			$linkParams['type'] = $conditions['type'];
 		}
-		if (strlen($conditions['title']))
-		{
+		if (strlen($conditions['title'])) {
 			$linkParams['title'] = $conditions['title'];
 		}
-		if (strlen($conditions['template']))
-		{
+		if (strlen($conditions['template'])) {
 			$linkParams['template'] = $conditions['template'];
 			$linkParams['template_cs'] = $conditions['template_cs'];
 		}
-		if ($conditions['addon_id'])
-		{
+		if ($conditions['addon_id']) {
 			$linkParams['addon_id'] = $conditions['addon_id'];
 		}
-		if ($conditions['state'])
-		{
+		if ($conditions['state']) {
 			$linkParams['state'] = $conditions['state'];
 		}
 
@@ -340,11 +292,9 @@ class Template extends AbstractController
 
 		$styleRepo = $this->getStyleRepo();
 
-		if ($this->filter('search', 'uint'))
-		{
+		if ($this->filter('search', 'uint')) {
 			$style = $this->assertStyleExists($this->filter('style_id', 'uint'));
-			if (!$style->canEdit())
-			{
+			if (!$style->canEdit()) {
 				return $this->error(\XF::phrase('templates_in_this_style_can_not_be_modified'));
 			}
 
@@ -354,19 +304,19 @@ class Template extends AbstractController
 			];
 
 			$finder = $this->getTemplateSearchFinder($style, $linkParams);
-			if (count($finder->getConditions()) <= 2)
-			{
+
+
+			if (count($finder->getConditions()) <= 2) {
 				return $this->error(\XF::phrase('please_complete_required_fields'));
 			}
 
 			$total = $finder->total();
 
-			if ($this->isPost() && $total > 0)
-			{
+			if ($this->isPost() && $total > 0) {
 				return $this->redirect($this->buildLink('templates/search', null, $linkParams));
 			}
 
-			$finder->with('Template.AddOn');
+			// $finder->with('Template.AddOn');
 
 			$templates = $finder->fetch();
 
@@ -375,10 +325,9 @@ class Template extends AbstractController
 				'conditions' => $this->filterSearchConditions(),
 				'templates' => $templates
 			];
+
 			return $this->view('XF:Template\SearchResults', 'template_search_results', $viewParams);
-		}
-		else
-		{
+		} else {
 			$viewParams = [
 				'styleTree' => $styleRepo->getStyleTree(),
 				'styleId' => $this->plugin('XF:Style')->getActiveStyleId(),
@@ -393,6 +342,7 @@ class Template extends AbstractController
 		$style = $this->assertStyleExists($this->filter('style_id', 'uint'));
 		$styleRepo = $this->getStyleRepo();
 
+
 		$conditions = $this->filterSearchConditions();
 
 		$viewParams = [
@@ -401,6 +351,7 @@ class Template extends AbstractController
 			'conditions' => $conditions,
 			'types' => $this->getTemplateRepo()->getTemplateTypes()
 		];
+
 		return $this->view('XF:Template\RefineSearch', 'template_refine_search', $viewParams);
 	}
 
@@ -411,7 +362,9 @@ class Template extends AbstractController
 		$outdatedTemplates = $this->getTemplateRepo()->getOutdatedTemplates();
 		$outdatedGrouped = \XF\Util\Arr::arrayGroup(
 			$outdatedTemplates,
-			function($v) { return $v['template']->style_id; }
+			function ($v) {
+				return $v['template']->style_id;
+			}
 		);
 
 		$viewParams = [
@@ -447,8 +400,7 @@ class Template extends AbstractController
 		$template = $this->assertTemplateForComparison($params->template_id);
 		$parentTemplate = $template->ParentTemplate;
 
-		if (!$parentTemplate->last_edit_date || $parentTemplate->last_edit_date < $template->last_edit_date)
-		{
+		if (!$parentTemplate->last_edit_date || $parentTemplate->last_edit_date < $template->last_edit_date) {
 			return $this->error(\XF::phrase('custom_template_out_of_date_edited_recently_no_merge'));
 		}
 
@@ -456,13 +408,11 @@ class Template extends AbstractController
 		$historyRepo = $this->repository('XF:TemplateHistory');
 		$previousVersion = $historyRepo->getHistoryForMerge($template, $parentTemplate);
 
-		if (!$previousVersion)
-		{
+		if (!$previousVersion) {
 			return $this->error(\XF::phrase('no_previous_version_of_parent_could_be_found'));
 		}
 
-		if ($this->isPost())
-		{
+		if ($this->isPost()) {
 			$merged = $this->filter('merged', 'array-str,no-trim');
 			$final = implode("\n", $merged);
 
@@ -472,17 +422,14 @@ class Template extends AbstractController
 			// even if the template isn't changed we should
 			// make the custom template the same version so
 			// it is no longer outdated.
-			if (!$template->isChanged('template'))
-			{
+			if (!$template->isChanged('template')) {
 				$template->updateVersionId();
 			}
 
 			$template->save();
 
 			return $this->redirect($this->buildLink('templates/outdated'));
-		}
-		else
-		{
+		} else {
 			$diff = new Diff3();
 			$diffs = $diff->findDifferences($template->template, $previousVersion->template, $parentTemplate->template);
 
@@ -498,8 +445,7 @@ class Template extends AbstractController
 
 	public function actionAutoMerge()
 	{
-		if ($this->isPost())
-		{
+		if ($this->isPost()) {
 			$templateRepo = $this->getTemplateRepo();
 			$templateIds = array_keys($templateRepo->getOutdatedTemplates());
 
@@ -508,9 +454,7 @@ class Template extends AbstractController
 			]);
 
 			return $this->redirect($this->buildLink('templates/outdated', null, ['automerged' => 1]));
-		}
-		else
-		{
+		} else {
 			return $this->view('XF:Template\AutoMerge', 'template_auto_merge');
 		}
 	}
@@ -518,14 +462,12 @@ class Template extends AbstractController
 	protected function assertTemplateForComparison($templateId)
 	{
 		$template = $this->assertTemplateExists($templateId, 'Style');
-		if (!$template->style_id)
-		{
+		if (!$template->style_id) {
 			throw $this->exception($this->error(\XF::phrase('you_cannot_compare_custom_changes_for_master_template')));
 		}
 
 		$parentTemplate = $template->ParentTemplate;
-		if (!$parentTemplate)
-		{
+		if (!$parentTemplate) {
 			throw $this->exception($this->error(\XF::phrase('this_template_does_not_have_parent_version')));
 		}
 

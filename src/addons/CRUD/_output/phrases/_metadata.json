@@ -1,4 +1,16 @@
 {
+    "class_contains.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "54a52176e0801f3523b7543f035f936e"
+    },
+    "name_contains.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "1623a3535fbdfe40df97cb4a733b5943"
+    },
     "nav.addRecord.txt": {
         "global_cache": false,
         "version_id": 1000010,
@@ -10,5 +22,17 @@
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
         "hash": "8ecfde6cfb333d8f81de0672a75b159c"
+    },
+    "please_complete_required_field.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "cd6e92fe1594cf893d6cbf817f2888e8"
+    },
+    "rollNo_contains.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "31f17c7c8f2f9be27354e8988348e43c"
     }
 }

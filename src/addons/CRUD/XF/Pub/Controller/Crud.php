@@ -12,42 +12,44 @@ class Crud extends AbstractController
 
     // http://localhost/xenforo/index.php?crud/
 
+
     public function actionIndex(ParameterBag $params)
     {
-        $data = $this->finder('CRUD\XF:Crud')->order('id', 'DESC');
-        //                          or
-        // $data = $this->finder('CRUD\XF:Crud')->order('id', 'DESC')->fetch();
 
-        // \XF::dump($data);
-        // exit;
+        $finder = $this->finder('CRUD\XF:Crud');
+
+        // ager filter search wala set hai to ye code chaley ga or is k ander wala function or code run ho ga
+        if ($this->filter('search', 'uint')) {
+            $finder = $this->getCrudSearchFinder();
+
+            if (count($finder->getConditions()) == 0) {
+                return $this->error(\XF::phrase('please_complete_required_field'));
+            }
+        }
+        // nai to ye wala run ho ga code jo is ka defaul hai or sarey record show kerwaye ga
+        else {
+            $finder->order('id', 'DESC');
+        }
+
 
         $page = $params->page;
         $perPage = 3;
 
-        $data->limitByPage($page, $perPage);
-
+        $finder->limitByPage($page, $perPage);
 
         $viewParams = [
-            'data' => $data->fetch(),
+            'data' => $finder->fetch(),
 
             'page' => $page,
             'perPage' => $perPage,
-            'total' => $data->total()
+            'total' => $finder->total(),
+
+            // ager filter me koch search kia hai to wo is k zareiye hm input tag me show kerwa sakte hain
+            'conditions' => $this->filterSearchConditions(),
         ];
 
         return $this->view('CRUD\XF:Crud\Index', 'crud_record_all', $viewParams);
     }
-
-
-    // Move to add from view 
-
-    // http://localhost/xenforo/index.php?crud/add/
-
-    // public function actionAdd()
-    // {
-    //     return $this->view('CRUD\XF:Crud\Add', 'crud_record_insert');
-    // }
-
 
     public function actionAdd()
     {
@@ -74,22 +76,14 @@ class Crud extends AbstractController
     {
         if ($params->id) {
             $crud = $this->assertDataExists($params->id);
-            // var_dump($params);
         } else {
             $crud = $this->em()->create('CRUD\XF:Crud');
-            // $input = $this->filter([
-            //     'title' => 'str',
-            //     'content' => 'str',
-            // ]);
-
-            // echo $input['content'];
         }
 
         $this->crudSaveProcess($crud)->run();
 
         return $this->redirect($this->buildLink('crud'));
     }
-
 
     protected function crudSaveProcess(\CRUD\XF\Entity\Crud $crud)
     {
@@ -104,21 +98,6 @@ class Crud extends AbstractController
 
         return $form;
     }
-
-    // to save data in data base using this method
-
-    // http://localhost/xenforo/index.php?crud/insert/    
-
-
-    // To update record in data base using this method
-
-    // http://localhost/xenforo/index.php?crud/update/
-
-
-    // To delete record from data base using this method
-
-    // http://localhost/xenforo/index.php?crud/id/delete-record/ 
-
 
     public function actionDeleteRecord(ParameterBag $params)
     {
@@ -147,5 +126,51 @@ class Crud extends AbstractController
     protected function assertDataExists($id, array $extraWith = [], $phraseKey = null)
     {
         return $this->assertRecordExists('CRUD\XF:Crud', $id, $extraWith, $phraseKey);
+    }
+
+    // filter bar k input tag k ander value ko get or set krney k liye ye method call kr rahey hain
+
+    protected function filterSearchConditions()
+    {
+        return $this->filter([
+            'name' => 'str',
+            'rClass' => 'str',
+            'rollNo' => 'str',
+        ]);
+    }
+
+    // filter wala form show kerwaney k liye ye use ho ga
+
+    public function actionRefineSearch()
+    {
+
+        $viewParams = [
+            'conditions' => $this->filterSearchConditions(),
+        ];
+
+        return $this->view('CRUD\XF:Crud\RefineSearch', 'crud_record_search_filter', $viewParams);
+    }
+
+    // ider hm condition apply kr rahey hain kr filter me koi ho gi to or wapis index waley function me return kr k result ko show kerwa rahey hain
+
+    protected function getCrudSearchFinder()
+    {
+        $conditions = $this->filterSearchConditions();
+
+        $finder = $this->finder('CRUD\XF:Crud');
+
+        if ($conditions['name'] != '') {
+            $finder->where('name', 'LIKE', '%' . $finder->escapeLike($conditions['name']) . '%');
+        }
+
+        if ($conditions['rClass'] != '') {
+            $finder->where('class', 'LIKE', '%' . $finder->escapeLike($conditions['rClass']) . '%');
+        }
+
+        if ($conditions['rollNo'] != '') {
+            $finder->where('rollNo', 'LIKE', '%' . $finder->escapeLike($conditions['rollNo']) . '%');
+        }
+
+        return $finder;
     }
 }
