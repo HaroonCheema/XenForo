@@ -179,6 +179,7 @@ return array (
   'option.termsLastUpdate' => 'Terms and rules last update',
   'option.tosForceWhitelist' => 'Force terms and rules agreement route whitelist',
   'option.tosUrl' => 'Terms and rules URL',
+  'option.tourn_user_conversation_id' => 'admin side conversation starter',
   'option.tumblrShare' => 'Enable Tumblr share button',
   'option.tweet' => 'Enable Twitter share button',
   'option.unsubscribeEmailAddress' => 'Unsubscribe email address',

@@ -123,6 +123,8 @@ return array (
   'admin_navigation.threadProperties' => 'Thread properties',
   'admin_navigation.threadReplyBans' => 'Thread reply bans',
   'admin_navigation.tools' => 'Tools',
+  'admin_navigation.tournament' => 'Tournament',
+  'admin_navigation.tournament_nav' => 'Tournament',
   'admin_navigation.trophies' => 'Trophies',
   'admin_navigation.twoStepProviders' => 'Two-step verification',
   'admin_navigation.upgradeCheck' => 'Check for upgrades',

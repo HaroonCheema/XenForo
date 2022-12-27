@@ -218,6 +218,7 @@ This option requires that the specified account is a catch-all account or suppor
   'option_explain.termsLastUpdate' => 'The Unix time stamp of the last terms and rules update.',
   'option_explain.tosForceWhitelist' => 'If you decide to <a href="admin.php?force-agreement/terms" target="_blank">Force terms and rules agreement</a> then the routes listed here will bypass being redirected to the force agreement page. The route path is the section of the URL to a page after your main forum directory URL, such as forums/ or pages/page-name/. Do not reference a route filter here.',
   'option_explain.tosUrl' => 'This link will be shown in the footer and users will have to agree to the terms and rules during registration.',
+  'option_explain.tourn_user_conversation_id' => 'the person who start the conversation from the admin side should not be register in user side',
   'option_explain.tumblrShare' => 'The Tumblr share button lets your users share pages to Tumblr.',
   'option_explain.tweet' => 'Enabling this button will allow your visitors to share pages easily using their Twitter account.<br />
 <br />

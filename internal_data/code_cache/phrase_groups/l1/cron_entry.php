@@ -18,6 +18,7 @@ return array (
   'cron_entry.sitemap' => 'Rebuild sitemap',
   'cron_entry.trophy' => 'Update user trophies',
   'cron_entry.userGroupPromotions' => 'User group promotions',
+  'cron_entry.userconvseration' => 'check register user convesation message Tournament',
   'cron_entry.views' => 'Update view counters',
   'cron_entry.warningExpiry' => 'Handle expired warnings',
 );

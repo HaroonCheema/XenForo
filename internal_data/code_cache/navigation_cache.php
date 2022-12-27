@@ -62,18 +62,6 @@ return function($__templater, $__selectedNav, array $__vars)
 			}
 		}
 
-		if ($__vars['xf']['visitor']['user_id']) {
-			$__navTemp = [
-		'title' => \XF::phrase('nav.defaultLogOut'),
-		'href' => $__templater->func('link', array('logout', null, array('t' => $__templater->func('csrf_token', array(), false), ), ), false),
-		'attributes' => [],
-	];
-			if ($__navTemp) {
-				$__tree['_default']['children']['defaultLogOut'] = $__navTemp;
-				$__flat['defaultLogOut'] =& $__tree['_default']['children']['defaultLogOut'];
-			}
-		}
-
 		if (((!$__vars['xf']['visitor']['user_id']) AND $__vars['xf']['options']['registrationSetup']['enabled'])) {
 			$__navTemp = [
 		'title' => \XF::phrase('nav.defaultRegister'),
@@ -83,6 +71,18 @@ return function($__templater, $__selectedNav, array $__vars)
 			if ($__navTemp) {
 				$__tree['_default']['children']['defaultRegister'] = $__navTemp;
 				$__flat['defaultRegister'] =& $__tree['_default']['children']['defaultRegister'];
+			}
+		}
+
+		if ($__vars['xf']['visitor']['user_id']) {
+			$__navTemp = [
+		'title' => \XF::phrase('nav.defaultLogOut'),
+		'href' => $__templater->func('link', array('logout', null, array('t' => $__templater->func('csrf_token', array(), false), ), ), false),
+		'attributes' => [],
+	];
+			if ($__navTemp) {
+				$__tree['_default']['children']['defaultLogOut'] = $__navTemp;
+				$__flat['defaultLogOut'] =& $__tree['_default']['children']['defaultLogOut'];
 			}
 		}
 
@@ -377,6 +377,16 @@ return function($__templater, $__selectedNav, array $__vars)
 	}
 
 	$__navTemp = [
+		'title' => \XF::phrase('nav.tournament_pub'),
+		'href' => $__templater->func('link', array('uptourn', ), false),
+		'attributes' => [],
+	];
+	if ($__navTemp) {
+		$__tree['tournament_pub'] = $__navTemp;
+		$__flat['tournament_pub'] =& $__tree['tournament_pub'];
+	}
+
+	$__navTemp = [
 		'title' => \XF::phrase('nav.createCrud'),
 		'href' => $__templater->func('link', array('crud', ), false),
 		'attributes' => [],
@@ -409,16 +419,6 @@ return function($__templater, $__selectedNav, array $__vars)
 		if (empty($__tree['demoPadNotes']['children'])) { $__tree['demoPadNotes']['children'] = []; }
 
 		$__navTemp = [
-		'title' => \XF::phrase('nav.demoPadPassParams'),
-		'href' => $__templater->func('link', array('notes/pass-params', ), false),
-		'attributes' => [],
-	];
-		if ($__navTemp) {
-			$__tree['demoPadNotes']['children']['demoPadPassParams'] = $__navTemp;
-			$__flat['demoPadPassParams'] =& $__tree['demoPadNotes']['children']['demoPadPassParams'];
-		}
-
-		$__navTemp = [
 		'title' => \XF::phrase('nav.demoPadNote'),
 		'href' => $__templater->func('link', array('notes/test', ), false),
 		'attributes' => [],
@@ -426,6 +426,16 @@ return function($__templater, $__selectedNav, array $__vars)
 		if ($__navTemp) {
 			$__tree['demoPadNotes']['children']['demoPadNote'] = $__navTemp;
 			$__flat['demoPadNote'] =& $__tree['demoPadNotes']['children']['demoPadNote'];
+		}
+
+		$__navTemp = [
+		'title' => \XF::phrase('nav.demoPadPassParams'),
+		'href' => $__templater->func('link', array('notes/pass-params', ), false),
+		'attributes' => [],
+	];
+		if ($__navTemp) {
+			$__tree['demoPadNotes']['children']['demoPadPassParams'] = $__navTemp;
+			$__flat['demoPadPassParams'] =& $__tree['demoPadNotes']['children']['demoPadPassParams'];
 		}
 
 	}
