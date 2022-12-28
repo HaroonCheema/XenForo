@@ -1,0 +1,10 @@
+{
+    "parent_navigation_id": "fsForumAutoReply",
+    "display_order": 100,
+    "link": "forumAutoReply",
+    "icon": "fa-plus",
+    "admin_permission_id": "",
+    "debug_only": false,
+    "development_only": false,
+    "hide_no_children": false
+}

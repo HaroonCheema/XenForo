@@ -1,0 +1,12 @@
+{
+    "admin/forum_auto_reply_add.html": {
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "f9a073490437a0a742aa680330682461"
+    },
+    "admin/forum_auto_reply_all.html": {
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "dec44711e7d555a6521eff669108bf76"
+    }
+}

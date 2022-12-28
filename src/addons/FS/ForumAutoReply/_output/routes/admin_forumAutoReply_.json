@@ -1,0 +1,11 @@
+{
+    "route_type": "admin",
+    "route_prefix": "forumAutoReply",
+    "sub_name": "",
+    "format": ":int<id>/:page",
+    "build_class": "",
+    "build_method": "",
+    "controller": "FS\\ForumAutoReply:ForumAutoController",
+    "context": "allForums",
+    "action_prefix": ""
+}
