@@ -17,6 +17,48 @@
         "version_string": "1.0.0 Alpha",
         "hash": "c6263ec3ae2a1e8e888fe542068cdfe5"
     },
+    "cell_forum.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "e6a7f8a2f42cc35979973da8dfb10720"
+    },
+    "cell_message.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "4c2a8fe7eaf24721cc7a9f0175115bd4"
+    },
+    "cell_prefix.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "716de874a0d74f25c0aa8c444c3a7539"
+    },
+    "cell_user_group.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "4d01e3bd5fff4e8dcae69a8c2d9310de"
+    },
+    "cell_user_name.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "92f1b1481fa6ff46c4a3caae78354dab"
+    },
+    "cell_words.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "6f15b8d4b7287d60a8ea3d1c5cbadc84"
+    },
+    "edit_message.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "8cb2e2ba8080e69b009398cedb05a6af"
+    },
     "enter_message.txt": {
         "global_cache": false,
         "version_id": 1000010,
@@ -27,7 +69,7 @@
         "global_cache": false,
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "ab88c8f1e889a2d2bfec5f2732a19b78"
+        "hash": "709f011604b8639b7dcc08310991fd61"
     },
     "enter_word.txt": {
         "global_cache": false,

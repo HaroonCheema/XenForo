@@ -1,33 +1,19 @@
-<xf:title>{{ phrase('add_message') }}</xf:title>
+<xf:title>
+  <xf:if is="$message.message_id"> {{ phrase('edit_message') }} :
+  {$message.message} <xf:else /> {{ phrase('add_message') }} </xf:if>
+</xf:title>
 
 <xf:form
-  action="{{ link('forumAutoReply/save', $record) }}"
+  action="{{ link('forumAutoReply/save', $message) }}"
   class="block"
   data-force-flash-message="true"
 >
   <div class="block-container">
     <div class="block-body">
-      <!-- Forums list -->
-
-      <!-- <xf:selectrow
-        name="forum_id"
-        value="{$nodeIds}"
-        label="{{ phrase('forum') }}"
-        hint="{{ phrase('required') }}"
-        required="required"
-      >
-        <xf:option value="0">{{ phrase('(none)') }}</xf:option>
-
-        <xf:foreach loop="$forums" value="$forum">
-          <xf:option value="{$forum.value}" disabled="{$forum.disabled}"
-            >{$forum.label}</xf:option
-          >
-        </xf:foreach>
-      </xf:selectrow> -->
+      <!-- Nodes list -->
 
       <xf:selectrow
-        name="forum_id"
-        value="{$nodeIds}"
+        name="node_id"
         label="{{ phrase('forum') }}"
         hint="{{ phrase('required') }}"
         required="required"
@@ -38,40 +24,14 @@
           <xf:option
             value="{$treeEntry.record.node_id}"
             disabled="{{ $treeEntry.record.node_type_id != 'Forum' }}"
+            selected="{{$message.node_id == $treeEntry.record.node_id }}"
             >{{ repeat('&nbsp;&nbsp;', $treeEntry.depth)|raw }}
             {$treeEntry.record.title}</xf:option
           >
         </xf:foreach>
       </xf:selectrow>
-      <!-- value="{$xf.visitor.username}" -->
 
-      <xf:textboxrow
-        name="from_user"
-        ac="single"
-        label="{{ phrase('from_user') }}"
-      >
-        <xf:explain>
-          <p>
-            {{
-            phrase('enter_name_of_existing_user_conversation_should_be_started_by')
-            }}
-          </p>
-          <p>
-            <b>{{ phrase('note:') }}</b> {{
-            phrase('you_cannot_start_conversation_with_yourself') }}
-          </p>
-        </xf:explain>
-      </xf:textboxrow>
-
-      <!-- <xf:textboxrow
-        name="forum_id"
-        autofocus="autofocus"
-        maxlength="{{ max_length($xf.visitor, 'title') }}"
-        value="{{$record.forum_id}}"
-        label="{{ phrase('forum') }}"
-        required="required"
-        hint="{{ phrase('required') }}"
-      /> -->
+      <!-- Words,Message,User inputs -->
 
       <xf:formrow
         rowtype="input"
@@ -83,65 +43,78 @@
           data-xf-init="list-sorter"
           data-drag-handle=".dragHandle"
         >
-          <xf:foreach loop="$record.tourn_prizes" key="$key" value="$value">
+          <xf:if is="$message.message_id">
             <div class="inputGroup">
               <xf:textbox
-                name="tourn_parto[]"
-                value="{$key}"
-                placeholder="{{ phrase('First One') }}"
+                name="words[]"
+                value="{$message.word}"
+                placeholder="{{ phrase('enter_word') }}"
                 size="24"
                 maxlength="25"
+                data-i="0"
                 dir="ltr"
               />
 
               <span class="inputGroup-splitter"></span>
 
               <xf:textbox
-                name="tourn_partt[]"
-                value="{$value}"
-                placeholder="{{ phrase('Last One') }}"
+                name="messages[]"
+                value="{$message.message}"
+                placeholder="{{ phrase('enter_message') }}"
                 size="24"
+                data-i="0"
+              />
+
+              <xf:textbox
+                name="from_users[]"
+                value="{$message.User.username}"
+                ac="single"
+                placeholder="{{ phrase('enter_user') }}"
+                size="24"
+                data-i="0"
               />
             </div>
-          </xf:foreach>
 
-          <div
-            class="inputGroup is-undraggable js-blockDragafter"
-            data-xf-init="field-adder"
-            data-remove-class="is-undraggable js-blockDragafter"
-          >
-            <xf:textbox
-              name="forum_words[]"
-              placeholder="{{ phrase('enter_word') }}"
-              size="24"
-              maxlength="25"
-              data-i="0"
-              dir="ltr"
-            />
+            <xf:else />
+            <div
+              class="inputGroup is-undraggable js-blockDragafter"
+              data-xf-init="field-adder"
+              data-remove-class="is-undraggable js-blockDragafter"
+            >
+              <xf:textbox
+                name="words[]"
+                placeholder="{{ phrase('enter_word') }}"
+                size="24"
+                maxlength="25"
+                data-i="0"
+                dir="ltr"
+              />
 
-            <span class="inputGroup-splitter"></span>
+              <span class="inputGroup-splitter"></span>
 
-            <xf:textbox
-              name="forum_message[]"
-              placeholder="{{ phrase('enter_message') }}"
-              size="24"
-              data-i="0"
-            />
+              <xf:textbox
+                name="messages[]"
+                placeholder="{{ phrase('enter_message') }}"
+                size="24"
+                data-i="0"
+              />
 
-            <xf:textbox
-              name="forum_user[]"
-              placeholder="{{ phrase('enter_user') }}"
-              size="24"
-              data-i="0"
-            />
-          </div>
+              <xf:textbox
+                name="from_users[]"
+                ac="single"
+                placeholder="{{ phrase('enter_user') }}"
+                size="24"
+                data-i="0"
+              />
+            </div>
+          </xf:if>
         </div>
       </xf:formrow>
 
       <!-- User Group List -->
 
       <xf:selectrow
-        name="userGroup_id"
+        name="user_group_id"
         value="{$nodeIds}"
         label="{{ phrase('user_group') }}"
         hint="{{ phrase('required') }}"
@@ -150,21 +123,13 @@
         <xf:option value="0">{{ phrase('(none)') }}</xf:option>
 
         <xf:foreach loop="$userGroups" value="$userGroup">
-          <xf:option value="{$userGroup.user_group_id}"
+          <xf:option
+            value="{$userGroup.user_group_id}"
+            selected="{{$message.user_group_id == $userGroup.user_group_id }}"
             >{$userGroup.title}</xf:option
           >
         </xf:foreach>
       </xf:selectrow>
-
-      <!-- <xf:textboxrow
-        name="userGroup_id"
-        autofocus="autofocus"
-        maxlength="{{ max_length($xf.visitor, 'title') }}"
-        value="{{$record.userGroup_id}}"
-        label="{{ phrase('user_group') }}"
-        required="required"
-        hint="{{ phrase('required') }}"
-      /> -->
 
       <!-- Prefixes List -->
 
@@ -185,74 +150,18 @@
           >
             <xf:foreach
               loop="{$prefixesGrouped.{$prefixGroupId}}"
-              key="$prefixId"
+              key="$prefix_id"
               value="$prefix"
             >
-              <xf:option value="{$prefixId}">{$prefix.title}</xf:option>
+              <xf:option
+                value="{$prefix_id}"
+                selected="{{$message.prefix_id == $prefix_id }}"
+                >{$prefix.title}</xf:option
+              >
             </xf:foreach>
           </xf:foreach>
         </xf:selectrow>
       </xf:if>
-
-      <!-- <xf:if is="$prefixesGrouped is not empty">
-        <xf:checkboxrow
-          name="available_prefixes"
-          rowtype="explainOffset"
-          listclass="prefix"
-          data-xf-init="checkbox-select-disabler"
-          data-select=".js-availablePrefixSelect"
-          label="{{ phrase('available_prefixes') }}"
-          explain="{{ phrase('available_prefixes_forum_explain') }}"
-        >
-          <xf:foreach
-            loop="$prefixGroups"
-            key="$prefixGroupId"
-            value="$prefixGroup"
-            if="{$prefixesGrouped.{$prefixGroupId}}"
-          >
-            <xf:optgroup
-              check-all="true"
-              listclass="listColumns"
-              label="{{ $prefixGroupId ? $prefixGroup.title : phrase('ungrouped') }}"
-            >
-              <xf:foreach
-                loop="{$prefixesGrouped.{$prefixGroupId}}"
-                key="$prefixId"
-                value="$prefix"
-              >
-                <xf:option
-                  value="{$prefixId}"
-                  selected="{$forum.prefix_cache.{$prefixId}}"
-                >
-                  <xf:label
-                    ><span class="label {$prefix.css_class}"
-                      >{$prefix.title}</span
-                    ></xf:label
-                  >
-                </xf:option>
-              </xf:foreach>
-            </xf:optgroup>
-          </xf:foreach>
-
-          <xf:hint>
-            <xf:checkbox standalone="true">
-              <xf:option check-all=".prefix"
-                >{{ phrase('select_all') }}</xf:option
-              >
-            </xf:checkbox>
-          </xf:hint>
-        </xf:checkboxrow>
-      </xf:if> -->
-
-      <!-- <xf:textboxrow
-        name="prefix_id"
-        autofocus="autofocus"
-        maxlength="{{ max_length($xf.visitor, 'title') }}"
-        value="{{$record.forum_id}}"
-        label="{{ phrase('thread_prefix') }}"
-        required="required"
-        hint="{{ phrase('required') }}"
-      /> -->
     </div>
     <xf:submitrow submit="" icon="save" />
   </div>

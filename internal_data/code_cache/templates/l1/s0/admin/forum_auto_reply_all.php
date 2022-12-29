@@ -1,6 +1,91 @@
 <?php
-// FROM HASH: dec44711e7d555a6521eff669108bf76
+// FROM HASH: ec116905b428aba091e361c5715244c5
 return array(
+'macros' => array('message_table_list' => array(
+'arguments' => function($__templater, array $__vars) { return array(
+		'data' => $__vars['data'],
+	); },
+'code' => function($__templater, array $__vars, $__extensions = null)
+{
+	$__finalCompiled = '';
+	$__finalCompiled .= '
+  ' . $__templater->dataRow(array(
+		'rowtype' => 'header',
+	), array(array(
+		'_type' => 'cell',
+		'html' => ' ' . 'Forum' . ' ',
+	),
+	array(
+		'_type' => 'cell',
+		'html' => ' ' . 'Words' . ' ',
+	),
+	array(
+		'_type' => 'cell',
+		'html' => ' ' . 'Message' . ' ',
+	),
+	array(
+		'_type' => 'cell',
+		'html' => ' ' . 'User Name' . ' ',
+	),
+	array(
+		'_type' => 'cell',
+		'html' => ' ' . 'User Group' . ' ',
+	),
+	array(
+		'_type' => 'cell',
+		'html' => ' ' . 'Prefix' . ' ',
+	),
+	array(
+		'class' => 'dataList-cell--min',
+		'_type' => 'cell',
+		'html' => ' Action ',
+	))) . '
+  ';
+	if ($__templater->isTraversable($__vars['data'])) {
+		foreach ($__vars['data'] AS $__vars['val']) {
+			$__finalCompiled .= '
+    ' . $__templater->dataRow(array(
+			), array(array(
+				'href' => $__templater->func('link', array('forumAutoReply/edit', $__vars['val'], ), false),
+				'_type' => 'cell',
+				'html' => '
+        ' . $__templater->escape($__vars['val']['Node']['title']) . '
+      ',
+			),
+			array(
+				'_type' => 'cell',
+				'html' => ' ' . $__templater->escape($__vars['val']['word']) . ' ',
+			),
+			array(
+				'_type' => 'cell',
+				'html' => ' ' . $__templater->escape($__vars['val']['message']) . ' ',
+			),
+			array(
+				'_type' => 'cell',
+				'html' => ' ' . $__templater->escape($__vars['val']['User']['username']) . ' ',
+			),
+			array(
+				'_type' => 'cell',
+				'html' => ' ' . $__templater->escape($__vars['val']['UserGroup']['title']) . ' ',
+			),
+			array(
+				'_type' => 'cell',
+				'html' => ' ' . $__templater->escape($__vars['val']['Prefix']['title']) . ' ',
+			),
+			array(
+				'href' => $__templater->func('link', array('forumAutoReply/delete', $__vars['val'], ), false),
+				'overlay' => 'true',
+				'_type' => 'delete',
+				'html' => '',
+			))) . '
+  ';
+		}
+	}
+	$__finalCompiled .= '
+';
+	return $__finalCompiled;
+}
+)),
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
 	$__finalCompiled = '';
@@ -31,20 +116,15 @@ return array(
   </div>
   <div class="block-container">
     <div class="block-body">
-      <!--       < Records >  -->
-
       ';
 	$__compilerTemp1 = '';
 	if (!$__templater->test($__vars['data'], 'empty', array())) {
-		$__compilerTemp1 .= ' -->
-        <!-- list macro -->
-
-        <!-- ' . $__templater->callMacro(null, 'record_table_list', array(
+		$__compilerTemp1 .= '
+          ' . $__templater->callMacro(null, 'message_table_list', array(
 			'data' => $__vars['data'],
-		), $__vars) . ' -->
+		), $__vars) . '
 
-        <!-- list macro -->
-        <!-- ';
+          ';
 	} else {
 		$__compilerTemp1 .= '
           <div class="blockMessage">
@@ -53,28 +133,22 @@ return array(
         ';
 	}
 	$__finalCompiled .= $__templater->dataList('
-        <h1>Haroon</h1>
-        <!-- ' . $__compilerTemp1 . ' -->
+        ' . $__compilerTemp1 . '
       ', array(
 		'data-xf-init' => 'responsive-data-list',
 	)) . '
-      <!-- ' . $__templater->func('page_nav', array(array(
+      ' . $__templater->func('page_nav', array(array(
 		'page' => $__vars['page'],
 		'total' => $__vars['total'],
 		'link' => 'forumAutoReply',
 		'wrapperclass' => 'block',
 		'perPage' => $__vars['perPage'],
-	))) . ' -->
-      <!--       </ Records > -->
+	))) . '
     </div>
-
-    <!-- <div class="block-footer">
-          <span class="block-footer-counter">footer</span>
-        </div> -->
   </div>
 </div>
 
-<!-- All macros is here define in below -->
+' . '
 ';
 	return $__finalCompiled;
 }

@@ -19,9 +19,14 @@ class Setup extends AbstractSetup
 	public function installstep1()
 	{
 		$this->schemaManager()->createTable('xf_forum_auto_reply', function (Create $table) {
-			$table->addColumn('id', 'int', '255')->autoIncrement();
-			$table->addColumn('forum_words', 'blob', '255')->nullable();
-			$table->addPrimaryKey('id');
+			$table->addColumn('message_id', 'int', '255')->autoIncrement();
+			$table->addColumn('node_id', 'int', '255');
+			$table->addColumn('word', 'mediumtext');
+			$table->addColumn('message', 'mediumtext');
+			$table->addColumn('user_id', 'int', '255');
+			$table->addColumn('user_group_id', 'int', '255');
+			$table->addColumn('prefix_id', 'int', '255');
+			$table->addPrimaryKey('message_id');
 		});
 	}
 
