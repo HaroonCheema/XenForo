@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: bcc79ef9b54c5f104f29b3704ce34677
+// FROM HASH: 1b0f9138317d1956be0fc2cf08fb7f6c
 return array(
 'macros' => array('message_table_list' => array(
 'arguments' => function($__templater, array $__vars) { return array(
@@ -155,6 +155,11 @@ return array(
 		'wrapperclass' => 'block',
 		'perPage' => $__vars['perPage'],
 	))) . '
+    </div>
+    <div class="block-footer">
+      <span class="block-footer-counter"
+        >' . $__templater->func('display_totals', array($__vars['totalReturn'], $__vars['total'], ), true) . '</span
+      >
     </div>
   </div>
 </div>

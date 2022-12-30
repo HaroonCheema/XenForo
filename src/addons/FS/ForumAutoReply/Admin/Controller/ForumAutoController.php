@@ -9,44 +9,28 @@ class ForumAutoController extends AbstractController
 {
     public function actionIndex(ParameterBag $params)
     {
-        $db = \XF::db();
-        $data = $db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM xf_forum_auto_reply GROUP BY node_id');
-        // $data = $this->finder('FS\ForumAutoReply:ForumAutoReply')->order('message_id', 'DESC')
-        //     ->with('Node')
-        //     ->with('User')
-        //     ->with('UserGroup')
-        //     ->with('Prefix');
+        $page = $this->filterPage();
 
-        // SELECT xf.node_id,MIN(xf.message_id) as message_id ,MIN(xf.user_group_id) as user_group_id ,MIN(xf.prefix_id) as prefix_id FROM xf_forum_auto_reply as xf GROUP BY xf.node_id INNER JOIN xf_node ON xf.node_id = xf_node.node_id;
-
-        // \XF::finder('My:Finder')->whereSql('my_date = (SELECT MAX(my_date) FROM my_table')->fetch();
-
-
-
-        // $data = $data->fetch();
-        // $data = $data->groupBy('node_id');
-
-        // echo '<pre>';
-        // print_r($data);
-        // var_dump($data);
-        // exit;
-
-        $page = $params->page;
         $perPage = 5;
 
-        // /$data->limitByPage($page, $perPage);
+        $from = (($perPage * $page) - $perPage) + 1;
+        $start = $from - 1;
+        $limit = $perPage;
+
+        $result = $this->pagination($start, $limit);
 
         $prefixListData = $this->getPrefixRepo();
 
         $viewParams = [
-            'data' => $data,
+            'data' => $result['data'],
             'nodeTree' => $this->getNodesRepo(),
             'userGroups' => $this->getUserGroupRepo()->findUserGroupsForList()->fetch(),
             'prefixGroups' => $prefixListData['prefixGroups'],
             'prefixesGrouped' => $prefixListData['prefixesGrouped'],
-            // 'page' => $page,
-            // 'perPage' => $perPage,
-            // 'total' => $data->total()
+            'page' => $page,
+            'perPage' => $perPage,
+            'totalReturn' => $result['totalReturn'],
+            'total' => $result['total']
         ];
 
         return $this->view('FS\ForumAutoReply:ForumAutoController\Index', 'forum_auto_reply_all', $viewParams);
@@ -264,6 +248,23 @@ class ForumAutoController extends AbstractController
         foreach ($nodes as $node) {
             $node->delete();
         }
+    }
+
+    protected function pagination($start, $limit)
+    {
+        $db = \XF::db();
+        $data = $db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM xf_forum_auto_reply GROUP BY node_id LIMIT ' . (int) $start . "," . (int) $limit);
+
+
+        $total = count($db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM xf_forum_auto_reply GROUP BY node_id'));
+
+        $viewParams = [
+            'data' => $data,
+            'total' => $total,
+            'totalReturn' => count($data),
+        ];
+
+        return $viewParams;
     }
 
     /**
