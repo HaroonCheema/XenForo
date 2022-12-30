@@ -120,6 +120,7 @@ class ForumAutoController extends AbstractController
             $message = $this->assertMessageExists($params->message_id);
             if ($message['node_id'] != $input['node_id']) {
                 $this->isNodeExisted();
+                $this->preDeleteNodes($message);
             } else {
                 $this->preDeleteNodes($message);
             }
@@ -253,7 +254,7 @@ class ForumAutoController extends AbstractController
     protected function pagination($start, $limit)
     {
         $db = \XF::db();
-        $data = $db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM xf_forum_auto_reply GROUP BY node_id LIMIT ' . (int) $start . "," . (int) $limit);
+        $data = $db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM xf_forum_auto_reply GROUP BY node_id ORDER BY message_id DESC LIMIT ' . (int) $start . "," . (int) $limit);
 
 
         $total = count($db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM xf_forum_auto_reply GROUP BY node_id'));

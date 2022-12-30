@@ -2,12 +2,12 @@
     "admin/forum_auto_reply_add.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "fee1fd6fda337c397cf54a6044d0f6d3"
+        "hash": "faf7d63a430539cbb7dee5e1a2769aff"
     },
     "admin/forum_auto_reply_all.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "1b0f9138317d1956be0fc2cf08fb7f6c"
+        "hash": "be027c92f358b96e9b0f2200f6b775cc"
     },
     "admin/forum_auto_reply_edit_single.html": {
         "version_id": 1000010,

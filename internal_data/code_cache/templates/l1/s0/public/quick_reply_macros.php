@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: 7a3102f0d9feaa7d5fdcb9377bbd8087
+// FROM HASH: 281578173b787b2f9c4b384a3736891d
 return array(
 'macros' => array('body' => array(
 'arguments' => function($__templater, array $__vars) { return array(
@@ -230,7 +230,6 @@ return array(
 	$__finalCompiled = '';
 	$__finalCompiled .= '
 
-' . '
 ';
 	return $__finalCompiled;
 }

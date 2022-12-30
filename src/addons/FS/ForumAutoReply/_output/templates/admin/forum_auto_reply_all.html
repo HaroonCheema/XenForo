@@ -71,8 +71,7 @@
       <xf:foreach loop="{$nodeTree.getFlattened(0)}" value="$treeEntry">
         <xf:if is="{$treeEntry.record.node_id} == {$val.node_id}">
           <xf:cell href="{{ link('forumAutoReply/edit', $val) }}">
-            {{ repeat('&nbsp;&nbsp;', $treeEntry.depth)|raw }}
-            {$treeEntry.record.title}
+            {{ repeat('', $treeEntry.depth)|raw }} {$treeEntry.record.title}
           </xf:cell>
         </xf:if>
       </xf:foreach>

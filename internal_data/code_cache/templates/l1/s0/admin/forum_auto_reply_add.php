@@ -1,11 +1,11 @@
 <?php
-// FROM HASH: fee1fd6fda337c397cf54a6044d0f6d3
+// FROM HASH: faf7d63a430539cbb7dee5e1a2769aff
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
 	$__finalCompiled = '';
 	$__compilerTemp1 = '';
-	if ($__vars['message']) {
+	if ($__vars['message']['message_id']) {
 		$__compilerTemp1 .= ' ' . 'Edit Message' . ' ';
 	} else {
 		$__compilerTemp1 .= ' ' . 'Add Message' . ' ';

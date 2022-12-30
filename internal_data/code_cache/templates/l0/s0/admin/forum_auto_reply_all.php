@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: 1b0f9138317d1956be0fc2cf08fb7f6c
+// FROM HASH: be027c92f358b96e9b0f2200f6b775cc
 return array(
 'macros' => array('message_table_list' => array(
 'arguments' => function($__templater, array $__vars) { return array(
@@ -46,8 +46,7 @@ return array(
 							'href' => $__templater->func('link', array('forumAutoReply/edit', $__vars['val'], ), false),
 							'_type' => 'cell',
 							'html' => '
-            ' . $__templater->filter($__templater->func('repeat', array('&nbsp;&nbsp;', $__vars['treeEntry']['depth'], ), false), array(array('raw', array()),), true) . '
-            ' . $__templater->escape($__vars['treeEntry']['record']['title']) . '
+            ' . $__templater->filter($__templater->func('repeat', array('', $__vars['treeEntry']['depth'], ), false), array(array('raw', array()),), true) . ' ' . $__templater->escape($__vars['treeEntry']['record']['title']) . '
           ',
 						);
 					}

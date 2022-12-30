@@ -1,5 +1,5 @@
 <xf:title>
-  <xf:if is="$message"> {{ phrase('edit_message') }} <xf:else /> {{
+  <xf:if is="$message.message_id"> {{ phrase('edit_message') }} <xf:else /> {{
   phrase('add_message') }} </xf:if>
 </xf:title>
 
