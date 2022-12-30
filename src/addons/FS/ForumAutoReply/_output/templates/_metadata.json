@@ -2,11 +2,16 @@
     "admin/forum_auto_reply_add.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "9dc38c14b0be17556c48176ed8177e06"
+        "hash": "fee1fd6fda337c397cf54a6044d0f6d3"
     },
     "admin/forum_auto_reply_all.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "ec116905b428aba091e361c5715244c5"
+        "hash": "bcc79ef9b54c5f104f29b3704ce34677"
+    },
+    "admin/forum_auto_reply_edit_single.html": {
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "ca850853bbaa32e27c58ca459cbc625f"
     }
 }

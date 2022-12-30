@@ -1,6 +1,6 @@
 <xf:title>
-  <xf:if is="$message.message_id"> {{ phrase('edit_message') }} :
-  {$message.message} <xf:else /> {{ phrase('add_message') }} </xf:if>
+  <xf:if is="$message"> {{ phrase('edit_message') }} <xf:else /> {{
+  phrase('add_message') }} </xf:if>
 </xf:title>
 
 <xf:form
@@ -24,7 +24,7 @@
           <xf:option
             value="{$treeEntry.record.node_id}"
             disabled="{{ $treeEntry.record.node_type_id != 'Forum' }}"
-            selected="{{$message.node_id == $treeEntry.record.node_id }}"
+            selected="{{$nodeId== $treeEntry.record.node_id }}"
             >{{ repeat('&nbsp;&nbsp;', $treeEntry.depth)|raw }}
             {$treeEntry.record.title}</xf:option
           >
@@ -43,11 +43,11 @@
           data-xf-init="list-sorter"
           data-drag-handle=".dragHandle"
         >
-          <xf:if is="$message.message_id">
+          <xf:foreach loop="$data" key="$key" value="$value">
             <div class="inputGroup">
               <xf:textbox
                 name="words[]"
-                value="{$message.word}"
+                value="{$value.word}"
                 placeholder="{{ phrase('enter_word') }}"
                 size="24"
                 maxlength="25"
@@ -59,7 +59,7 @@
 
               <xf:textbox
                 name="messages[]"
-                value="{$message.message}"
+                value="{$value.message}"
                 placeholder="{{ phrase('enter_message') }}"
                 size="24"
                 data-i="0"
@@ -67,47 +67,67 @@
 
               <xf:textbox
                 name="from_users[]"
-                value="{$message.User.username}"
+                value="{$value.User.username}"
                 ac="single"
                 placeholder="{{ phrase('enter_user') }}"
                 size="24"
                 data-i="0"
               />
-            </div>
-
-            <xf:else />
-            <div
-              class="inputGroup is-undraggable js-blockDragafter"
-              data-xf-init="field-adder"
-              data-remove-class="is-undraggable js-blockDragafter"
-            >
-              <xf:textbox
-                name="words[]"
-                placeholder="{{ phrase('enter_word') }}"
-                size="24"
-                maxlength="25"
-                data-i="0"
-                dir="ltr"
+              <xf:button
+                href="{{ link('forumAutoReply/edit-single', $value) }}"
+                overlay="true"
+                style="
+                  background-color: #fff;
+                  border: none;
+                  padding: 0px;
+                  color: #47a7eb;
+                "
+                fa="fa-edit"
               />
-
-              <span class="inputGroup-splitter"></span>
-
-              <xf:textbox
-                name="messages[]"
-                placeholder="{{ phrase('enter_message') }}"
-                size="24"
-                data-i="0"
-              />
-
-              <xf:textbox
-                name="from_users[]"
-                ac="single"
-                placeholder="{{ phrase('enter_user') }}"
-                size="24"
-                data-i="0"
+              <xf:button
+                href="{{ link('forumAutoReply/delete', $value) }}"
+                overlay="true"
+                style="
+                  background-color: #fff;
+                  border: none;
+                  padding: 0px;
+                  color: #47a7eb;
+                "
+                fa="fa-trash"
               />
             </div>
-          </xf:if>
+          </xf:foreach>
+          <div
+            class="inputGroup is-undraggable js-blockDragafter"
+            data-xf-init="field-adder"
+            data-remove-class="is-undraggable js-blockDragafter"
+          >
+            <xf:textbox
+              name="words[]"
+              placeholder="{{ phrase('enter_word') }}"
+              size="24"
+              maxlength="25"
+              data-i="0"
+              dir="ltr"
+            />
+
+            <span class="inputGroup-splitter"></span>
+
+            <xf:textbox
+              name="messages[]"
+              placeholder="{{ phrase('enter_message') }}"
+              size="24"
+              data-i="0"
+            />
+
+            <xf:textbox
+              name="from_users[]"
+              ac="single"
+              placeholder="{{ phrase('enter_user') }}"
+              size="24"
+              data-i="0"
+            />
+          </div>
         </div>
       </xf:formrow>
 
@@ -125,7 +145,7 @@
         <xf:foreach loop="$userGroups" value="$userGroup">
           <xf:option
             value="{$userGroup.user_group_id}"
-            selected="{{$message.user_group_id == $userGroup.user_group_id }}"
+            selected="{{$userGroupId == $userGroup.user_group_id }}"
             >{$userGroup.title}</xf:option
           >
         </xf:foreach>
@@ -155,7 +175,7 @@
             >
               <xf:option
                 value="{$prefix_id}"
-                selected="{{$message.prefix_id == $prefix_id }}"
+                selected="{{$prefixId == $prefix_id }}"
                 >{$prefix.title}</xf:option
               >
             </xf:foreach>

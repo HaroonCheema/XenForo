@@ -83,6 +83,12 @@
         "version_string": "1.0.0 Alpha",
         "hash": "c6263ec3ae2a1e8e888fe542068cdfe5"
     },
+    "node_already_exist.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "9352c4487fbbb66fdedb7e87571e9c09"
+    },
     "thread_prefix.txt": {
         "global_cache": false,
         "version_id": 1000010,

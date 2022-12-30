@@ -21,7 +21,14 @@
     <div class="block-body">
       <xf:datalist data-xf-init="responsive-data-list">
         <xf:if is="$data is not empty">
-          <xf:macro name="message_table_list" arg-data="{$data}" />
+          <xf:macro
+            name="message_table_list"
+            arg-data="{$data}"
+            arg-nodeTree="{$nodeTree}"
+            arg-userGroups="{$userGroups}"
+            arg-prefixGroups="{$prefixGroups}"
+            arg-prefixesGrouped="{$prefixesGrouped}"
+          />
 
           <xf:else />
           <div class="blockMessage">
@@ -40,28 +47,52 @@
   </div>
 </div>
 
-<xf:macro name="message_table_list" arg-data="{$data}">
+<xf:macro
+  name="message_table_list"
+  arg-data="{$data}"
+  arg-nodeTree="{$nodeTree}"
+  arg-userGroups="{$userGroups}"
+  arg-prefixGroups="{$prefixGroups}"
+  arg-prefixesGrouped="{$prefixesGrouped}"
+>
   <xf:datarow rowtype="header">
     <xf:cell> {{ phrase('cell_forum') }} </xf:cell>
-    <xf:cell> {{ phrase('cell_words') }} </xf:cell>
-    <xf:cell> {{ phrase('cell_message') }} </xf:cell>
-    <xf:cell> {{ phrase('cell_user_name') }} </xf:cell>
     <xf:cell> {{ phrase('cell_user_group') }} </xf:cell>
     <xf:cell> {{ phrase('cell_prefix') }} </xf:cell>
     <xf:cell class="dataList-cell--min"> Action </xf:cell>
   </xf:datarow>
   <xf:foreach loop="{$data}" value="$val">
     <xf:datarow>
-      <xf:cell href="{{ link('forumAutoReply/edit', $val) }}">
-        {{$val.Node.title}}
-      </xf:cell>
-      <xf:cell> {{$val.word}} </xf:cell>
-      <xf:cell> {{$val.message}} </xf:cell>
-      <xf:cell> {{$val.User.username}} </xf:cell>
-      <xf:cell> {{$val.UserGroup.title}} </xf:cell>
-      <xf:cell> {{$val.Prefix.title}} </xf:cell>
+      <xf:foreach loop="{$nodeTree.getFlattened(0)}" value="$treeEntry">
+        <xf:if is="{$treeEntry.record.node_id} == {$val.node_id}">
+          <xf:cell href="{{ link('forumAutoReply/edit', $val) }}">
+            {{ repeat('&nbsp;&nbsp;', $treeEntry.depth)|raw }}
+            {$treeEntry.record.title}
+          </xf:cell>
+        </xf:if>
+      </xf:foreach>
+      <xf:foreach loop="{$userGroups}" value="$userGroup">
+        <xf:if is="{$userGroup.user_group_id} == {$val.user_group_id}">
+          <xf:cell> {$userGroup.title} </xf:cell>
+        </xf:if>
+      </xf:foreach>
+      <xf:foreach
+        loop="{$prefixGroups}"
+        key="$prefixGroupId"
+        value="$prefixGroup"
+      >
+        <xf:foreach
+          loop="{$prefixesGrouped.{$prefixGroupId}}"
+          key="$prefix_id"
+          value="$prefix"
+        >
+          <xf:if is="{$val.prefix_id} == {$prefix_id}">
+            <xf:cell> {$prefix.title} </xf:cell>
+          </xf:if>
+        </xf:foreach>
+      </xf:foreach>
       <xf:delete
-        href="{{ link('forumAutoReply/delete', $val) }}"
+        href="{{ link('forumAutoReply/delete-all', $val) }}"
         overlay="true"
       />
     </xf:datarow>

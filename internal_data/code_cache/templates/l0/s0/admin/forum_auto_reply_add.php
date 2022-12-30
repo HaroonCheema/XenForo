@@ -1,13 +1,12 @@
 <?php
-// FROM HASH: 9dc38c14b0be17556c48176ed8177e06
+// FROM HASH: fee1fd6fda337c397cf54a6044d0f6d3
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
 	$__finalCompiled = '';
 	$__compilerTemp1 = '';
-	if ($__vars['message']['message_id']) {
-		$__compilerTemp1 .= ' ' . 'Edit Message' . ' :
-  ' . $__templater->escape($__vars['message']['message']) . ' ';
+	if ($__vars['message']) {
+		$__compilerTemp1 .= ' ' . 'Edit Message' . ' ';
 	} else {
 		$__compilerTemp1 .= ' ' . 'Add Message' . ' ';
 	}
@@ -28,7 +27,7 @@ return array(
 			$__compilerTemp2[] = array(
 				'value' => $__vars['treeEntry']['record']['node_id'],
 				'disabled' => ($__vars['treeEntry']['record']['node_type_id'] != 'Forum'),
-				'selected' => ($__vars['message']['node_id'] == $__vars['treeEntry']['record']['node_id']),
+				'selected' => ($__vars['nodeId'] == $__vars['treeEntry']['record']['node_id']),
 				'label' => $__templater->filter($__templater->func('repeat', array('&nbsp;&nbsp;', $__vars['treeEntry']['depth'], ), false), array(array('raw', array()),), true) . '
             ' . $__templater->escape($__vars['treeEntry']['record']['title']),
 				'_type' => 'option',
@@ -36,74 +35,65 @@ return array(
 		}
 	}
 	$__compilerTemp4 = '';
-	if ($__vars['message']['message_id']) {
-		$__compilerTemp4 .= '
+	if ($__templater->isTraversable($__vars['data'])) {
+		foreach ($__vars['data'] AS $__vars['key'] => $__vars['value']) {
+			$__compilerTemp4 .= '
             <div class="inputGroup">
               ' . $__templater->formTextBox(array(
-			'name' => 'words[]',
-			'value' => $__vars['message']['word'],
-			'placeholder' => 'Enter Word here...!',
-			'size' => '24',
-			'maxlength' => '25',
-			'data-i' => '0',
-			'dir' => 'ltr',
-		)) . '
+				'name' => 'words[]',
+				'value' => $__vars['value']['word'],
+				'placeholder' => 'Enter Word here...!',
+				'size' => '24',
+				'maxlength' => '25',
+				'data-i' => '0',
+				'dir' => 'ltr',
+			)) . '
 
               <span class="inputGroup-splitter"></span>
 
               ' . $__templater->formTextBox(array(
-			'name' => 'messages[]',
-			'value' => $__vars['message']['message'],
-			'placeholder' => 'Enter Message here...!',
-			'size' => '24',
-			'data-i' => '0',
-		)) . '
+				'name' => 'messages[]',
+				'value' => $__vars['value']['message'],
+				'placeholder' => 'Enter Message here...!',
+				'size' => '24',
+				'data-i' => '0',
+			)) . '
 
               ' . $__templater->formTextBox(array(
-			'name' => 'from_users[]',
-			'value' => $__vars['message']['User']['username'],
-			'ac' => 'single',
-			'placeholder' => 'Enter Existing User...!',
-			'size' => '24',
-			'data-i' => '0',
-		)) . '
-            </div>
-
-            ';
-	} else {
-		$__compilerTemp4 .= '
-            <div
-              class="inputGroup is-undraggable js-blockDragafter"
-              data-xf-init="field-adder"
-              data-remove-class="is-undraggable js-blockDragafter"
-            >
-              ' . $__templater->formTextBox(array(
-			'name' => 'words[]',
-			'placeholder' => 'Enter Word here...!',
-			'size' => '24',
-			'maxlength' => '25',
-			'data-i' => '0',
-			'dir' => 'ltr',
-		)) . '
-
-              <span class="inputGroup-splitter"></span>
-
-              ' . $__templater->formTextBox(array(
-			'name' => 'messages[]',
-			'placeholder' => 'Enter Message here...!',
-			'size' => '24',
-			'data-i' => '0',
-		)) . '
-
-              ' . $__templater->formTextBox(array(
-			'name' => 'from_users[]',
-			'ac' => 'single',
-			'placeholder' => 'Enter Existing User...!',
-			'size' => '24',
-			'data-i' => '0',
-		)) . '
+				'name' => 'from_users[]',
+				'value' => $__vars['value']['User']['username'],
+				'ac' => 'single',
+				'placeholder' => 'Enter Existing User...!',
+				'size' => '24',
+				'data-i' => '0',
+			)) . '
+              ' . $__templater->button('', array(
+				'href' => $__templater->func('link', array('forumAutoReply/edit-single', $__vars['value'], ), false),
+				'overlay' => 'true',
+				'style' => '
+                  background-color: #fff;
+                  border: none;
+                  padding: 0px;
+                  color: #47a7eb;
+                ',
+				'fa' => 'fa-edit',
+			), '', array(
+			)) . '
+              ' . $__templater->button('', array(
+				'href' => $__templater->func('link', array('forumAutoReply/delete', $__vars['value'], ), false),
+				'overlay' => 'true',
+				'style' => '
+                  background-color: #fff;
+                  border: none;
+                  padding: 0px;
+                  color: #47a7eb;
+                ',
+				'fa' => 'fa-trash',
+			), '', array(
+			)) . '
             </div>
           ';
+		}
 	}
 	$__compilerTemp5 = array(array(
 		'value' => '0',
@@ -114,7 +104,7 @@ return array(
 		foreach ($__vars['userGroups'] AS $__vars['userGroup']) {
 			$__compilerTemp5[] = array(
 				'value' => $__vars['userGroup']['user_group_id'],
-				'selected' => ($__vars['message']['user_group_id'] == $__vars['userGroup']['user_group_id']),
+				'selected' => ($__vars['userGroupId'] == $__vars['userGroup']['user_group_id']),
 				'label' => $__templater->escape($__vars['userGroup']['title']),
 				'_type' => 'option',
 			);
@@ -135,7 +125,7 @@ return array(
 					foreach ($__vars['prefixesGrouped'][$__vars['prefixGroupId']] AS $__vars['prefix_id'] => $__vars['prefix']) {
 						$__compilerTemp7[] = array(
 							'value' => $__vars['prefix_id'],
-							'selected' => ($__vars['message']['prefix_id'] == $__vars['prefix_id']),
+							'selected' => ($__vars['prefixId'] == $__vars['prefix_id']),
 							'label' => $__templater->escape($__vars['prefix']['title']),
 							'_type' => 'option',
 						);
@@ -175,6 +165,37 @@ return array(
           data-drag-handle=".dragHandle"
         >
           ' . $__compilerTemp4 . '
+          <div
+            class="inputGroup is-undraggable js-blockDragafter"
+            data-xf-init="field-adder"
+            data-remove-class="is-undraggable js-blockDragafter"
+          >
+            ' . $__templater->formTextBox(array(
+		'name' => 'words[]',
+		'placeholder' => 'Enter Word here...!',
+		'size' => '24',
+		'maxlength' => '25',
+		'data-i' => '0',
+		'dir' => 'ltr',
+	)) . '
+
+            <span class="inputGroup-splitter"></span>
+
+            ' . $__templater->formTextBox(array(
+		'name' => 'messages[]',
+		'placeholder' => 'Enter Message here...!',
+		'size' => '24',
+		'data-i' => '0',
+	)) . '
+
+            ' . $__templater->formTextBox(array(
+		'name' => 'from_users[]',
+		'ac' => 'single',
+		'placeholder' => 'Enter Existing User...!',
+		'size' => '24',
+		'data-i' => '0',
+	)) . '
+          </div>
         </div>
       ', array(
 		'rowtype' => 'input',
