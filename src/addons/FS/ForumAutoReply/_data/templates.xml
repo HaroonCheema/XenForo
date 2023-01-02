@@ -189,7 +189,7 @@
   </div>
 </xf:form>
 ]]></template>
-  <template type="admin" title="forum_auto_reply_all" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[<xf:title>{{ phrase('forum_auto_reply') }}</xf:title>
+  <template type="admin" title="forum_auto_reply_all" version_id="1000100" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('forum_auto_reply') }}</xf:title>
 
 <xf:breadcrumb href="#">{{ phrase('forum_auto_reply') }}</xf:breadcrumb>
 
@@ -198,51 +198,61 @@
     >{{ phrase('add_message') }}</xf:button
   >
 </xf:pageaction>
-
-<div class="block">
+<xf:form action="{{ link($prefix . '/toggle') }}" class="block" ajax="true">
   <div class="block-outer">
-    <xf:macro
-      template="filter_macros"
-      name="quick_filter"
-      arg-key="forumAutoReply"
-      arg-class="block-outer-opposite"
-    />
+		<xf:macro
+		  template="filter_macros"
+		  name="quick_filter"
+		  arg-key="forumAutoReply"
+		  arg-class="block-outer-opposite"
+		/>
   </div>
+
   <div class="block-container">
-    <div class="block-body">
-      <xf:datalist data-xf-init="responsive-data-list">
+
+		
+      
+		  
         <xf:if is="$data is not empty">
-          <xf:macro
-            name="message_table_list"
-            arg-data="{$data}"
-            arg-nodeTree="{$nodeTree}"
-            arg-userGroups="{$userGroups}"
-            arg-prefixGroups="{$prefixGroups}"
-            arg-prefixesGrouped="{$prefixesGrouped}"
-          />
+	<div class="block-body">
+			<xf:datalist data-xf-init="responsive-data-list">
+					<xf:macro
+					name="message_table_list"
+					arg-data="{$data}"
+					arg-nodeTree="{$nodeTree}"
+					arg-userGroups="{$userGroups}"
+					arg-prefixGroups="{$prefixGroups}"
+					arg-prefixesGrouped="{$prefixesGrouped}"
+				  />
 
-          <xf:else />
-          <div class="blockMessage">
-            {{ phrase('no_items_have_been_created_yet') }}
-          </div>
-        </xf:if>
-      </xf:datalist>
-      <xf:pagenav
-        page="{$page}"
-        perpage="{$perPage}"
-        total="{$total}"
-        link="forumAutoReply"
-        wrapperclass="block"
-      />
-    </div>
-    <div class="block-footer">
-      <span class="block-footer-counter"
-        >{{ display_totals($totalReturn, $total) }}</span
-      >
-    </div>
-  </div>
-</div>
 
+				   </xf:datalist>
+				<div class="block-footer">
+					  <span class="block-footer-counter"
+						>{{ display_totals($totalReturn, $total) }}</span
+					  >
+				</div>
+		    
+		</div>
+       <xf:else />
+			<div class="block-body block-row">{{ phrase('no_items_have_been_created_yet') }}</div>
+		
+       </xf:if>
+   
+		
+  
+		 
+ </div>
+
+
+   <xf:pagenav
+			page="{$page}"
+			perpage="{$perPage}"
+			total="{$total}"
+			link="forumAutoReply"
+			wrapperclass="block"
+		  />
+</xf:form>
 <xf:macro
   name="message_table_list"
   arg-data="{$data}"
@@ -292,8 +302,7 @@
       />
     </xf:datarow>
   </xf:foreach>
-</xf:macro>
-]]></template>
+</xf:macro>]]></template>
   <template type="admin" title="forum_auto_reply_edit_single" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[<xf:title>
   <xf:if is="$message.message_id"> {{ phrase('edit_message') }} :
   {$message.message} </xf:if>

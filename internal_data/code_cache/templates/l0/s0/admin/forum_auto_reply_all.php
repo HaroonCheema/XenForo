@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: be027c92f358b96e9b0f2200f6b775cc
+// FROM HASH: 10d206595ffd7ecfd9cd7e6288f60223
 return array(
 'macros' => array('message_table_list' => array(
 'arguments' => function($__templater, array $__vars) { return array(
@@ -112,21 +112,13 @@ return array(
 	)) . '
 ');
 	$__finalCompiled .= '
-
-<div class="block">
-  <div class="block-outer">
-    ' . $__templater->callMacro('filter_macros', 'quick_filter', array(
-		'key' => 'forumAutoReply',
-		'class' => 'block-outer-opposite',
-	), $__vars) . '
-  </div>
-  <div class="block-container">
-    <div class="block-body">
-      ';
+';
 	$__compilerTemp1 = '';
 	if (!$__templater->test($__vars['data'], 'empty', array())) {
 		$__compilerTemp1 .= '
-          ' . $__templater->callMacro(null, 'message_table_list', array(
+	<div class="block-body">
+			' . $__templater->dataList('
+					' . $__templater->callMacro(null, 'message_table_list', array(
 			'data' => $__vars['data'],
 			'nodeTree' => $__vars['nodeTree'],
 			'userGroups' => $__vars['userGroups'],
@@ -134,36 +126,57 @@ return array(
 			'prefixesGrouped' => $__vars['prefixesGrouped'],
 		), $__vars) . '
 
-          ';
+
+				   ', array(
+			'data-xf-init' => 'responsive-data-list',
+		)) . '
+				<div class="block-footer">
+					  <span class="block-footer-counter"
+						>' . $__templater->func('display_totals', array($__vars['totalReturn'], $__vars['total'], ), true) . '</span
+					  >
+				</div>
+		    
+		</div>
+       ';
 	} else {
 		$__compilerTemp1 .= '
-          <div class="blockMessage">
-            ' . 'No items have been created yet.' . '
-          </div>
-        ';
+			<div class="block-body block-row">' . 'No items have been created yet.' . '</div>
+		
+       ';
 	}
-	$__finalCompiled .= $__templater->dataList('
+	$__finalCompiled .= $__templater->form('
+  <div class="block-outer">
+		' . $__templater->callMacro('filter_macros', 'quick_filter', array(
+		'key' => 'forumAutoReply',
+		'class' => 'block-outer-opposite',
+	), $__vars) . '
+  </div>
+
+  <div class="block-container">
+
+		
+      
+		  
         ' . $__compilerTemp1 . '
-      ', array(
-		'data-xf-init' => 'responsive-data-list',
-	)) . '
-      ' . $__templater->func('page_nav', array(array(
+   
+		
+  
+		 
+ </div>
+
+
+   ' . $__templater->func('page_nav', array(array(
 		'page' => $__vars['page'],
 		'total' => $__vars['total'],
 		'link' => 'forumAutoReply',
 		'wrapperclass' => 'block',
 		'perPage' => $__vars['perPage'],
 	))) . '
-    </div>
-    <div class="block-footer">
-      <span class="block-footer-counter"
-        >' . $__templater->func('display_totals', array($__vars['totalReturn'], $__vars['total'], ), true) . '</span
-      >
-    </div>
-  </div>
-</div>
-
-' . '
+', array(
+		'action' => $__templater->func('link', array($__vars['prefix'] . '/toggle', ), false),
+		'class' => 'block',
+		'ajax' => 'true',
+	)) . '
 ';
 	return $__finalCompiled;
 }

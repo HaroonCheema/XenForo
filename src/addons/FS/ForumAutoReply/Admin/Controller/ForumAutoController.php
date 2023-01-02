@@ -11,7 +11,7 @@ class ForumAutoController extends AbstractController
     {
         $page = $this->filterPage();
 
-        $perPage = 5;
+        $perPage = 15;
 
         $from = (($perPage * $page) - $perPage) + 1;
         $start = $from - 1;
@@ -254,10 +254,10 @@ class ForumAutoController extends AbstractController
     protected function pagination($start, $limit)
     {
         $db = \XF::db();
-        $data = $db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM xf_forum_auto_reply GROUP BY node_id ORDER BY message_id DESC LIMIT ' . (int) $start . "," . (int) $limit);
+        $data = $db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM fs_forum_auto_reply GROUP BY node_id ORDER BY message_id DESC LIMIT ' . (int) $start . "," . (int) $limit);
 
 
-        $total = count($db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM xf_forum_auto_reply GROUP BY node_id'));
+        $total = count($db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM fs_forum_auto_reply GROUP BY node_id'));
 
         $viewParams = [
             'data' => $data,

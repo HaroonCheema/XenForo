@@ -10,9 +10,9 @@ class ForumAutoReply extends Entity
 
     public static function getStructure(Structure $structure)
     {
-        $structure->table = 'xf_forum_auto_reply';
+        $structure->table = 'fs_forum_auto_reply';
         $structure->shortName = 'FS\ForumAutoReply:ForumAutoReply';
-        $structure->contentType = 'xf_forum_auto_reply';
+        $structure->contentType = 'fs_forum_auto_reply';
         $structure->primaryKey = 'message_id';
         $structure->columns = [
             'message_id' => ['type' => self::UINT, 'autoIncrement' => true],
