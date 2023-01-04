@@ -1,0 +1,26 @@
+{
+    "no_match_enter_message.txt": {
+        "global_cache": false,
+        "version_id": 1000200,
+        "version_string": "1.0.2",
+        "hash": "ee40bce897aaa9692a747ed1c0d1217f"
+    },
+    "no_match_enter_user.txt": {
+        "global_cache": false,
+        "version_id": 1000200,
+        "version_string": "1.0.2",
+        "hash": "709f011604b8639b7dcc08310991fd61"
+    },
+    "no_match_message.txt": {
+        "global_cache": false,
+        "version_id": 1000200,
+        "version_string": "1.0.2",
+        "hash": "77747e8ced64bc2af6d1d10b8de1d288"
+    },
+    "no_match_prefix.txt": {
+        "global_cache": false,
+        "version_id": 1000200,
+        "version_string": "1.0.2",
+        "hash": "eacadbc4ba468f8405271fa6c502cce2"
+    }
+}

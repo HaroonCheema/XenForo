@@ -20,12 +20,22 @@ class Setup extends AbstractSetup
 	{
 		$this->schemaManager()->createTable('fs_forum_auto_reply', function (Create $table) {
 			$table->addColumn('message_id', 'int', '255')->autoIncrement();
+
 			$table->addColumn('node_id', 'int', '255');
-			$table->addColumn('word', 'mediumtext');
-			$table->addColumn('message', 'mediumtext');
-			$table->addColumn('user_id', 'int', '255');
-			$table->addColumn('user_group_id', 'int', '255');
-			$table->addColumn('prefix_id', 'int', '255');
+
+			$table->addColumn('user_group_id', 'int', '255')->nullable();
+
+			$table->addColumn('prefix_id', 'int', '255')->nullable();
+			$table->addColumn('no_match_prefix_id', 'mediumtext')->nullable();
+
+			$table->addColumn('word', 'mediumtext')->nullable();
+
+			$table->addColumn('message', 'mediumtext')->nullable();
+			$table->addColumn('no_match_message', 'mediumtext')->nullable();
+
+			$table->addColumn('user_id', 'int', '255')->nullable();
+			$table->addColumn('no_match_user_ids', 'mediumtext')->nullable();
+
 			$table->addPrimaryKey('message_id');
 		});
 	}

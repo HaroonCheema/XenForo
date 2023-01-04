@@ -17,11 +17,16 @@ class ForumAutoReply extends Entity
         $structure->columns = [
             'message_id' => ['type' => self::UINT, 'autoIncrement' => true],
             'node_id' => ['type' => self::UINT],
-            'word' => ['type' => self::STR, 'required' => true],
-            'message' => ['type' => self::STR, 'required' => true],
-            'user_id' => ['type' => self::UINT],
-            'user_group_id' => ['type' => self::UINT],
-            'prefix_id' => ['type' => self::UINT],
+            'word' => ['type' => self::STR, 'default' => null],
+            'message' => ['type' => self::STR, 'default' => null],
+            'user_id' => ['type' => self::UINT, 'default' => null],
+            'user_group_id' => ['type' => self::UINT, 'default' => null],
+            'prefix_id' => ['type' => self::UINT, 'default' => null],
+
+            'no_match_prefix_id' => ['type' => self::STR, 'default' => null],
+            'no_match_message' => ['type' => self::STR, 'default' => null],
+            'no_match_user_ids' => ['type' => self::STR, 'default' => null],
+
         ];
 
         $structure->relations = [

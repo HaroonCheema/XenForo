@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: faf7d63a430539cbb7dee5e1a2769aff
+// FROM HASH: 896b6fdc0a33adac27f3b2888fbfc5ef
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
@@ -34,10 +34,58 @@ return array(
 			);
 		}
 	}
-	$__compilerTemp4 = '';
+	$__compilerTemp4 = array(array(
+		'value' => '0',
+		'label' => $__vars['xf']['language']['parenthesis_open'] . 'None' . $__vars['xf']['language']['parenthesis_close'],
+		'_type' => 'option',
+	));
+	if ($__templater->isTraversable($__vars['userGroups'])) {
+		foreach ($__vars['userGroups'] AS $__vars['userGroup']) {
+			$__compilerTemp4[] = array(
+				'value' => $__vars['userGroup']['user_group_id'],
+				'selected' => ($__vars['userGroupId'] == $__vars['userGroup']['user_group_id']),
+				'label' => $__templater->escape($__vars['userGroup']['title']),
+				'_type' => 'option',
+			);
+		}
+	}
+	$__compilerTemp5 = '';
+	if (!$__templater->test($__vars['prefixesGrouped'], 'empty', array())) {
+		$__compilerTemp5 .= '
+        ';
+		$__compilerTemp6 = array(array(
+			'value' => '0',
+			'label' => $__vars['xf']['language']['parenthesis_open'] . 'None' . $__vars['xf']['language']['parenthesis_close'],
+			'_type' => 'option',
+		));
+		if ($__templater->isTraversable($__vars['prefixGroups'])) {
+			foreach ($__vars['prefixGroups'] AS $__vars['prefixGroupId'] => $__vars['prefixGroup']) {
+				if ($__templater->isTraversable($__vars['prefixesGrouped'][$__vars['prefixGroupId']])) {
+					foreach ($__vars['prefixesGrouped'][$__vars['prefixGroupId']] AS $__vars['prefix_id'] => $__vars['prefix']) {
+						$__compilerTemp6[] = array(
+							'value' => $__vars['prefix_id'],
+							'selected' => ($__vars['prefixId'] == $__vars['prefix_id']),
+							'label' => $__templater->escape($__vars['prefix']['title']),
+							'_type' => 'option',
+						);
+					}
+				}
+			}
+		}
+		$__compilerTemp5 .= $__templater->formSelectRow(array(
+			'name' => 'prefix_id',
+			'value' => $__vars['nodeIds'],
+			'required' => 'required',
+		), $__compilerTemp6, array(
+			'label' => 'Prefixes',
+			'hint' => 'Required',
+		)) . '
+      ';
+	}
+	$__compilerTemp7 = '';
 	if ($__templater->isTraversable($__vars['data'])) {
 		foreach ($__vars['data'] AS $__vars['key'] => $__vars['value']) {
-			$__compilerTemp4 .= '
+			$__compilerTemp7 .= '
             <div class="inputGroup">
               ' . $__templater->formTextBox(array(
 				'name' => 'words[]',
@@ -95,26 +143,11 @@ return array(
           ';
 		}
 	}
-	$__compilerTemp5 = array(array(
-		'value' => '0',
-		'label' => $__vars['xf']['language']['parenthesis_open'] . 'None' . $__vars['xf']['language']['parenthesis_close'],
-		'_type' => 'option',
-	));
-	if ($__templater->isTraversable($__vars['userGroups'])) {
-		foreach ($__vars['userGroups'] AS $__vars['userGroup']) {
-			$__compilerTemp5[] = array(
-				'value' => $__vars['userGroup']['user_group_id'],
-				'selected' => ($__vars['userGroupId'] == $__vars['userGroup']['user_group_id']),
-				'label' => $__templater->escape($__vars['userGroup']['title']),
-				'_type' => 'option',
-			);
-		}
-	}
-	$__compilerTemp6 = '';
+	$__compilerTemp8 = '';
 	if (!$__templater->test($__vars['prefixesGrouped'], 'empty', array())) {
-		$__compilerTemp6 .= '
+		$__compilerTemp8 .= '
         ';
-		$__compilerTemp7 = array(array(
+		$__compilerTemp9 = array(array(
 			'value' => '0',
 			'label' => $__vars['xf']['language']['parenthesis_open'] . 'None' . $__vars['xf']['language']['parenthesis_close'],
 			'_type' => 'option',
@@ -123,9 +156,9 @@ return array(
 			foreach ($__vars['prefixGroups'] AS $__vars['prefixGroupId'] => $__vars['prefixGroup']) {
 				if ($__templater->isTraversable($__vars['prefixesGrouped'][$__vars['prefixGroupId']])) {
 					foreach ($__vars['prefixesGrouped'][$__vars['prefixGroupId']] AS $__vars['prefix_id'] => $__vars['prefix']) {
-						$__compilerTemp7[] = array(
+						$__compilerTemp9[] = array(
 							'value' => $__vars['prefix_id'],
-							'selected' => ($__vars['prefixId'] == $__vars['prefix_id']),
+							'selected' => ($__vars['noMatchPrefixId'] == $__vars['prefix_id']),
 							'label' => $__templater->escape($__vars['prefix']['title']),
 							'_type' => 'option',
 						);
@@ -133,12 +166,12 @@ return array(
 				}
 			}
 		}
-		$__compilerTemp6 .= $__templater->formSelectRow(array(
-			'name' => 'prefix_id',
+		$__compilerTemp8 .= $__templater->formSelectRow(array(
+			'name' => 'no_match_prefix_id',
 			'value' => $__vars['nodeIds'],
 			'required' => 'required',
-		), $__compilerTemp7, array(
-			'label' => 'Prefixes',
+		), $__compilerTemp9, array(
+			'label' => 'No Word Match (Prefix)',
 			'hint' => 'Required',
 		)) . '
       ';
@@ -146,6 +179,17 @@ return array(
 	$__finalCompiled .= $__templater->form('
   <div class="block-container">
     <div class="block-body">
+      <!-- ' . $__templater->formTokenInputRow(array(
+		'name' => 'recipients',
+		'value' => $__vars['to'],
+		'href' => $__templater->func('link', array('forumAutoReply/find', ), false),
+		'max-tokens' => (($__vars['maxRecipients'] > -1) ? $__vars['maxRecipients'] : null),
+	), array(
+		'rowtype' => 'fullWidth',
+		'label' => ((($__vars['maxRecipients'] == -1) OR ($__vars['maxRecipients'] > 1)) ? 'Recipients' : 'Recipient'),
+		'explain' => ((($__vars['maxRecipients'] == -1) OR ($__vars['maxRecipients'] > 1)) ? 'You may enter multiple names here.' : null),
+	)) . ' -->
+
       <!-- Nodes list -->
 
       ' . $__templater->formSelectRow(array(
@@ -156,6 +200,21 @@ return array(
 		'hint' => 'Required',
 	)) . '
 
+      <!-- User Group List -->
+
+      ' . $__templater->formSelectRow(array(
+		'name' => 'user_group_id',
+		'value' => $__vars['nodeIds'],
+		'required' => 'required',
+	), $__compilerTemp4, array(
+		'label' => 'User group',
+		'hint' => 'Required',
+	)) . '
+
+      <!-- Prefixes List -->
+
+      ' . $__compilerTemp5 . '
+
       <!-- Words,Message,User inputs -->
 
       ' . $__templater->formRow('
@@ -164,36 +223,42 @@ return array(
           data-xf-init="list-sorter"
           data-drag-handle=".dragHandle"
         >
-          ' . $__compilerTemp4 . '
+          ' . $__compilerTemp7 . '
           <div
             class="inputGroup is-undraggable js-blockDragafter"
             data-xf-init="field-adder"
             data-remove-class="is-undraggable js-blockDragafter"
           >
-            ' . $__templater->formTextBox(array(
+            ' . $__templater->formTextBoxRow(array(
 		'name' => 'words[]',
 		'placeholder' => 'Enter Word here...!',
-		'size' => '24',
-		'maxlength' => '25',
 		'data-i' => '0',
 		'dir' => 'ltr',
+	), array(
+		'rowtype' => 'fullWidth',
 	)) . '
 
-            <span class="inputGroup-splitter"></span>
-
-            ' . $__templater->formTextBox(array(
+            ' . $__templater->formTextBoxRow(array(
 		'name' => 'messages[]',
 		'placeholder' => 'Enter Message here...!',
-		'size' => '24',
 		'data-i' => '0',
+	), array(
+		'rowtype' => 'fullWidth',
 	)) . '
 
-            ' . $__templater->formTextBox(array(
+            <!-- ' . $__templater->formTextBox(array(
 		'name' => 'from_users[]',
 		'ac' => 'single',
 		'placeholder' => 'Enter Existing User...!',
 		'size' => '24',
 		'data-i' => '0',
+	)) . ' -->
+
+            ' . $__templater->formTokenInputRow(array(
+		'name' => 'from_users[]',
+		'href' => $__templater->func('link', array('forumAutoReply/find', ), false),
+	), array(
+		'rowtype' => 'fullWidth',
 	)) . '
           </div>
         </div>
@@ -203,20 +268,42 @@ return array(
 		'hint' => 'Required',
 	)) . '
 
-      <!-- User Group List -->
+      <!-- No Match Prefixes List -->
 
-      ' . $__templater->formSelectRow(array(
-		'name' => 'user_group_id',
-		'value' => $__vars['nodeIds'],
-		'required' => 'required',
-	), $__compilerTemp5, array(
-		'label' => 'User group',
-		'hint' => 'Required',
+      ' . $__compilerTemp8 . '
+
+      <!-- No Match Message,User inputs -->
+
+      ' . $__templater->formRow('
+        <div
+          class="inputGroup-container"
+          data-xf-init="list-sorter"
+          data-drag-handle=".dragHandle"
+        >
+          <div class="inputGroup">
+            ' . $__templater->formTextBoxRow(array(
+		'name' => 'no_match_messages',
+		'value' => $__vars['noMatchMessage'],
+		'placeholder' => 'Enter Message Here...!',
+		'data-i' => '0',
+	), array(
+		'rowtype' => 'fullWidth',
 	)) . '
 
-      <!-- Prefixes List -->
-
-      ' . $__compilerTemp6 . '
+            ' . $__templater->formTokenInputRow(array(
+		'name' => 'no_match_users',
+		'value' => $__vars['noMatchUsers'],
+		'href' => $__templater->func('link', array('forumAutoReply/find', ), false),
+	), array(
+		'rowtype' => 'fullWidth',
+	)) . '
+          </div>
+        </div>
+      ', array(
+		'rowtype' => 'input',
+		'label' => 'No Word Match (Message)',
+		'hint' => 'Required',
+	)) . '
     </div>
     ' . $__templater->formSubmitRow(array(
 		'submit' => '',
