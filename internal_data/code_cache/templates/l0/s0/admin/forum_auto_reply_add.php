@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: d77dcffa87bb2f56ced2eece86ad9e85
+// FROM HASH: 80460a6f1397756419d3c240fe7c2cd2
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
@@ -112,7 +112,7 @@ return array(
 
               ' . $__templater->formTextBox(array(
 				'name' => 'from_users[]',
-				'value' => $__vars['matchUsers'][$__vars['arr']],
+				'value' => $__templater->method($__vars['value'], 'getMatchUserids', array()),
 				'ac' => 'multiple',
 				'placeholder' => 'Enter Existing User...!',
 				'size' => '24',
@@ -164,7 +164,7 @@ return array(
 					foreach ($__vars['prefixesGrouped'][$__vars['prefixGroupId']] AS $__vars['prefix_id'] => $__vars['prefix']) {
 						$__compilerTemp9[] = array(
 							'value' => $__vars['prefix_id'],
-							'selected' => ($__vars['noMatchPrefixId'] == $__vars['prefix_id']),
+							'selected' => ($__vars['noDataMatch']['no_match_prefix_id'] == $__vars['prefix_id']),
 							'label' => $__templater->escape($__vars['prefix']['title']),
 							'_type' => 'option',
 						);
@@ -266,15 +266,11 @@ return array(
       <!-- No Match Message,User inputs -->
 
       ' . $__templater->formRow('
-        <div
-          class="inputGroup-container"
-          data-xf-init="list-sorter"
-          data-drag-handle=".dragHandle"
-        >
+        
           <div class="inputGroup">
             ' . $__templater->formTextBoxRow(array(
 		'name' => 'no_match_messages',
-		'value' => $__vars['noMatchMessage'],
+		'value' => $__vars['noDataMatch']['no_match_message'],
 		'placeholder' => 'Enter Message Here...!',
 		'data-i' => '0',
 	), array(
@@ -284,13 +280,13 @@ return array(
             ' . $__templater->formTextBox(array(
 		'name' => 'no_match_users',
 		'ac' => 'multiple',
-		'value' => $__vars['noMatchUsers'],
+		'value' => ($__vars['noDataMatch'] ? $__templater->method($__vars['noDataMatch'], 'getNoMatchUserIds', array()) : ''),
 		'placeholder' => 'Enter Existing User...!',
 		'data-i' => '0',
 		'style' => 'width: 530px; height: 36px; margin-top: 15px',
 	)) . '
           </div>
-        </div>
+     
       ', array(
 		'rowtype' => 'input',
 		'label' => 'No Word Match (Message)',
@@ -305,10 +301,10 @@ return array(
   </div>
 ', array(
 		'action' => $__templater->func('link', array('forumAutoReply/save', $__vars['message'], ), false),
+		'ajax' => 'true',
 		'class' => 'block',
 		'data-force-flash-message' => 'true',
-	)) . '
-';
+	));
 	return $__finalCompiled;
 }
 );

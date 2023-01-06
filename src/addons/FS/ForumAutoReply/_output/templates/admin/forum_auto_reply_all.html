@@ -1,0 +1,143 @@
+<xf:title>{{ phrase('forum_auto_reply') }}</xf:title>
+
+<xf:pageaction>
+  <xf:button href="{{ link('forumAutoReply/add') }}" icon="add">{{ phrase('add_message') }}</xf:button>
+</xf:pageaction>
+<xf:form action="{{ link($prefix . '/toggle') }}" class="block" ajax="true">
+  <div class="block-outer">
+		<xf:macro
+		  template="filter_macros"
+		  name="quick_filter"
+		  arg-key="forumAutoReply"
+		  arg-class="block-outer-opposite"
+		/>
+  </div>
+
+  <div class="block-container">
+
+  <xf:if is="$Messages is not empty">
+	<div class="block-body">
+			<xf:datalist data-xf-init="responsive-data-list">
+					
+				<xf:macro
+					name="message_table_list"
+					arg-Messages="{$Messages}"
+					arg-nodeTree="{$nodeTree}"
+					arg-userGroups="{$userGroups}"
+					arg-prefixGroups="{$prefixGroups}"
+					arg-prefixesGrouped="{$prefixesGrouped}"
+				  />
+
+
+				   </xf:datalist>
+				<div class="block-footer">
+					  <span class="block-footer-counter"
+						>{{ display_totals($totalReturn, $total) }}</span
+					  >
+				</div>
+		    
+		</div>
+       <xf:else />
+			<div class="block-body block-row">{{ phrase('no_items_have_been_created_yet') }}</div>
+		
+       </xf:if>
+    
+ </div>
+
+
+   <xf:pagenav
+			page="{$page}"
+			perpage="{$perPage}"
+			total="{$total}"
+			link="forumAutoReply"
+			wrapperclass="block"
+		  />
+</xf:form>
+<xf:macro
+  name="message_table_list"
+  arg-Messages="{$Messages}"
+  arg-nodeTree="{$nodeTree}"
+  arg-userGroups="{$userGroups}"
+  arg-prefixGroups="{$prefixGroups}"
+  arg-prefixesGrouped="{$prefixesGrouped}"
+>
+  <xf:datarow rowtype="header">
+    <xf:cell> {{ phrase('cell_forum') }} </xf:cell>
+    <xf:cell> {{ phrase('cell_user_group') }} </xf:cell>
+    <xf:cell> {{ phrase('cell_prefix') }} </xf:cell>
+    <xf:cell> {{ phrase('fs_no_match_prefix_cell') }} </xf:cell>
+    <xf:cell class="dataList-cell--min"></xf:cell>
+	 <xf:cell class="dataList-cell--min"></xf:cell>
+  </xf:datarow>
+  <xf:foreach loop="{$Messages}" value="$msg">
+    <xf:datarow>
+      <xf:foreach loop="{$nodeTree.getFlattened(0)}" value="$treeEntry">
+        <xf:if is="{$treeEntry.record.node_id} == {$msg.node_id}">
+          <xf:cell >
+            {{ repeat('', $treeEntry.depth)|raw }} {$treeEntry.record.title}
+          </xf:cell>
+        </xf:if>
+      </xf:foreach>
+		
+        <xf:if is="{$msg.user_group_id} != null">
+      <xf:foreach loop="{$userGroups}" value="$userGroup">
+        <xf:if is="{$userGroup.user_group_id} == {$msg.user_group_id}">
+          <xf:cell> {$userGroup.title} </xf:cell>
+        </xf:if>
+      </xf:foreach>
+			<xf:else/>
+          <xf:cell>  </xf:cell>	
+        </xf:if>
+			
+        <xf:if is="{$msg.prefix_id} != null">
+      <xf:foreach
+        loop="{$prefixGroups}"
+        key="$prefixGroupId"
+        value="$prefixGroup"
+      >
+        <xf:foreach
+          loop="{$prefixesGrouped.{$prefixGroupId}}"
+          key="$prefix_id"
+          value="$prefix"
+        >
+			
+          <xf:if is="{$msg.prefix_id} == {$prefix_id}">
+			  <xf:cell> {$prefix.title} </xf:cell>
+		   </xf:if>	
+			
+        </xf:foreach>
+      </xf:foreach>
+			<xf:else/>
+          <xf:cell>  </xf:cell>	
+        </xf:if>
+		
+		<xf:if is="{$msg.no_match_prefix_id} != null">
+      <xf:foreach
+        loop="{$prefixGroups}"
+        key="$prefixGroupId"
+        value="$prefixGroup"
+      >
+        <xf:foreach
+          loop="{$prefixesGrouped.{$prefixGroupId}}"
+          key="$prefix_id"
+          value="$prefix"
+        >
+			
+          <xf:if is="{$msg.no_match_prefix_id} == {$prefix_id}">
+			  <xf:cell> {$prefix.title} </xf:cell>
+		   </xf:if>	
+			
+        </xf:foreach>
+      </xf:foreach>
+			<xf:else/>
+          <xf:cell>  </xf:cell>	
+        </xf:if>
+		
+	<xf:action href="{{ link('forumAutoReply/edit', $msg) }}" >{{ phrase('edit') }}</xf:action>
+      <xf:delete
+        href="{{ link('forumAutoReply/delete-all', $msg) }}"
+        overlay="true"
+      />
+    </xf:datarow>
+  </xf:foreach>
+</xf:macro>

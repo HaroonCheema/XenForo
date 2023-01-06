@@ -1,23 +1,18 @@
 <?php
-// FROM HASH: d1ee84e450657b2b60f04730080e9938
+// FROM HASH: 072f056e7305138b6f9f4803df07cdbf
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
 	$__finalCompiled = '';
-	$__compilerTemp1 = '';
-	if ($__vars['message']['message_id']) {
-		$__compilerTemp1 .= ' ' . 'Edit Message' . ' :
-  ' . $__templater->escape($__vars['message']['message']) . ' ';
-	}
 	$__templater->pageParams['pageTitle'] = $__templater->preEscaped('
-  ' . $__compilerTemp1 . '
+   ' . 'Edit Message' . ' 
 ');
 	$__finalCompiled .= '
 
 ';
-	$__compilerTemp2 = '';
+	$__compilerTemp1 = '';
 	if ($__vars['message']['message_id']) {
-		$__compilerTemp2 .= '
+		$__compilerTemp1 .= '
             <div class="inputGroup">
               ' . $__templater->formTextBox(array(
 			'name' => 'words[]',
@@ -61,7 +56,7 @@ return array(
           data-xf-init="list-sorter"
           data-drag-handle=".dragHandle"
         >
-          ' . $__compilerTemp2 . '
+          ' . $__compilerTemp1 . '
         </div>
       ', array(
 		'rowtype' => 'input',
@@ -79,8 +74,7 @@ return array(
 		'action' => $__templater->func('link', array('forumAutoReply/edit-save', $__vars['message'], ), false),
 		'class' => 'block',
 		'data-force-flash-message' => 'true',
-	)) . '
-';
+	));
 	return $__finalCompiled;
 }
 );

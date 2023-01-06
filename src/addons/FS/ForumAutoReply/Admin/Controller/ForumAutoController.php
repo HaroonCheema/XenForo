@@ -8,8 +8,10 @@ use XF\Mvc\ParameterBag;
 
 class ForumAutoController extends AbstractController
 {
+
     public function actionIndex(ParameterBag $params)
     {
+
         $page = $this->filterPage();
 
         $perPage = 15;
@@ -23,7 +25,7 @@ class ForumAutoController extends AbstractController
         $prefixListData = $this->getPrefixRepo();
 
         $viewParams = [
-            'data' => $result['data'],
+            'Messages' => $result['data'],
             'nodeTree' => $this->getNodesRepo(),
             'userGroups' => $this->getUserGroupRepo()->findUserGroupsForList()->fetch(),
             'prefixGroups' => $prefixListData['prefixGroups'],
@@ -47,6 +49,8 @@ class ForumAutoController extends AbstractController
     {
         /** @var \FS\ForumAutoReply\Entity\ForumAutoReply $message */
         $message = $this->assertMessageExists($params->message_id);
+
+
         return $this->messageAddEdit($message);
     }
 
@@ -70,7 +74,6 @@ class ForumAutoController extends AbstractController
         $input = $this->filterMessageInputs();
         $this->isExistedUser($input['no_match_users']);
 
-
         /** @var \FS\ForumAutoReply\Entity\ForumAutoReply $message */
         $message = $this->assertMessageExists($params->message_id);
 
@@ -91,14 +94,12 @@ class ForumAutoController extends AbstractController
         return $this->messageAddEdit($message);
     }
 
-
     public function actionAddEdit(\FS\ForumAutoReply\Entity\ForumAutoReply $message)
     {
 
         $prefixListData = $this->getPrefixRepo();
 
         $viewParams = [
-
             'nodeTree' => $this->getNodesRepo(),
             'userGroups' => $this->getUserGroupRepo()->findUserGroupsForList()->fetch(),
             'prefixGroups' => $prefixListData['prefixGroups'],
@@ -113,67 +114,27 @@ class ForumAutoController extends AbstractController
         $data = $this->finder('FS\ForumAutoReply:ForumAutoReply')->where('node_id', $message['node_id'])->where('prefix_id', '!=', NULL)
             ->fetch();
 
-
-
         $dataGroup = $this->finder('FS\ForumAutoReply:ForumAutoReply')->where('node_id', $message['node_id'])->where('prefix_id', '!=', NULL)
             ->fetchOne();
 
-        $noDataMatch = $this->finder('FS\ForumAutoReply:ForumAutoReply')->where('node_id', $message['node_id'])->where('no_match_prefix_id', '!=', NULL)
-            ->with('User')->fetchOne();
-
+        $noDataMatch = $this->finder('FS\ForumAutoReply:ForumAutoReply')->where('node_id', $message['node_id'])->where('no_match_prefix_id', '!=', NULL)->fetchOne();
 
         $prefixListData = $this->getPrefixRepo();
 
-        if ($dataGroup && $noDataMatch) {
-            $noMatchUsers = $this->noMatchUserNames($noDataMatch['no_match_user_ids']);
-            $matchUsers = $this->matchUserNames($data);
-
-            $viewParams = [
-                'message' => $message,
-                'nodeId' => $message['node_id'],
-                'userGroupId' => $dataGroup['user_group_id'],
-                'prefixId' => $dataGroup['prefix_id'],
-                'noMatchPrefixId' => $noDataMatch['no_match_prefix_id'],
-                'noMatchMessage' => $noDataMatch['no_match_message'],
-                'noMatchUsers' => $noMatchUsers['no_match_user_names'],
-                'matchUsers' => $matchUsers['match_user_names'],
-                'data' => $data,
-                'nodeTree' => $this->getNodesRepo(),
-                'userGroups' => $this->getUserGroupRepo()->findUserGroupsForList()->fetch(),
-                'prefixGroups' => $prefixListData['prefixGroups'],
-                'prefixesGrouped' => $prefixListData['prefixesGrouped'],
-            ];
-        } elseif ($dataGroup) {
-            $matchUsers = $this->matchUserNames($data);
+        $viewParams = [
+            'message' => $message,
+            'nodeId' => $message['node_id'],
+            'userGroupId' => $dataGroup ? $dataGroup['user_group_id'] : '',
+            'prefixId' => $dataGroup ? $dataGroup['prefix_id'] : '',
+            'noDataMatch' => $noDataMatch,
+            'data' => $data,
+            'nodeTree' => $this->getNodesRepo(),
+            'userGroups' => $this->getUserGroupRepo()->findUserGroupsForList()->fetch(),
+            'prefixGroups' => $prefixListData['prefixGroups'],
+            'prefixesGrouped' => $prefixListData['prefixesGrouped'],
+        ];
 
 
-            $viewParams = [
-                'message' => $message,
-                'nodeId' => $message['node_id'],
-                'userGroupId' => $dataGroup['user_group_id'],
-                'prefixId' => $dataGroup['prefix_id'],
-                'matchUsers' => $matchUsers['match_user_names'],
-                'data' => $data,
-                'nodeTree' => $this->getNodesRepo(),
-                'userGroups' => $this->getUserGroupRepo()->findUserGroupsForList()->fetch(),
-                'prefixGroups' => $prefixListData['prefixGroups'],
-                'prefixesGrouped' => $prefixListData['prefixesGrouped'],
-            ];
-        } else {
-            $noMatchUsers = $this->noMatchUserNames($noDataMatch['no_match_user_ids']);
-
-            $viewParams = [
-                'message' => $message,
-                'nodeId' => $message['node_id'],
-                'noMatchPrefixId' => $noDataMatch['no_match_prefix_id'],
-                'noMatchMessage' => $noDataMatch['no_match_message'],
-                'noMatchUsers' => $noMatchUsers['no_match_user_names'],
-                'nodeTree' => $this->getNodesRepo(),
-                'userGroups' => $this->getUserGroupRepo()->findUserGroupsForList()->fetch(),
-                'prefixGroups' => $prefixListData['prefixGroups'],
-                'prefixesGrouped' => $prefixListData['prefixesGrouped'],
-            ];
-        }
 
         return $this->view('FS\ForumAutoReply:ForumAutoController\Add', 'forum_auto_reply_add', $viewParams);
     }
@@ -204,6 +165,7 @@ class ForumAutoController extends AbstractController
 
     public function actionSave(ParameterBag $params)
     {
+
         $input = $this->filterMessageInputs();
 
         if ($params->message_id) {
@@ -233,6 +195,7 @@ class ForumAutoController extends AbstractController
 
     protected function messageSaveProcess()
     {
+
         $this->isNoMatchExisted();
 
         $input = $this->filterMessageInputs();
@@ -270,7 +233,7 @@ class ForumAutoController extends AbstractController
             $this->buildLink('forumAutoReply/delete', $replyExists),
             null,
             $this->buildLink('forumAutoReply'),
-            "{$replyExists->word} - {$replyExists->message}"
+            "{$replyExists->word}"
         );
     }
 
@@ -292,26 +255,39 @@ class ForumAutoController extends AbstractController
         return $plugin->actionDelete(
             $replyExists,
             $this->buildLink('forumAutoReply/delete-all', $replyExists),
-            null,
+            $this->buildLink('forumAutoReply/edit', $replyExists),
             $this->buildLink('forumAutoReply'),
-            "Are you sure for delete this Forum ?"
+            \XF::phrase('fs_are_you_sure_to_delete', ['node' => $replyExists->Node->title])
         );
     }
 
     protected function filterMessageInputs()
     {
-        return $this->filter([
+        $input = $this->filter([
             'node_id' => 'str',
             'words' => 'array',
             'messages' => 'array',
             'from_users' => 'array',
             'user_group_id' => 'str',
             'prefix_id' => 'str',
-
             'no_match_prefix_id' => 'str',
             'no_match_messages' => 'str',
             'no_match_users' => 'str',
         ]);
+
+        if ($input['node_id'] && $input['words'][0] != '' && $input['messages'][0] != '' && $input['from_users'][0] != '') {
+
+            return $input;
+        }
+
+        if ($input['node_id'] && $input['no_match_messages'] != '' && $input['no_match_users'] != '') {
+
+            return $input;
+        }
+
+        throw $this->exception(
+            $this->notFound(\XF::phrase("fs_fil_reqired_fields"))
+        );
     }
 
     protected function isNodeExisted()
@@ -331,7 +307,7 @@ class ForumAutoController extends AbstractController
     {
         $input = $this->filterMessageInputs();
 
-        foreach ($input['from_users'] as  $value) {
+        foreach ($input['from_users'] as $value) {
             if ($value != '') {
                 $this->isExistedUser($value);
             }
@@ -344,7 +320,6 @@ class ForumAutoController extends AbstractController
         $users_names = explode(" ", $str);
 
         $user_name = implode("", $users_names);
-
 
         $users_names = explode(",", $user_name);
 
@@ -366,54 +341,6 @@ class ForumAutoController extends AbstractController
 
         $viewParams = [
             'no_match_user_ids' => $user_ids
-        ];
-
-        return $viewParams;
-    }
-
-    protected function noMatchUserNames($userIds)
-    {
-
-
-        $users_ids = explode(", ", $userIds);
-
-        $users_names = array();
-
-        foreach ($users_ids as $value) {
-            $user = null;
-            if ($value) {
-                $user = $this->em()->findOne('XF:User', ['user_id' => $value]);
-
-                if (!$user) {
-                    throw $this->exception($this->error(\XF::phraseDeferred('requested_user_x_not_found', ['name' => $value])));
-                }
-                array_push($users_names, $user['username'] . ', ');
-            }
-        }
-
-        $users_names = implode("", $users_names);
-
-        $viewParams = [
-            'no_match_user_names' => $users_names
-        ];
-
-        return $viewParams;
-    }
-
-    protected function matchUserNames($data)
-    {
-
-        $users_names = array();
-
-        foreach ($data as $value) {
-
-            $users = $this->noMatchUserNames($value['user_id']);
-
-            array_push($users_names, $users['no_match_user_names']);
-        }
-
-        $viewParams = [
-            'match_user_names' => $users_names
         ];
 
         return $viewParams;
@@ -466,8 +393,7 @@ class ForumAutoController extends AbstractController
     protected function pagination($start, $limit)
     {
         $db = \XF::db();
-        $data = $db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM fs_forum_auto_reply GROUP BY node_id ORDER BY message_id DESC LIMIT ' . (int) $start . "," . (int) $limit);
-
+        $data = $db->fetchAll('SELECT node_id,MIN(message_id) as message_id, MIN(no_match_prefix_id) as no_match_prefix_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM fs_forum_auto_reply GROUP BY node_id ORDER BY message_id DESC LIMIT ' . (int) $start . "," . (int) $limit);
 
         $total = count($db->fetchAll('SELECT node_id,MIN(message_id) as message_id ,MIN(user_group_id) as user_group_id ,MIN(prefix_id) as prefix_id FROM fs_forum_auto_reply GROUP BY node_id'));
 
@@ -510,6 +436,35 @@ class ForumAutoController extends AbstractController
         $prefixListData = $prefixRepo->getPrefixListData();
 
         return $prefixListData;
+    }
+
+    protected function noMatchUserNames($userIds)
+    {
+
+
+        $users_ids = explode(", ", $userIds);
+
+        $users_names = array();
+
+        foreach ($users_ids as $value) {
+            $user = null;
+            if ($value) {
+                $user = $this->em()->findOne('XF:User', ['user_id' => $value]);
+
+                if (!$user) {
+                    throw $this->exception($this->error(\XF::phraseDeferred('requested_user_x_not_found', ['name' => $value])));
+                }
+                array_push($users_names, $user['username'] . ', ');
+            }
+        }
+
+        $users_names = implode("", $users_names);
+
+        $viewParams = [
+            'no_match_user_names' => $users_names
+        ];
+
+        return $viewParams;
     }
 
     /**

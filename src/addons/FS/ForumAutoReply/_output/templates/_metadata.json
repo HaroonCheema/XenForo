@@ -1,12 +1,7 @@
 {
-    "admin/forum_auto_reply_add.html": {
-        "version_id": 1000300,
-        "version_string": "1.0.3",
-        "hash": "d77dcffa87bb2f56ced2eece86ad9e85"
-    },
-    "admin/forum_auto_reply_edit_single.html": {
-        "version_id": 1000300,
-        "version_string": "1.0.3",
-        "hash": "d1ee84e450657b2b60f04730080e9938"
+    "admin/forum_auto_reply_all.html": {
+        "version_id": 1000600,
+        "version_string": "1.0.6",
+        "hash": "08e0adc921dc8522538d504003f7805c"
     }
 }

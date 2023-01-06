@@ -1,9 +1,9 @@
 <?php
-// FROM HASH: 10d206595ffd7ecfd9cd7e6288f60223
+// FROM HASH: 08e0adc921dc8522538d504003f7805c
 return array(
 'macros' => array('message_table_list' => array(
 'arguments' => function($__templater, array $__vars) { return array(
-		'data' => $__vars['data'],
+		'Messages' => $__vars['Messages'],
 		'nodeTree' => $__vars['nodeTree'],
 		'userGroups' => $__vars['userGroups'],
 		'prefixGroups' => $__vars['prefixGroups'],
@@ -28,22 +28,30 @@ return array(
 		'html' => ' ' . 'Prefix' . ' ',
 	),
 	array(
+		'_type' => 'cell',
+		'html' => ' ' . 'No Match Prefix' . ' ',
+	),
+	array(
 		'class' => 'dataList-cell--min',
 		'_type' => 'cell',
-		'html' => ' Action ',
+		'html' => '',
+	),
+	array(
+		'class' => 'dataList-cell--min',
+		'_type' => 'cell',
+		'html' => '',
 	))) . '
   ';
-	if ($__templater->isTraversable($__vars['data'])) {
-		foreach ($__vars['data'] AS $__vars['val']) {
+	if ($__templater->isTraversable($__vars['Messages'])) {
+		foreach ($__vars['Messages'] AS $__vars['msg']) {
 			$__finalCompiled .= '
     ';
 			$__compilerTemp1 = array();
 			$__compilerTemp2 = $__templater->method($__vars['nodeTree'], 'getFlattened', array(0, ));
 			if ($__templater->isTraversable($__compilerTemp2)) {
 				foreach ($__compilerTemp2 AS $__vars['treeEntry']) {
-					if ($__vars['treeEntry']['record']['node_id'] == $__vars['val']['node_id']) {
+					if ($__vars['treeEntry']['record']['node_id'] == $__vars['msg']['node_id']) {
 						$__compilerTemp1[] = array(
-							'href' => $__templater->func('link', array('forumAutoReply/edit', $__vars['val'], ), false),
 							'_type' => 'cell',
 							'html' => '
             ' . $__templater->filter($__templater->func('repeat', array('', $__vars['treeEntry']['depth'], ), false), array(array('raw', array()),), true) . ' ' . $__templater->escape($__vars['treeEntry']['record']['title']) . '
@@ -52,32 +60,72 @@ return array(
 					}
 				}
 			}
-			if ($__templater->isTraversable($__vars['userGroups'])) {
-				foreach ($__vars['userGroups'] AS $__vars['userGroup']) {
-					if ($__vars['userGroup']['user_group_id'] == $__vars['val']['user_group_id']) {
-						$__compilerTemp1[] = array(
-							'_type' => 'cell',
-							'html' => ' ' . $__templater->escape($__vars['userGroup']['title']) . ' ',
-						);
+			if ($__vars['msg']['user_group_id'] != null) {
+				if ($__templater->isTraversable($__vars['userGroups'])) {
+					foreach ($__vars['userGroups'] AS $__vars['userGroup']) {
+						if ($__vars['userGroup']['user_group_id'] == $__vars['msg']['user_group_id']) {
+							$__compilerTemp1[] = array(
+								'_type' => 'cell',
+								'html' => ' ' . $__templater->escape($__vars['userGroup']['title']) . ' ',
+							);
+						}
 					}
 				}
+			} else {
+				$__compilerTemp1[] = array(
+					'_type' => 'cell',
+					'html' => '  ',
+				);
 			}
-			if ($__templater->isTraversable($__vars['prefixGroups'])) {
-				foreach ($__vars['prefixGroups'] AS $__vars['prefixGroupId'] => $__vars['prefixGroup']) {
-					if ($__templater->isTraversable($__vars['prefixesGrouped'][$__vars['prefixGroupId']])) {
-						foreach ($__vars['prefixesGrouped'][$__vars['prefixGroupId']] AS $__vars['prefix_id'] => $__vars['prefix']) {
-							if ($__vars['val']['prefix_id'] == $__vars['prefix_id']) {
-								$__compilerTemp1[] = array(
-									'_type' => 'cell',
-									'html' => ' ' . $__templater->escape($__vars['prefix']['title']) . ' ',
-								);
+			if ($__vars['msg']['prefix_id'] != null) {
+				if ($__templater->isTraversable($__vars['prefixGroups'])) {
+					foreach ($__vars['prefixGroups'] AS $__vars['prefixGroupId'] => $__vars['prefixGroup']) {
+						if ($__templater->isTraversable($__vars['prefixesGrouped'][$__vars['prefixGroupId']])) {
+							foreach ($__vars['prefixesGrouped'][$__vars['prefixGroupId']] AS $__vars['prefix_id'] => $__vars['prefix']) {
+								if ($__vars['msg']['prefix_id'] == $__vars['prefix_id']) {
+									$__compilerTemp1[] = array(
+										'_type' => 'cell',
+										'html' => ' ' . $__templater->escape($__vars['prefix']['title']) . ' ',
+									);
+								}
 							}
 						}
 					}
 				}
+			} else {
+				$__compilerTemp1[] = array(
+					'_type' => 'cell',
+					'html' => '  ',
+				);
+			}
+			if ($__vars['msg']['no_match_prefix_id'] != null) {
+				if ($__templater->isTraversable($__vars['prefixGroups'])) {
+					foreach ($__vars['prefixGroups'] AS $__vars['prefixGroupId'] => $__vars['prefixGroup']) {
+						if ($__templater->isTraversable($__vars['prefixesGrouped'][$__vars['prefixGroupId']])) {
+							foreach ($__vars['prefixesGrouped'][$__vars['prefixGroupId']] AS $__vars['prefix_id'] => $__vars['prefix']) {
+								if ($__vars['msg']['no_match_prefix_id'] == $__vars['prefix_id']) {
+									$__compilerTemp1[] = array(
+										'_type' => 'cell',
+										'html' => ' ' . $__templater->escape($__vars['prefix']['title']) . ' ',
+									);
+								}
+							}
+						}
+					}
+				}
+			} else {
+				$__compilerTemp1[] = array(
+					'_type' => 'cell',
+					'html' => '  ',
+				);
 			}
 			$__compilerTemp1[] = array(
-				'href' => $__templater->func('link', array('forumAutoReply/delete-all', $__vars['val'], ), false),
+				'href' => $__templater->func('link', array('forumAutoReply/edit', $__vars['msg'], ), false),
+				'_type' => 'action',
+				'html' => 'Edit',
+			);
+			$__compilerTemp1[] = array(
+				'href' => $__templater->func('link', array('forumAutoReply/delete-all', $__vars['msg'], ), false),
 				'overlay' => 'true',
 				'_type' => 'delete',
 				'html' => '',
@@ -99,11 +147,6 @@ return array(
 	$__finalCompiled .= '
 
 ';
-	$__templater->breadcrumb($__templater->preEscaped('Forum Auto Reply'), '#', array(
-	));
-	$__finalCompiled .= '
-
-';
 	$__templater->pageParams['pageAction'] = $__templater->preEscaped('
   ' . $__templater->button('Add Message', array(
 		'href' => $__templater->func('link', array('forumAutoReply/add', ), false),
@@ -114,12 +157,13 @@ return array(
 	$__finalCompiled .= '
 ';
 	$__compilerTemp1 = '';
-	if (!$__templater->test($__vars['data'], 'empty', array())) {
+	if (!$__templater->test($__vars['Messages'], 'empty', array())) {
 		$__compilerTemp1 .= '
 	<div class="block-body">
 			' . $__templater->dataList('
-					' . $__templater->callMacro(null, 'message_table_list', array(
-			'data' => $__vars['data'],
+					
+				' . $__templater->callMacro(null, 'message_table_list', array(
+			'Messages' => $__vars['Messages'],
 			'nodeTree' => $__vars['nodeTree'],
 			'userGroups' => $__vars['userGroups'],
 			'prefixGroups' => $__vars['prefixGroups'],
@@ -154,14 +198,8 @@ return array(
 
   <div class="block-container">
 
-		
-      
-		  
-        ' . $__compilerTemp1 . '
-   
-		
-  
-		 
+  ' . $__compilerTemp1 . '
+    
  </div>
 
 

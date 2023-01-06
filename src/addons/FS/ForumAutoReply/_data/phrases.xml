@@ -14,6 +14,9 @@
   <phrase title="enter_user" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Enter Existing User...!]]></phrase>
   <phrase title="enter_word" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Enter Word here...!]]></phrase>
   <phrase title="forum_auto_reply" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Forum Auto Reply]]></phrase>
+  <phrase title="fs_are_you_sure_to_delete" version_id="1000400" version_string="1.0.4"><![CDATA[Are You Sure to Delete {node} ?]]></phrase>
+  <phrase title="fs_fil_reqired_fields" version_id="1000400" version_string="1.0.4"><![CDATA[Fill Require Fields]]></phrase>
+  <phrase title="fs_no_match_prefix_cell" version_id="1000600" version_string="1.0.6"><![CDATA[No Match Prefix]]></phrase>
   <phrase title="no_match_enter_message" version_id="1000200" version_string="1.0.2"><![CDATA[Enter Message Here...!]]></phrase>
   <phrase title="no_match_enter_user" version_id="1000200" version_string="1.0.2"><![CDATA[Enter Existing User...!]]></phrase>
   <phrase title="no_match_message" version_id="1000200" version_string="1.0.2"><![CDATA[No Word Match (Message)]]></phrase>

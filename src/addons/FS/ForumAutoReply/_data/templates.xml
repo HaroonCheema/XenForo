@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates>
-  <template type="admin" title="forum_auto_reply_add" version_id="1000300" version_string="1.0.3"><![CDATA[<xf:title>
+  <template type="admin" title="forum_auto_reply_add" version_id="1000400" version_string="1.0.4"><![CDATA[<xf:title>
   <xf:if is="$message.message_id"> {{ phrase('edit_message') }} <xf:else /> {{
   phrase('add_message') }} </xf:if>
 </xf:title>
 
 <xf:form
-  action="{{ link('forumAutoReply/save', $message) }}"
+  action="{{ link('forumAutoReply/save', $message) }}" ajax="true"
   class="block"
   data-force-flash-message="true"
 >
@@ -123,7 +123,7 @@
 
               <xf:textbox
                 name="from_users[]"
-                value="{$matchUsers.{$arr}}"
+                value="{$value.getMatchUserids()}"
                 ac="multiple"
                 placeholder="{{ phrase('enter_user') }}"
                 size="24"
@@ -210,7 +210,7 @@
             >
               <xf:option
                 value="{$prefix_id}"
-                selected="{{$noMatchPrefixId == $prefix_id }}"
+                selected="{{$noDataMatch.no_match_prefix_id == $prefix_id }}"
                 >{$prefix.title}</xf:option
               >
             </xf:foreach>
@@ -225,15 +225,11 @@
         label="{{ phrase('no_match_message') }}"
         hint="{{ phrase('required') }}"
       >
-        <div
-          class="inputGroup-container"
-          data-xf-init="list-sorter"
-          data-drag-handle=".dragHandle"
-        >
+        
           <div class="inputGroup">
             <xf:textboxrow
               name="no_match_messages"
-              value="{$noMatchMessage}"
+              value="{$noDataMatch.no_match_message}"
               placeholder="{{ phrase('no_match_enter_message') }}"
               data-i="0"
               rowtype="fullWidth"
@@ -242,27 +238,22 @@
             <xf:textbox
               name="no_match_users"
               ac="multiple"
-              value="{$noMatchUsers}"
+              value="{{$noDataMatch ? $noDataMatch.getNoMatchUserIds() : ''}}"
               placeholder="{{ phrase('enter_user') }}"
               data-i="0"
               style="width: 530px; height: 36px; margin-top: 15px"
             />
           </div>
-        </div>
+     
       </xf:formrow>
     </div>
     <xf:submitrow submit="" icon="save" />
   </div>
-</xf:form>
-]]></template>
-  <template type="admin" title="forum_auto_reply_all" version_id="1000100" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('forum_auto_reply') }}</xf:title>
-
-<xf:breadcrumb href="#">{{ phrase('forum_auto_reply') }}</xf:breadcrumb>
+</xf:form>]]></template>
+  <template type="admin" title="forum_auto_reply_all" version_id="1000600" version_string="1.0.6"><![CDATA[<xf:title>{{ phrase('forum_auto_reply') }}</xf:title>
 
 <xf:pageaction>
-  <xf:button href="{{ link('forumAutoReply/add') }}" icon="add"
-    >{{ phrase('add_message') }}</xf:button
-  >
+  <xf:button href="{{ link('forumAutoReply/add') }}" icon="add">{{ phrase('add_message') }}</xf:button>
 </xf:pageaction>
 <xf:form action="{{ link($prefix . '/toggle') }}" class="block" ajax="true">
   <div class="block-outer">
@@ -276,15 +267,13 @@
 
   <div class="block-container">
 
-		
-      
-		  
-        <xf:if is="$data is not empty">
+  <xf:if is="$Messages is not empty">
 	<div class="block-body">
 			<xf:datalist data-xf-init="responsive-data-list">
-					<xf:macro
+					
+				<xf:macro
 					name="message_table_list"
-					arg-data="{$data}"
+					arg-Messages="{$Messages}"
 					arg-nodeTree="{$nodeTree}"
 					arg-userGroups="{$userGroups}"
 					arg-prefixGroups="{$prefixGroups}"
@@ -304,10 +293,7 @@
 			<div class="block-body block-row">{{ phrase('no_items_have_been_created_yet') }}</div>
 		
        </xf:if>
-   
-		
-  
-		 
+    
  </div>
 
 
@@ -321,7 +307,7 @@
 </xf:form>
 <xf:macro
   name="message_table_list"
-  arg-data="{$data}"
+  arg-Messages="{$Messages}"
   arg-nodeTree="{$nodeTree}"
   arg-userGroups="{$userGroups}"
   arg-prefixGroups="{$prefixGroups}"
@@ -331,22 +317,31 @@
     <xf:cell> {{ phrase('cell_forum') }} </xf:cell>
     <xf:cell> {{ phrase('cell_user_group') }} </xf:cell>
     <xf:cell> {{ phrase('cell_prefix') }} </xf:cell>
-    <xf:cell class="dataList-cell--min"> Action </xf:cell>
+    <xf:cell> {{ phrase('fs_no_match_prefix_cell') }} </xf:cell>
+    <xf:cell class="dataList-cell--min"></xf:cell>
+	 <xf:cell class="dataList-cell--min"></xf:cell>
   </xf:datarow>
-  <xf:foreach loop="{$data}" value="$val">
+  <xf:foreach loop="{$Messages}" value="$msg">
     <xf:datarow>
       <xf:foreach loop="{$nodeTree.getFlattened(0)}" value="$treeEntry">
-        <xf:if is="{$treeEntry.record.node_id} == {$val.node_id}">
-          <xf:cell href="{{ link('forumAutoReply/edit', $val) }}">
+        <xf:if is="{$treeEntry.record.node_id} == {$msg.node_id}">
+          <xf:cell >
             {{ repeat('', $treeEntry.depth)|raw }} {$treeEntry.record.title}
           </xf:cell>
         </xf:if>
       </xf:foreach>
+		
+        <xf:if is="{$msg.user_group_id} != null">
       <xf:foreach loop="{$userGroups}" value="$userGroup">
-        <xf:if is="{$userGroup.user_group_id} == {$val.user_group_id}">
+        <xf:if is="{$userGroup.user_group_id} == {$msg.user_group_id}">
           <xf:cell> {$userGroup.title} </xf:cell>
         </xf:if>
       </xf:foreach>
+			<xf:else/>
+          <xf:cell>  </xf:cell>	
+        </xf:if>
+			
+        <xf:if is="{$msg.prefix_id} != null">
       <xf:foreach
         loop="{$prefixGroups}"
         key="$prefixGroupId"
@@ -357,21 +352,49 @@
           key="$prefix_id"
           value="$prefix"
         >
-          <xf:if is="{$val.prefix_id} == {$prefix_id}">
-            <xf:cell> {$prefix.title} </xf:cell>
-          </xf:if>
+			
+          <xf:if is="{$msg.prefix_id} == {$prefix_id}">
+			  <xf:cell> {$prefix.title} </xf:cell>
+		   </xf:if>	
+			
         </xf:foreach>
       </xf:foreach>
+			<xf:else/>
+          <xf:cell>  </xf:cell>	
+        </xf:if>
+		
+		<xf:if is="{$msg.no_match_prefix_id} != null">
+      <xf:foreach
+        loop="{$prefixGroups}"
+        key="$prefixGroupId"
+        value="$prefixGroup"
+      >
+        <xf:foreach
+          loop="{$prefixesGrouped.{$prefixGroupId}}"
+          key="$prefix_id"
+          value="$prefix"
+        >
+			
+          <xf:if is="{$msg.no_match_prefix_id} == {$prefix_id}">
+			  <xf:cell> {$prefix.title} </xf:cell>
+		   </xf:if>	
+			
+        </xf:foreach>
+      </xf:foreach>
+			<xf:else/>
+          <xf:cell>  </xf:cell>	
+        </xf:if>
+		
+	<xf:action href="{{ link('forumAutoReply/edit', $msg) }}" >{{ phrase('edit') }}</xf:action>
       <xf:delete
-        href="{{ link('forumAutoReply/delete-all', $val) }}"
+        href="{{ link('forumAutoReply/delete-all', $msg) }}"
         overlay="true"
       />
     </xf:datarow>
   </xf:foreach>
 </xf:macro>]]></template>
-  <template type="admin" title="forum_auto_reply_edit_single" version_id="1000300" version_string="1.0.3"><![CDATA[<xf:title>
-  <xf:if is="$message.message_id"> {{ phrase('edit_message') }} :
-  {$message.message} </xf:if>
+  <template type="admin" title="forum_auto_reply_edit_single" version_id="1000400" version_string="1.0.4"><![CDATA[<xf:title>
+   {{ phrase('edit_message') }} 
 </xf:title>
 
 <xf:form
@@ -430,6 +453,5 @@
     </div>
     <xf:submitrow submit="" icon="edit" />
   </div>
-</xf:form>
-]]></template>
+</xf:form>]]></template>
 </templates>

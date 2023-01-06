@@ -8,6 +8,46 @@ use XF\Mvc\Entity\Structure;
 class ForumAutoReply extends Entity
 {
 
+    
+    public function getNoMatchUserIds(){
+        
+        return $this->getconverUserIds($this->no_match_user_ids);
+        
+    }
+    
+    public function getMatchUserids(){
+        
+       return $this->getconverUserIds($this->user_id);
+        
+    }
+    public  function getconverUserIds($users)
+    {
+           
+      $users_ids = explode(", ", $users);
+
+        $users_names = array();
+
+        foreach ($users_ids as $value) {
+            $user = null;
+            if ($value) {
+                $user = $this->em()->findOne('XF:User', ['user_id' => $value]);
+
+                if (!$user) {
+                    throw $this->exception($this->error(\XF::phraseDeferred('requested_user_x_not_found', ['name' => $value])));
+                }
+                array_push($users_names, $user['username'] . ', ');
+            }
+        }
+
+        $users_names = implode("", $users_names);
+
+        return $users_names;
+        $viewParams = [
+            'no_match_user_names' => $users_names
+        ];
+
+        return $viewParams;
+    }
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'fs_forum_auto_reply';
@@ -36,12 +76,6 @@ class ForumAutoReply extends Entity
                 'conditions' => 'node_id',
             ],
 
-            'User' => [
-                'entity' => 'XF:User',
-                'type' => self::TO_ONE,
-                'conditions' => 'user_id',
-            ],
-
             'UserGroup' => [
                 'entity' => 'XF:UserGroup',
                 'type' => self::TO_ONE,
@@ -60,4 +94,6 @@ class ForumAutoReply extends Entity
 
         return $structure;
     }
+    
+  
 }
