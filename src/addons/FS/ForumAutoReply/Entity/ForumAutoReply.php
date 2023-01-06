@@ -19,7 +19,7 @@ class ForumAutoReply extends Entity
             'node_id' => ['type' => self::UINT],
             'word' => ['type' => self::STR, 'default' => null],
             'message' => ['type' => self::STR, 'default' => null],
-            'user_id' => ['type' => self::UINT, 'default' => null],
+            'user_id' => ['type' => self::STR, 'default' => null],
             'user_group_id' => ['type' => self::UINT, 'default' => null],
             'prefix_id' => ['type' => self::UINT, 'default' => null],
 

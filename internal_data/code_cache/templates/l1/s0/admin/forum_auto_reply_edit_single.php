@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: ca850853bbaa32e27c58ca459cbc625f
+// FROM HASH: d1ee84e450657b2b60f04730080e9938
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
@@ -41,19 +41,18 @@ return array(
 
               ' . $__templater->formTextBox(array(
 			'name' => 'from_users[]',
-			'value' => $__vars['message']['User']['username'],
-			'ac' => 'single',
+			'value' => $__vars['userNames'],
+			'ac' => 'multiple',
 			'placeholder' => 'Enter Existing User...!',
 			'size' => '24',
 			'data-i' => '0',
 		)) . '
-            </div>  
+            </div>
           ';
 	}
 	$__finalCompiled .= $__templater->form('
   <div class="block-container">
     <div class="block-body">
-      
       <!-- Words,Message,User inputs -->
 
       ' . $__templater->formRow('
@@ -80,7 +79,8 @@ return array(
 		'action' => $__templater->func('link', array('forumAutoReply/edit-save', $__vars['message'], ), false),
 		'class' => 'block',
 		'data-force-flash-message' => 'true',
-	));
+	)) . '
+';
 	return $__finalCompiled;
 }
 );

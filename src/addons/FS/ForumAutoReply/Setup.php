@@ -24,16 +24,13 @@ class Setup extends AbstractSetup
 			$table->addColumn('node_id', 'int', '255');
 
 			$table->addColumn('user_group_id', 'int', '255')->nullable();
-
 			$table->addColumn('prefix_id', 'int', '255')->nullable();
-			$table->addColumn('no_match_prefix_id', 'mediumtext')->nullable();
-
 			$table->addColumn('word', 'mediumtext')->nullable();
-
 			$table->addColumn('message', 'mediumtext')->nullable();
-			$table->addColumn('no_match_message', 'mediumtext')->nullable();
+			$table->addColumn('user_id', 'mediumtext')->nullable();
 
-			$table->addColumn('user_id', 'int', '255')->nullable();
+			$table->addColumn('no_match_prefix_id', 'mediumtext')->nullable();
+			$table->addColumn('no_match_message', 'mediumtext')->nullable();
 			$table->addColumn('no_match_user_ids', 'mediumtext')->nullable();
 
 			$table->addPrimaryKey('message_id');

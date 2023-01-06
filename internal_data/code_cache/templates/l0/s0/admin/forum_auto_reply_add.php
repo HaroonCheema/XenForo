@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: 896b6fdc0a33adac27f3b2888fbfc5ef
+// FROM HASH: d77dcffa87bb2f56ced2eece86ad9e85
 return array(
 'code' => function($__templater, array $__vars, $__extensions = null)
 {
@@ -82,9 +82,12 @@ return array(
 		)) . '
       ';
 	}
+	$__vars['arr'] = 0;
 	$__compilerTemp7 = '';
+	$__vars['i'] = 0;
 	if ($__templater->isTraversable($__vars['data'])) {
 		foreach ($__vars['data'] AS $__vars['key'] => $__vars['value']) {
+			$__vars['i']++;
 			$__compilerTemp7 .= '
             <div class="inputGroup">
               ' . $__templater->formTextBox(array(
@@ -109,8 +112,8 @@ return array(
 
               ' . $__templater->formTextBox(array(
 				'name' => 'from_users[]',
-				'value' => $__vars['value']['User']['username'],
-				'ac' => 'single',
+				'value' => $__vars['matchUsers'][$__vars['arr']],
+				'ac' => 'multiple',
 				'placeholder' => 'Enter Existing User...!',
 				'size' => '24',
 				'data-i' => '0',
@@ -140,6 +143,9 @@ return array(
 			), '', array(
 			)) . '
             </div>
+            ';
+			$__vars['arr'] = $__vars['i'];
+			$__compilerTemp7 .= '
           ';
 		}
 	}
@@ -179,17 +185,6 @@ return array(
 	$__finalCompiled .= $__templater->form('
   <div class="block-container">
     <div class="block-body">
-      <!-- ' . $__templater->formTokenInputRow(array(
-		'name' => 'recipients',
-		'value' => $__vars['to'],
-		'href' => $__templater->func('link', array('forumAutoReply/find', ), false),
-		'max-tokens' => (($__vars['maxRecipients'] > -1) ? $__vars['maxRecipients'] : null),
-	), array(
-		'rowtype' => 'fullWidth',
-		'label' => ((($__vars['maxRecipients'] == -1) OR ($__vars['maxRecipients'] > 1)) ? 'Recipients' : 'Recipient'),
-		'explain' => ((($__vars['maxRecipients'] == -1) OR ($__vars['maxRecipients'] > 1)) ? 'You may enter multiple names here.' : null),
-	)) . ' -->
-
       <!-- Nodes list -->
 
       ' . $__templater->formSelectRow(array(
@@ -223,6 +218,8 @@ return array(
           data-xf-init="list-sorter"
           data-drag-handle=".dragHandle"
         >
+          ' . '' . '
+
           ' . $__compilerTemp7 . '
           <div
             class="inputGroup is-undraggable js-blockDragafter"
@@ -246,19 +243,13 @@ return array(
 		'rowtype' => 'fullWidth',
 	)) . '
 
-            <!-- ' . $__templater->formTextBox(array(
+            ' . $__templater->formTextBox(array(
 		'name' => 'from_users[]',
-		'ac' => 'single',
+		'ac' => 'multiple',
 		'placeholder' => 'Enter Existing User...!',
 		'size' => '24',
 		'data-i' => '0',
-	)) . ' -->
-
-            ' . $__templater->formTokenInputRow(array(
-		'name' => 'from_users[]',
-		'href' => $__templater->func('link', array('forumAutoReply/find', ), false),
-	), array(
-		'rowtype' => 'fullWidth',
+		'style' => 'width: 530px; height: 36px; margin-top: 16px',
 	)) . '
           </div>
         </div>
@@ -290,12 +281,13 @@ return array(
 		'rowtype' => 'fullWidth',
 	)) . '
 
-            ' . $__templater->formTokenInputRow(array(
+            ' . $__templater->formTextBox(array(
 		'name' => 'no_match_users',
+		'ac' => 'multiple',
 		'value' => $__vars['noMatchUsers'],
-		'href' => $__templater->func('link', array('forumAutoReply/find', ), false),
-	), array(
-		'rowtype' => 'fullWidth',
+		'placeholder' => 'Enter Existing User...!',
+		'data-i' => '0',
+		'style' => 'width: 530px; height: 36px; margin-top: 15px',
 	)) . '
           </div>
         </div>

@@ -10,7 +10,6 @@
 >
   <div class="block-container">
     <div class="block-body">
-      
       <!-- Words,Message,User inputs -->
 
       <xf:formrow
@@ -47,13 +46,13 @@
 
               <xf:textbox
                 name="from_users[]"
-                value="{$message.User.username}"
-                ac="single"
+                value="{$userNames}"
+                ac="multiple"
                 placeholder="{{ phrase('enter_user') }}"
                 size="24"
                 data-i="0"
               />
-            </div>  
+            </div>
           </xf:if>
         </div>
       </xf:formrow>

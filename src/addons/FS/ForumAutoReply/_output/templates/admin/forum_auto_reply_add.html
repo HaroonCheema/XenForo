@@ -10,16 +10,6 @@
 >
   <div class="block-container">
     <div class="block-body">
-      <!-- <xf:tokeninputrow
-        name="recipients"
-        value="{$to}"
-        href="{{ link('forumAutoReply/find') }}"
-        rowtype="fullWidth"
-        label="{{ ($maxRecipients == -1 OR $maxRecipients > 1) ? phrase('recipients') : phrase('recipient') }}"
-        max-tokens="{{ ($maxRecipients > -1) ? $maxRecipients : null }}"
-        explain="{{ ($maxRecipients == -1 OR $maxRecipients > 1) ? phrase('separate_names_with_comma') : null }}"
-      /> -->
-
       <!-- Nodes list -->
 
       <xf:selectrow
@@ -105,7 +95,9 @@
           data-xf-init="list-sorter"
           data-drag-handle=".dragHandle"
         >
-          <xf:foreach loop="$data" key="$key" value="$value">
+          <xf:set var="$arr" value="{{0}}" />
+
+          <xf:foreach loop="$data" key="$key" value="$value" i="$i">
             <div class="inputGroup">
               <xf:textbox
                 name="words[]"
@@ -129,8 +121,8 @@
 
               <xf:textbox
                 name="from_users[]"
-                value="{$value.User.username}"
-                ac="single"
+                value="{$matchUsers.{$arr}}"
+                ac="multiple"
                 placeholder="{{ phrase('enter_user') }}"
                 size="24"
                 data-i="0"
@@ -158,6 +150,7 @@
                 fa="fa-trash"
               />
             </div>
+            <xf:set var="$arr" value="{{$i}}" />
           </xf:foreach>
           <div
             class="inputGroup is-undraggable js-blockDragafter"
@@ -179,18 +172,13 @@
               rowtype="fullWidth"
             />
 
-            <!-- <xf:textbox
+            <xf:textbox
               name="from_users[]"
-              ac="single"
+              ac="multiple"
               placeholder="{{ phrase('enter_user') }}"
               size="24"
               data-i="0"
-            /> -->
-
-            <xf:tokeninputrow
-              name="from_users[]"
-              href="{{ link('forumAutoReply/find') }}"
-              rowtype="fullWidth"
+              style="width: 530px; height: 36px; margin-top: 16px"
             />
           </div>
         </div>
@@ -249,11 +237,13 @@
               rowtype="fullWidth"
             />
 
-            <xf:tokeninputrow
+            <xf:textbox
               name="no_match_users"
+              ac="multiple"
               value="{$noMatchUsers}"
-              href="{{ link('forumAutoReply/find') }}"
-              rowtype="fullWidth"
+              placeholder="{{ phrase('enter_user') }}"
+              data-i="0"
+              style="width: 530px; height: 36px; margin-top: 15px"
             />
           </div>
         </div>
