@@ -87,7 +87,8 @@ class User extends Entity implements LinkableInterface
 	{
 		$userId = $this->user_id;
 
-		return sprintf('data://avatars/%s/%d/%d.jpg',
+		return sprintf(
+			'data://avatars/%s/%d/%d.jpg',
 			$size,
 			floor($userId / 1000),
 			$userId
@@ -96,16 +97,11 @@ class User extends Entity implements LinkableInterface
 
 	public function getAvatarType()
 	{
-		if ($this->gravatar)
-		{
+		if ($this->gravatar) {
 			return 'gravatar';
-		}
-		else if ($this->avatar_date)
-		{
+		} else if ($this->avatar_date) {
 			return 'custom';
-		}
-		else
-		{
+		} else {
 			return 'default';
 		}
 	}
@@ -115,26 +111,20 @@ class User extends Entity implements LinkableInterface
 		$app = $this->app();
 
 		$sizeMap = $app->container('avatarSizeMap');
-		if (!isset($sizeMap[$sizeCode]))
-		{
+		if (!isset($sizeMap[$sizeCode])) {
 			// Always fallback to 's' in the event of an unknown size (e.g. 'xs', 'xxs' etc.)
 			$sizeCode = 's';
 		}
 
-		if ($this->gravatar && $forceType != 'custom')
-		{
+		if ($this->gravatar && $forceType != 'custom') {
 			return $this->getGravatarUrl($sizeCode);
-		}
-		else if ($this->avatar_date)
-		{
+		} else if ($this->avatar_date) {
 			$group = floor($this->user_id / 1000);
 			return $app->applyExternalDataUrl(
 				"avatars/{$sizeCode}/{$group}/{$this->user_id}.jpg?{$this->avatar_date}",
 				$canonical
 			);
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}
@@ -143,26 +133,22 @@ class User extends Entity implements LinkableInterface
 	{
 		$sizeMap = $this->app()->container('avatarSizeMap');
 
-		switch ($sizeCode)
-		{
+		switch ($sizeCode) {
 			case 'xs':
 			case 's':
-				if ($this->avatarSupportsSize($sizeMap['m']))
-				{
+				if ($this->avatarSupportsSize($sizeMap['m'])) {
 					return $this->getAvatarUrl('m', $forceType, $canonical);
 				}
 				break;
 
 			case 'm':
-				if ($this->avatarSupportsSize($sizeMap['l']))
-				{
+				if ($this->avatarSupportsSize($sizeMap['l'])) {
 					return $this->getAvatarUrl('l', $forceType, $canonical);
 				}
 				break;
 
 			case 'l':
-				if ($this->avatar_highdpi || $this->gravatar)
-				{
+				if ($this->avatar_highdpi || $this->gravatar) {
 					return $this->getAvatarUrl('h', $forceType, $canonical);
 				}
 				break;
@@ -173,8 +159,7 @@ class User extends Entity implements LinkableInterface
 
 	protected function avatarSupportsSize($size)
 	{
-		if ($this->gravatar)
-		{
+		if ($this->gravatar) {
 			// We can always support 2x gravatars
 			return true;
 		}
@@ -184,13 +169,11 @@ class User extends Entity implements LinkableInterface
 	public function getGravatarUrl($sizeCode, $email = null)
 	{
 		$sizeMap = $this->app()->container('avatarSizeMap');
-		if (!isset($sizeMap[$sizeCode]))
-		{
+		if (!isset($sizeMap[$sizeCode])) {
 			$sizeCode = 's';
 		}
 
-		if ($email === null)
-		{
+		if ($email === null) {
 			$email = $this->gravatar ?: $this->email;
 		}
 
@@ -202,30 +185,23 @@ class User extends Entity implements LinkableInterface
 
 	public function isMemberOf($userGroupId)
 	{
-		if ($userGroupId instanceof UserGroup)
-		{
+		if ($userGroupId instanceof UserGroup) {
 			$userGroupId = $userGroupId->user_group_id;
 		}
 
-		if (!$userGroupId)
-		{
+		if (!$userGroupId) {
 			return false;
 		}
 
-		if (is_array($userGroupId))
-		{
+		if (is_array($userGroupId)) {
 			if (
 				in_array($this->user_group_id, $userGroupId)
 				|| array_intersect($userGroupId, $this->secondary_group_ids)
-			)
-			{
+			) {
 				return true;
 			}
-		}
-		else
-		{
-			if ($this->user_group_id == $userGroupId || in_array($userGroupId, $this->secondary_group_ids))
-			{
+		} else {
+			if ($this->user_group_id == $userGroupId || in_array($userGroupId, $this->secondary_group_ids)) {
 				return true;
 			}
 		}
@@ -235,8 +211,7 @@ class User extends Entity implements LinkableInterface
 
 	public function isOnline()
 	{
-		if (!$this->canViewOnlineStatus())
-		{
+		if (!$this->canViewOnlineStatus()) {
 			return false;
 		}
 
@@ -257,8 +232,7 @@ class User extends Entity implements LinkableInterface
 
 	public function authenticate($password)
 	{
-		if (!$this->Auth)
-		{
+		if (!$this->Auth) {
 			return false;
 		}
 		return $this->Auth->authenticate($password);
@@ -292,8 +266,7 @@ class User extends Entity implements LinkableInterface
 
 	public function hasAdminPermission($permissionId)
 	{
-		if (!$this->is_admin || !$this->Admin)
-		{
+		if (!$this->is_admin || !$this->Admin) {
 			return false;
 		}
 
@@ -315,8 +288,7 @@ class User extends Entity implements LinkableInterface
 	 */
 	public function getIsSuperAdmin()
 	{
-		if ($this->is_admin && $this->Admin)
-		{
+		if ($this->is_admin && $this->Admin) {
 			return $this->Admin->is_super_admin;
 		}
 
@@ -357,14 +329,12 @@ class User extends Entity implements LinkableInterface
 		$app = $this->app();
 
 		$style = $app->style($this->style_id);
-		if (!$style->isUsable($this))
-		{
+		if (!$style->isUsable($this)) {
 			$style = $app->style(0);
 		}
 
 		$language = $app->language($this->language_id);
-		if (!$language->isUsable($this))
-		{
+		if (!$language->isUsable($this)) {
 			$language = $app->language(0);
 		}
 
@@ -392,25 +362,21 @@ class User extends Entity implements LinkableInterface
 
 	public function canEdit()
 	{
-		if (!$this->exists())
-		{
+		if (!$this->exists()) {
 			return false;
 		}
 
 		$visitor = \XF::visitor();
 
-		if (!$visitor->is_super_admin && $this->is_super_admin)
-		{
+		if (!$visitor->is_super_admin && $this->is_super_admin) {
 			return false;
 		}
 
-		if ($visitor->is_admin && $visitor->hasAdminPermission('user'))
-		{
+		if ($visitor->is_admin && $visitor->hasAdminPermission('user')) {
 			return true;
 		}
 
-		if ($this->is_admin && $this->is_moderator && $this->is_staff)
-		{
+		if ($this->is_admin && $this->is_moderator && $this->is_staff) {
 			// moderators can't edit admins/mods/staff
 			return false;
 		}
@@ -422,8 +388,7 @@ class User extends Entity implements LinkableInterface
 	{
 		$visitor = \XF::visitor();
 
-		return (
-			$visitor->user_id &&
+		return ($visitor->user_id &&
 			$visitor->is_moderator &&
 			$visitor->hasPermission('general', 'banUser')
 		);
@@ -433,13 +398,11 @@ class User extends Entity implements LinkableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if (!$this->user_id || !$visitor->is_moderator || $this->user_id == $visitor->user_id)
-		{
+		if (!$this->user_id || !$visitor->is_moderator || $this->user_id == $visitor->user_id) {
 			return false;
 		}
 
-		if ($this->is_admin || $this->is_moderator)
-		{
+		if ($this->is_admin || $this->is_moderator) {
 			$error = \XF::phraseDeferred('this_user_is_an_admin_or_moderator_choose_another');
 			return false;
 		}
@@ -455,41 +418,35 @@ class User extends Entity implements LinkableInterface
 	public function isPossibleSpammer(&$error = null)
 	{
 		// guest
-		if (!$this->user_id)
-		{
+		if (!$this->user_id) {
 			return false;
 		}
 
 		// self
-		if ($this->user_id == \XF::visitor()->user_id)
-		{
+		if ($this->user_id == \XF::visitor()->user_id) {
 			$error = \XF::phraseDeferred('sorry_dave');
 			return false;
 		}
 
 		// staff
-		if ($this->is_admin || $this->is_moderator)
-		{
+		if ($this->is_admin || $this->is_moderator) {
 			$error = \XF::phraseDeferred('spam_cleaner_no_admins_or_mods');
 			return false;
 		}
 
 		$criteria = $this->app()->options()->spamUserCriteria;
 
-		if ($criteria['message_count'] && $this->message_count > $criteria['message_count'])
-		{
+		if ($criteria['message_count'] && $this->message_count > $criteria['message_count']) {
 			$error = \XF::phraseDeferred('spam_cleaner_too_many_messages', ['message_count' => $criteria['message_count']]);
 			return false;
 		}
 
-		if ($criteria['register_date'] && $this->register_date < (time() - $criteria['register_date'] * 86400))
-		{
+		if ($criteria['register_date'] && $this->register_date < (time() - $criteria['register_date'] * 86400)) {
 			$error = \XF::phraseDeferred('spam_cleaner_registered_too_long', ['register_days' => $criteria['register_date']]);
 			return false;
 		}
 
-		if ($criteria['reaction_score'] && $this->reaction_score > $criteria['reaction_score'])
-		{
+		if ($criteria['reaction_score'] && $this->reaction_score > $criteria['reaction_score']) {
 			$error = \XF::phraseDeferred('spam_cleaner_reaction_score_too_high', ['reaction_score' => $criteria['reaction_score']]);
 			return false;
 		}
@@ -499,8 +456,7 @@ class User extends Entity implements LinkableInterface
 
 	public function isSpamCheckRequired()
 	{
-		return (
-			!$this->is_admin
+		return (!$this->is_admin
 			&& !$this->is_moderator
 			&& $this->app()->options()->maxContentSpamMessages
 			&& !$this->hasPermission('general', 'bypassSpamCheck')
@@ -512,16 +468,13 @@ class User extends Entity implements LinkableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if ($this->user_state == 'disabled')
-		{
+		if ($this->user_state == 'disabled') {
 			return false;
 		}
-		if (!$this->last_activity)
-		{
+		if (!$this->last_activity) {
 			return false;
 		}
-		if ($this->visible || $this->user_id == $visitor->user_id)
-		{
+		if ($this->visible || $this->user_id == $visitor->user_id) {
 			return true;
 		}
 
@@ -532,12 +485,10 @@ class User extends Entity implements LinkableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if (!$this->last_activity)
-		{
+		if (!$this->last_activity) {
 			return false;
 		}
-		if (($this->visible && $this->activity_visible) || $this->user_id == $visitor->user_id)
-		{
+		if (($this->visible && $this->activity_visible) || $this->user_id == $visitor->user_id) {
 			return true;
 		}
 
@@ -558,8 +509,7 @@ class User extends Entity implements LinkableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if (!$visitor->user_id || $this->user_id == $visitor->user_id)
-		{
+		if (!$visitor->user_id || $this->user_id == $visitor->user_id) {
 			return false;
 		}
 
@@ -596,8 +546,7 @@ class User extends Entity implements LinkableInterface
 
 	public function canUseRte(): bool
 	{
-		if ($this->user_id)
-		{
+		if ($this->user_id) {
 			return true;
 		}
 
@@ -611,8 +560,7 @@ class User extends Entity implements LinkableInterface
 
 	public function isPrivacyCheckMet($privacyKey, User $user)
 	{
-		if (!$this->Privacy)
-		{
+		if (!$this->Privacy) {
 			return true;
 		}
 
@@ -628,8 +576,7 @@ class User extends Entity implements LinkableInterface
 
 	public function canChangeLanguage(&$error = null)
 	{
-		$languages = array_filter($this->app()->container('language.cache'), function($language)
-		{
+		$languages = array_filter($this->app()->container('language.cache'), function ($language) {
 			return ($this->is_admin || $language['user_selectable']);
 		});
 		return (bool)(count($languages) > 1);
@@ -637,8 +584,7 @@ class User extends Entity implements LinkableInterface
 
 	public function canChangeStyle(&$error = null)
 	{
-		$styles = array_filter($this->app()->container('style.cache'), function($style)
-		{
+		$styles = array_filter($this->app()->container('style.cache'), function ($style) {
 			return ($this->is_admin || $style['user_selectable']);
 		});
 		return (bool)(count($styles) > 1);
@@ -651,8 +597,7 @@ class User extends Entity implements LinkableInterface
 
 	public function canReport(&$error = null)
 	{
-		if (!$this->user_id || !$this->hasPermission('general', 'report'))
-		{
+		if (!$this->user_id || !$this->hasPermission('general', 'report')) {
 			$error = \XF::phraseDeferred('you_may_not_report_this_content');
 			return false;
 		}
@@ -662,8 +607,7 @@ class User extends Entity implements LinkableInterface
 
 	public function canBeReported(&$error = null)
 	{
-		if ($this->is_staff)
-		{
+		if ($this->is_staff) {
 			return false;
 		}
 
@@ -673,18 +617,15 @@ class User extends Entity implements LinkableInterface
 	public function canViewFullProfile(&$error = null)
 	{
 		$visitor = \XF::visitor();
-		if ($visitor->user_id == $this->user_id)
-		{
+		if ($visitor->user_id == $this->user_id) {
 			return true;
 		}
 
-		if (!$visitor->hasPermission('general', 'viewProfile'))
-		{
+		if (!$visitor->hasPermission('general', 'viewProfile')) {
 			return false;
 		}
 
-		if (!$this->isPrivacyCheckMet('allow_view_profile', $visitor))
-		{
+		if (!$this->isPrivacyCheckMet('allow_view_profile', $visitor)) {
 			$error = \XF::phraseDeferred('member_limits_viewing_profile');
 			return false;
 		}
@@ -692,18 +633,15 @@ class User extends Entity implements LinkableInterface
 		if (
 			($this->user_state == 'moderated' || $this->user_state == 'email_confirm' || $this->user_state == 'rejected')
 			&& !$visitor->canBypassUserPrivacy()
-		)
-		{
+		) {
 			$error = \XF::phraseDeferred('this_users_profile_is_not_available');
 			return false;
 		}
 
-		if ($this->is_banned)
-		{
+		if ($this->is_banned) {
 			/** @var UserBan|null $ban */
 			$ban = $this->Ban;
-			if ($ban && !$ban->end_date && !$visitor->canBypassUserPrivacy())
-			{
+			if ($ban && !$ban->end_date && !$visitor->canBypassUserPrivacy()) {
 				$error = \XF::phraseDeferred('this_users_profile_is_not_available');
 				return false;
 			}
@@ -760,8 +698,7 @@ class User extends Entity implements LinkableInterface
 	{
 		$options = $this->app()->options();
 
-		if (empty($options->allowVideoUploads['enabled']))
-		{
+		if (empty($options->allowVideoUploads['enabled'])) {
 			return false;
 		}
 
@@ -774,18 +711,15 @@ class User extends Entity implements LinkableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if (!$this->app()->options()->enableNewsFeed)
-		{
+		if (!$this->app()->options()->enableNewsFeed) {
 			return false;
 		}
 
-		if ($visitor->canBypassUserPrivacy())
-		{
+		if ($visitor->canBypassUserPrivacy()) {
 			return true;
 		}
 
-		return (
-			$this->isPrivacyCheckMet('allow_receive_news_feed', $visitor)
+		return ($this->isPrivacyCheckMet('allow_receive_news_feed', $visitor)
 			&& $this->user_state != 'disabled'
 		);
 	}
@@ -794,18 +728,15 @@ class User extends Entity implements LinkableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if (!$visitor->hasPermission('general', 'viewProfile'))
-		{
+		if (!$visitor->hasPermission('general', 'viewProfile')) {
 			return false;
 		}
 
-		if ($visitor->canBypassUserPrivacy())
-		{
+		if ($visitor->canBypassUserPrivacy()) {
 			return true;
 		}
 
-		return (
-			$this->isPrivacyCheckMet('allow_view_profile', $visitor)
+		return ($this->isPrivacyCheckMet('allow_view_profile', $visitor)
 			&& $this->isPrivacyCheckMet('allow_view_identities', $visitor)
 		);
 	}
@@ -817,28 +748,23 @@ class User extends Entity implements LinkableInterface
 
 	public function canFollowUser(User $user)
 	{
-		if (!$user->user_id || !$this->user_id)
-		{
+		if (!$user->user_id || !$this->user_id) {
 			return false;
 		}
 
-		if ($user->user_id == $this->user_id)
-		{
+		if ($user->user_id == $this->user_id) {
 			return false;
 		}
 
-		if ($this->user_state != 'valid')
-		{
+		if ($this->user_state != 'valid') {
 			return false;
 		}
 
-		if ($this->isFollowing($user))
-		{
+		if ($this->isFollowing($user)) {
 			return true;
 		}
 
-		if (!in_array($user->user_state, ['valid', 'email_confirm', 'email_confirm_edit']))
-		{
+		if (!in_array($user->user_state, ['valid', 'email_confirm', 'email_confirm_edit'])) {
 			return false;
 		}
 
@@ -852,30 +778,25 @@ class User extends Entity implements LinkableInterface
 
 	public function canIgnoreUser(User $user, &$error = null)
 	{
-		if (!$user->user_id || !$this->user_id)
-		{
+		if (!$user->user_id || !$this->user_id) {
 			return false;
 		}
 
-		if ($user->is_staff)
-		{
+		if ($user->is_staff) {
 			$error = \XF::phraseDeferred('staff_members_may_not_be_ignored');
 			return false;
 		}
 
-		if ($user->user_id == $this->user_id)
-		{
+		if ($user->user_id == $this->user_id) {
 			$error = \XF::phraseDeferred('you_may_not_ignore_yourself');
 			return false;
 		}
 
-		if ($this->user_state != 'valid')
-		{
+		if ($this->user_state != 'valid') {
 			return false;
 		}
 
-		if (!in_array($user->user_state, ['valid', 'email_confirm', 'email_confirm_edit', 'email_bounce']))
-		{
+		if (!in_array($user->user_state, ['valid', 'email_confirm', 'email_confirm_edit', 'email_bounce'])) {
 			return false;
 		}
 
@@ -884,18 +805,15 @@ class User extends Entity implements LinkableInterface
 
 	public function isIgnoring($userId)
 	{
-		if (!$this->user_id)
-		{
+		if (!$this->user_id) {
 			return false;
 		}
 
-		if ($userId instanceof User)
-		{
+		if ($userId instanceof User) {
 			$userId = $userId->user_id;
 		}
 
-		if (!$userId || !$this->Profile)
-		{
+		if (!$userId || !$this->Profile) {
 			return false;
 		}
 
@@ -905,32 +823,27 @@ class User extends Entity implements LinkableInterface
 
 	public function canStartConversation()
 	{
-		if (!$this->exists())
-		{
+		if (!$this->exists()) {
 			return false;
 		}
 
 		$maxRecipients = $this->hasPermission('conversation', 'maxRecipients');
-		return (
-			$this->hasPermission('conversation', 'start')
+		return ($this->hasPermission('conversation', 'start')
 			&& ($maxRecipients == -1 || $maxRecipients > 0)
 		);
 	}
 
 	public function canStartConversationWith(\XF\Entity\User $user)
 	{
-		if (!$this->canBypassUserPrivacy() && !$user->canReceiveConversation())
-		{
+		if (!$this->canBypassUserPrivacy() && !$user->canReceiveConversation()) {
 			return false;
 		}
 
-		if (!$user->user_id || $user->user_id == $this->user_id)
-		{
+		if (!$user->user_id || $user->user_id == $this->user_id) {
 			return false;
 		}
 
-		return (
-			$this->canStartConversation()
+		return ($this->canStartConversation()
 			&& $user->Privacy->isPrivacyCheckMet('allow_send_personal_conversation', $this)
 			&& $user->user_state != 'disabled'
 			&& !$user->is_banned
@@ -978,8 +891,7 @@ class User extends Entity implements LinkableInterface
 	{
 		$options = $this->app()->options();
 
-		return (
-			!$this->is_banned
+		return (!$this->is_banned
 			&& $options->contactUrl['type']
 			&& $this->hasPermission('general', 'useContactForm')
 		);
@@ -987,38 +899,31 @@ class User extends Entity implements LinkableInterface
 
 	public function canUsePushNotifications()
 	{
-		if (!\XF::isPushUsable())
-		{
+		if (!\XF::isPushUsable()) {
 			return false;
 		}
 
-		return (
-			$this->user_id
+		return ($this->user_id
 			&& $this->hasPermission('general', 'usePush')
 		);
 	}
 
 	public function canChangeUsername(&$error = null): bool
 	{
-		if (!$this->user_id)
-		{
+		if (!$this->user_id) {
 			return false;
 		}
 
-		if ($this->PendingUsernameChange)
-		{
+		if ($this->PendingUsernameChange) {
 			$error = \XF::phrase('pending_username_awaiting_approval');
 			return false;
 		}
 
-		if ($this->hasPermission('general', 'changeUsername'))
-		{
+		if ($this->hasPermission('general', 'changeUsername')) {
 			$changeLimit = $this->app()->options()->usernameChangeTimeLimit;
-			if ($changeLimit)
-			{
+			if ($changeLimit) {
 				$effectiveLastChangeDate = max($this->username_date, $this->register_date);
-				if ($effectiveLastChangeDate > \XF::$time - 86400 * $changeLimit)
-				{
+				if ($effectiveLastChangeDate > \XF::$time - 86400 * $changeLimit) {
 					$days = ceil(($this->next_allowed_username_change - \XF::$time) / 86400);
 
 					$error = \XF::phraseDeferred(
@@ -1037,14 +942,12 @@ class User extends Entity implements LinkableInterface
 
 	public function hasViewableUsernameHistory(): bool
 	{
-		if ($this->username_date == 0)
-		{
+		if ($this->username_date == 0) {
 			// username has never been changed
 			return false;
 		}
 
-		if ($this->canViewFullUsernameHistory())
-		{
+		if ($this->canViewFullUsernameHistory()) {
 			// if you have the ability to view this user's full history, then you're bypassing any visible/date checks
 			return true;
 		}
@@ -1061,38 +964,31 @@ class User extends Entity implements LinkableInterface
 		if (
 			($visitor->user_id && $visitor->user_id == $this->user_id)
 			|| $visitor->canBypassUserPrivacy()
-		)
-		{
+		) {
 			return ($this->username_date > 0);
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
 
 	public function getNextAllowedUsernameChange($lastUsernameChangeDate = null): int
 	{
-		if ($lastUsernameChangeDate === null)
-		{
+		if ($lastUsernameChangeDate === null) {
 			$lastUsernameChangeDate = max($this->username_date, $this->register_date);
 		}
 
-		if (!$this->hasPermission('general', 'changeUsername'))
-		{
+		if (!$this->hasPermission('general', 'changeUsername')) {
 			return 0;
 		}
 
 		$changeLimit = $this->app()->options()->usernameChangeTimeLimit;
-		if (!$changeLimit || !$lastUsernameChangeDate)
-		{
+		if (!$changeLimit || !$lastUsernameChangeDate) {
 			return 0;
 		}
 
 		$nextChange = $lastUsernameChangeDate + 86400 * $changeLimit;
 
-		if (\XF::$time > $nextChange)
-		{
+		if (\XF::$time > $nextChange) {
 			return 0;
 		}
 
@@ -1106,8 +1002,7 @@ class User extends Entity implements LinkableInterface
 
 	public function canCreateThreadPreReg()
 	{
-		if ($this->user_id || $this->canCreateThread())
-		{
+		if ($this->user_id || $this->canCreateThread()) {
 			return false;
 		}
 
@@ -1130,8 +1025,7 @@ class User extends Entity implements LinkableInterface
 	{
 		$options = \XF::options();
 
-		return (
-			!$this->user_id
+		return (!$this->user_id
 			&& $options->preRegAction['enabled']
 			&& $options->registrationSetup['enabled']
 		);
@@ -1145,8 +1039,7 @@ class User extends Entity implements LinkableInterface
 	public function getAllowedUserMentions(array $mentions)
 	{
 		$maxMentions = $this->hasPermission('general', 'maxMentionedUsers');
-		if ($maxMentions == 0)
-		{
+		if ($maxMentions == 0) {
 			return [];
 		}
 		if ($maxMentions < 0) // unlimited
@@ -1174,20 +1067,16 @@ class User extends Entity implements LinkableInterface
 
 	public function cacheNodePermissions(array $nodeIds = null)
 	{
-		if (is_array($nodeIds))
-		{
+		if (is_array($nodeIds)) {
 			\XF::permissionCache()->cacheContentPermsByIds($this->permission_combination_id, 'node', $nodeIds);
-		}
-		else
-		{
+		} else {
 			\XF::permissionCache()->cacheAllContentPerms($this->permission_combination_id, 'node');
 		}
 	}
 
 	public function rebuildUserGroupRelations($newTransaction = true)
 	{
-		if (!$this->user_id)
-		{
+		if (!$this->user_id) {
 			throw new \LogicException("User must be saved first");
 		}
 
@@ -1200,8 +1089,7 @@ class User extends Entity implements LinkableInterface
 			'user_group_id' => $this->user_group_id,
 			'is_primary' => 1
 		];
-		foreach ($this->secondary_group_ids AS $groupId)
-		{
+		foreach ($this->secondary_group_ids as $groupId) {
 			$inserts[] = [
 				'user_id' => $userId,
 				'user_group_id' => $groupId,
@@ -1209,55 +1097,48 @@ class User extends Entity implements LinkableInterface
 			];
 		}
 
-		if($newTransaction)
-		{
+		if ($newTransaction) {
 			$db->beginTransaction();
 		}
 
-		$db->delete('xf_user_group_relation', 'user_id = ?' , $this->user_id);
+		$db->delete('xf_user_group_relation', 'user_id = ?', $this->user_id);
 		$db->insertBulk('xf_user_group_relation', $inserts, false, 'is_primary = VALUES(is_primary)');
 
-		if ($newTransaction)
-		{
+		if ($newTransaction) {
 			$db->commit();
 		}
 	}
 
 	public function rebuildDisplayStyleGroup()
 	{
-		if (!$this->user_id)
-		{
+		if (!$this->user_id) {
 			throw new \LogicException("User must be saved first");
 		}
 
 		$groupRepo = $this->getUserGroupRepo();
 		$id = $groupRepo->getDisplayGroupIdForUser($this);
-		if ($id != $this->display_style_group_id)
-		{
+		if ($id != $this->display_style_group_id) {
 			$this->fastUpdate('display_style_group_id', $id);
 		}
 	}
 
 	public function rebuildWarningPoints()
 	{
-		if (!$this->user_id)
-		{
+		if (!$this->user_id) {
 			throw new \LogicException("User must be saved first");
 		}
 
 		/** @var \XF\Repository\Warning $warningRepo */
 		$warningRepo = $this->repository('XF:Warning');
 		$points = $warningRepo->getActiveWarningPointsForUser($this->user_id);
-		if ($points != $this->warning_points)
-		{
+		if ($points != $this->warning_points) {
 			$this->fastUpdate('warning_points', $points);
 		}
 	}
 
 	public function rebuildPermissionCombination()
 	{
-		if (!$this->user_id)
-		{
+		if (!$this->user_id) {
 			throw new \LogicException("User must be saved first");
 		}
 
@@ -1268,21 +1149,18 @@ class User extends Entity implements LinkableInterface
 
 	public function removeUserFromGroup($groupId)
 	{
-		if ($groupId instanceof UserGroup)
-		{
+		if ($groupId instanceof UserGroup) {
 			$groupId = $groupId->user_group_id;
 		}
 
-		if ($this->user_group_id == $groupId)
-		{
+		if ($this->user_group_id == $groupId) {
 			$this->user_group_id = self::GROUP_REG;
 			return true;
 		}
 
 		$ids = $this->secondary_group_ids;
 		$position = array_search($groupId, $ids);
-		if ($position !== false)
-		{
+		if ($position !== false) {
 			unset($ids[$position]);
 			$this->secondary_group_ids = $ids;
 			return true;
@@ -1293,15 +1171,11 @@ class User extends Entity implements LinkableInterface
 
 	public function toggleActivitySummaryEmail($enable)
 	{
-		if ($enable)
-		{
-			if ($this->last_summary_email_date === null)
-			{
+		if ($enable) {
+			if ($this->last_summary_email_date === null) {
 				$this->last_summary_email_date = \XF::$time;
 			}
-		}
-		else
-		{
+		} else {
 			$this->last_summary_email_date = null;
 		}
 	}
@@ -1310,24 +1184,20 @@ class User extends Entity implements LinkableInterface
 
 	protected function verifyUsername(&$username)
 	{
-		if ($username === $this->getExistingValue('username'))
-		{
+		if ($username === $this->getExistingValue('username')) {
 			return true; // unchanged, always pass
 		}
 
 		/** @var \XF\Validator\Username $validator */
 		$validator = $this->app()->validator('Username');
 		$username = $validator->coerceValue($username);
-		if ($this->user_id)
-		{
+		if ($this->user_id) {
 			$validator->setOption('self_user_id', $this->user_id);
 		}
-		if ($this->getOption('admin_edit'))
-		{
+		if ($this->getOption('admin_edit')) {
 			$validator->setOption('admin_edit', true);
 		}
-		if (!$validator->isValid($username, $errorKey))
-		{
+		if (!$validator->isValid($username, $errorKey)) {
 			$this->error($validator->getPrintableErrorValue($errorKey), 'username');
 			return false;
 		}
@@ -1337,13 +1207,11 @@ class User extends Entity implements LinkableInterface
 
 	protected function verifyEmail(&$email)
 	{
-		if ($this->isUpdate() && $email === $this->getExistingValue('email'))
-		{
+		if ($this->isUpdate() && $email === $this->getExistingValue('email')) {
 			return true;
 		}
 
-		if ($this->getOption('admin_edit') && $email === '')
-		{
+		if ($this->getOption('admin_edit') && $email === '') {
 			return true;
 		}
 
@@ -1353,41 +1221,31 @@ class User extends Entity implements LinkableInterface
 		$bannedEmails = $this->app()->container('bannedEmails');
 
 		$emailValidator = $this->app()->validator('Email');
-		if (!$this->getOption('admin_edit'))
-		{
+		if (!$this->getOption('admin_edit')) {
 			$emailValidator->setOption('banned', $bannedEmails);
 		}
 
 		$emailValidator->setOption('check_typos', true);
 
-		if (!$emailValidator->isValid($email, $errorKey))
-		{
-			if ($errorKey == 'banned')
-			{
+		if (!$emailValidator->isValid($email, $errorKey)) {
+			if ($errorKey == 'banned') {
 				$this->error(\XF::phrase('email_address_you_entered_has_been_banned_by_administrator'), 'email');
 
 				// try to find triggering banned email entry. try exact match first...
 				$emailBan = $this->_em->findOne('XF:BanEmail', ['banned_email' => $email]);
-				if (!$emailBan)
-				{
+				if (!$emailBan) {
 					// ...otherwise find the first entry that triggered
 					$bannedEmail = $banningRepo->getBannedEntryFromEmail($email, $bannedEmails);
-					if ($bannedEmail)
-					{
+					if ($bannedEmail) {
 						$emailBan = $this->_em->findOne('XF:BanEmail', ['banned_email' => $bannedEmail]);
 					}
 				}
-				if ($emailBan)
-				{
+				if ($emailBan) {
 					$emailBan->fastUpdate('last_triggered_date', time());
 				}
-			}
-			else if ($errorKey == 'typo')
-			{
+			} else if ($errorKey == 'typo') {
 				$this->error(\XF::phrase('email_address_you_entered_appears_have_typo'));
-			}
-			else
-			{
+			} else {
 				$this->error(\XF::phrase('please_enter_valid_email'), 'email');
 			}
 
@@ -1395,8 +1253,7 @@ class User extends Entity implements LinkableInterface
 		}
 
 		$existingUser = $this->finder('XF:User')->where('email', $email)->fetchOne();
-		if ($existingUser && $existingUser['user_id'] != $this->user_id)
-		{
+		if ($existingUser && $existingUser['user_id'] != $this->user_id) {
 			$this->error(\XF::phrase('email_addresses_must_be_unique'), 'email');
 			return false;
 		}
@@ -1406,8 +1263,7 @@ class User extends Entity implements LinkableInterface
 
 	protected function verifyStyleId(&$styleId)
 	{
-		if ($styleId && !$this->_em->find('XF:Style', $styleId))
-		{
+		if ($styleId && !$this->_em->find('XF:Style', $styleId)) {
 			$styleId = 0;
 		}
 
@@ -1416,8 +1272,7 @@ class User extends Entity implements LinkableInterface
 
 	protected function verifyLanguageId(&$languageId)
 	{
-		if ($languageId && !$this->_em->find('XF:Language', $languageId))
-		{
+		if ($languageId && !$this->_em->find('XF:Language', $languageId)) {
 			$languageId = 0;
 		}
 
@@ -1426,14 +1281,12 @@ class User extends Entity implements LinkableInterface
 
 	protected function verifyTimezone(&$timezone)
 	{
-		if (!$timezone)
-		{
+		if (!$timezone) {
 			$timezone = $this->app()->options()->guestTimeZone;
 		}
 
 		$tzs = \DateTimeZone::listIdentifiers(\DateTimeZone::ALL_WITH_BC);
-		if (!in_array($timezone, $tzs))
-		{
+		if (!in_array($timezone, $tzs)) {
 			$this->error(\XF::phrase('please_select_valid_time_zone'), 'timezone');
 			return false;
 		}
@@ -1443,35 +1296,27 @@ class User extends Entity implements LinkableInterface
 
 	protected function verifyCustomTitle(&$title)
 	{
-		if ($title === $this->getExistingValue('custom_title'))
-		{
+		if ($title === $this->getExistingValue('custom_title')) {
 			return true; // can always keep the existing value
 		}
-		if ($this->getOption('admin_edit'))
-		{
+		if ($this->getOption('admin_edit')) {
 			return true;
 		}
 
-		if ($title !== $this->app()->stringFormatter()->censorText($title))
-		{
+		if ($title !== $this->app()->stringFormatter()->censorText($title)) {
 			$this->error(\XF::phrase('please_enter_custom_title_that_does_not_contain_any_censored_words'), 'custom_title');
 			return false;
 		}
 
-		if (!$this->is_moderator && !$this->is_admin)
-		{
+		if (!$this->is_moderator && !$this->is_admin) {
 			$disallowed = $this->getOption('custom_title_disallowed');
-			if ($disallowed)
-			{
-				foreach ($disallowed AS $value)
-				{
+			if ($disallowed) {
+				foreach ($disallowed as $value) {
 					$value = trim($value);
-					if ($value === '')
-					{
+					if ($value === '') {
 						continue;
 					}
-					if (stripos($title, $value) !== false)
-					{
+					if (stripos($title, $value) !== false) {
 						$this->error(\XF::phrase('please_enter_another_custom_title_disallowed_words'), 'custom_title');
 						return false;
 					}
@@ -1486,14 +1331,12 @@ class User extends Entity implements LinkableInterface
 
 	protected function _preSave()
 	{
-		if ($this->isChanged('user_group_id') || $this->isChanged('secondary_group_ids'))
-		{
+		if ($this->isChanged('user_group_id') || $this->isChanged('secondary_group_ids')) {
 			$groupRepo = $this->getUserGroupRepo();
 			$this->display_style_group_id = $groupRepo->getDisplayGroupIdForUser($this);
 		}
 
-		if ($this->isChanged(['user_group_id', 'secondary_group_ids']))
-		{
+		if ($this->isChanged(['user_group_id', 'secondary_group_ids'])) {
 			// Do not allow a primary user group also be a secondary user group.
 			$this->secondary_group_ids = array_diff(
 				$this->secondary_group_ids,
@@ -1501,18 +1344,15 @@ class User extends Entity implements LinkableInterface
 			);
 		}
 
-		if (!$this->secret_key)
-		{
+		if (!$this->secret_key) {
 			$this->secret_key = \XF::generateRandomString(32);
 		}
 
-		if ($this->isInsert() && !$this->isChanged('email') && empty($this->_errors['email']))
-		{
+		if ($this->isInsert() && !$this->isChanged('email') && empty($this->_errors['email'])) {
 			$this->email = '';
 		}
 
-		if ($this->isChanged('email') && $this->email && empty($this->_errors['email']))
-		{
+		if ($this->isChanged('email') && $this->email && empty($this->_errors['email'])) {
 			// Redo the duplicate email check. This tries to reduce a race condition that can be extended
 			// due to third-party spam checks.
 			$matchUserId = $this->db()->fetchOne("
@@ -1520,14 +1360,12 @@ class User extends Entity implements LinkableInterface
 				FROM xf_user
 				WHERE email = ?
 			", $this->email);
-			if ($matchUserId && (!$this->user_id || $matchUserId != $this->user_id))
-			{
+			if ($matchUserId && (!$this->user_id || $matchUserId != $this->user_id)) {
 				$this->error(\XF::phrase('email_addresses_must_be_unique'), 'username');
 			}
 		}
 
-		if ($this->isChanged('username') && empty($this->_errors['username']))
-		{
+		if ($this->isChanged('username') && empty($this->_errors['username'])) {
 			// Redo the duplicate name check. This tries to reduce a race condition that can be extended
 			// due to third-party spam checks.
 			$matchUserId = $this->db()->fetchOne("
@@ -1535,25 +1373,20 @@ class User extends Entity implements LinkableInterface
 				FROM xf_user
 				WHERE username = ?
 			", $this->username);
-			if ($matchUserId && (!$this->user_id || $matchUserId != $this->user_id))
-			{
+			if ($matchUserId && (!$this->user_id || $matchUserId != $this->user_id)) {
 				$this->error(\XF::phrase('usernames_must_be_unique'), 'username');
 			}
 
-			if ($this->isUpdate() && empty($this->_errors['username']))
-			{
+			if ($this->isUpdate() && empty($this->_errors['username'])) {
 				$this->username_date = \XF::$time;
 			}
 		}
 
-		if ($this->isUpdate() && $this->isChanged('security_lock'))
-		{
-			if ($this->security_lock && $this->getOption('prevent_self_lock'))
-			{
+		if ($this->isUpdate() && $this->isChanged('security_lock')) {
+			if ($this->security_lock && $this->getOption('prevent_self_lock')) {
 				$visitor = \XF::visitor();
 
-				if ($visitor->user_id == $this->user_id)
-				{
+				if ($visitor->user_id == $this->user_id) {
 					$this->error(\XF::phrase('you_cannot_security_lock_your_own_account'));
 				}
 			}
@@ -1562,22 +1395,18 @@ class User extends Entity implements LinkableInterface
 
 	protected function _postSave()
 	{
-		if ($this->isChanged('user_group_id') || $this->isChanged('secondary_group_ids'))
-		{
+		if ($this->isChanged('user_group_id') || $this->isChanged('secondary_group_ids')) {
 			$this->rebuildUserGroupRelations(false);
 			$this->rebuildPermissionCombination();
 		}
 
-		if ($this->isChanged(['user_group_id', 'secondary_group_ids', 'permission_combination_id', 'user_state']))
-		{
+		if ($this->isChanged(['user_group_id', 'secondary_group_ids', 'permission_combination_id', 'user_state'])) {
 			// TODO: this is mostly temporary -- this should happen at the getter level
 			$this->clearCache('PermissionSet');
 		}
 
-		if ($this->isUpdate() && $this->isChanged('username') && $this->getExistingValue('username') != null)
-		{
-			if ($this->getOption('enqueue_rename_cleanup'))
-			{
+		if ($this->isUpdate() && $this->isChanged('username') && $this->getExistingValue('username') != null) {
+			if ($this->getOption('enqueue_rename_cleanup')) {
 				$this->app()->jobManager()->enqueue('XF:UserRenameCleanUp', [
 					'originalUserId' => $this->user_id,
 					'originalUserName' => $this->getExistingValue('username'),
@@ -1591,8 +1420,7 @@ class User extends Entity implements LinkableInterface
 			// if user has a pending username change then handle them
 			$usernameChangeRepo->clearPendingUsernameChanges($this);
 
-			if ($this->getOption('insert_username_change_history'))
-			{
+			if ($this->getOption('insert_username_change_history')) {
 				$usernameChangeRepo->insertUsernameChangeLog(
 					$this->user_id,
 					$this->getExistingValue('username'),
@@ -1603,8 +1431,7 @@ class User extends Entity implements LinkableInterface
 		}
 
 		$approvalChange = $this->isStateChanged('user_state', 'moderated');
-		if ($approvalChange == 'enter')
-		{
+		if ($approvalChange == 'enter') {
 			$approvalQueue = $this->getRelationOrDefault('ApprovalQueue', false);
 
 			$approvalQueue->content_type = 'user';
@@ -1612,37 +1439,29 @@ class User extends Entity implements LinkableInterface
 			$approvalQueue->content_date = $this->register_date;
 
 			$approvalQueue->save();
-		}
-		else if ($approvalChange == 'leave' && $this->ApprovalQueue)
-		{
+		} else if ($approvalChange == 'leave' && $this->ApprovalQueue) {
 			$this->ApprovalQueue->delete();
 		}
 
 		$rejectionChange = $this->isStateChanged('user_state', 'rejected');
-		if ($rejectionChange == 'enter' && !$this->Reject)
-		{
+		if ($rejectionChange == 'enter' && !$this->Reject) {
 			/** @var UserReject $reject */
 			$reject = $this->getRelationOrDefault('Reject', false);
 			$reject->setFromVisitor();
 			$reject->save();
-		}
-		else if ($rejectionChange == 'leave' && $this->Reject)
-		{
+		} else if ($rejectionChange == 'leave' && $this->Reject) {
 			$this->Reject->delete();
 		}
 
-		if ($this->isChanged('is_staff'))
-		{
-			if ($this->isUpdate())
-			{
+		if ($this->isChanged('is_staff')) {
+			if ($this->isUpdate()) {
 				$this->repository('XF:UserIgnored')->rebuildIgnoredCacheByIgnoredUser($this->user_id);
 			}
 
 			$this->repository('XF:MemberStat')->emptyCache('staff_members');
 		}
 
-		if ($this->isUpdate() && $this->isChanged('email'))
-		{
+		if ($this->isUpdate() && $this->isChanged('email')) {
 			// remove lost password requests when updating the email address
 			$this->db()->delete(
 				'xf_user_confirmation',
@@ -1651,18 +1470,15 @@ class User extends Entity implements LinkableInterface
 			);
 		}
 
-		if ($this->isUpdate() && $this->isStateChanged('security_lock', 'reset') === 'leave')
-		{
+		if ($this->isUpdate() && $this->isStateChanged('security_lock', 'reset') === 'leave') {
 			$this->repository('XF:UserConfirmation')->fastDeleteUserConfirmationRecords($this, 'security_lock_reset');
 		}
 	}
 
 	protected function _preDelete()
 	{
-		if (!$this->getOption('allow_self_delete'))
-		{
-			if ($this->user_id == \XF::visitor()->user_id)
-			{
+		if (!$this->getOption('allow_self_delete')) {
+			if ($this->user_id == \XF::visitor()->user_id) {
 				$this->error(\XF::phrase('you_cannot_delete_your_own_account'));
 			}
 		}
@@ -1696,8 +1512,7 @@ class User extends Entity implements LinkableInterface
 		$banner = $this->app()->service('XF:User\ProfileBanner', $this);
 		$banner->deleteBannerForUserDelete();
 
-		if ($this->getOption('enqueue_delete_cleanup'))
-		{
+		if ($this->getOption('enqueue_delete_cleanup')) {
 			$this->app()->jobManager()->enqueue('XF:UserDeleteCleanUp', [
 				'userId' => $this->user_id,
 				'username' => $this->username
@@ -1709,17 +1524,13 @@ class User extends Entity implements LinkableInterface
 	{
 		$changes = [];
 
-		if ($this->isUpdate() && $this->isChanged('last_summary_email_date'))
-		{
+		if ($this->isUpdate() && $this->isChanged('last_summary_email_date')) {
 			$newValue = $this->last_summary_email_date;
 			$oldValue = $this->getExistingValue('last_summary_email_date');
 
-			if ($newValue === null && $oldValue !== null)
-			{
+			if ($newValue === null && $oldValue !== null) {
 				$changes['enable_activity_summary_email'] = [1, 0];
-			}
-			else if ($newValue !== null && $oldValue === null)
-			{
+			} else if ($newValue !== null && $oldValue === null) {
 				$changes['enable_activity_summary_email'] = [0, 1];
 			}
 		}
@@ -1729,8 +1540,7 @@ class User extends Entity implements LinkableInterface
 
 	public function setUserRejected($reason = '', User $byUser = null)
 	{
-		if ($this->user_state == 'rejected')
-		{
+		if ($this->user_state == 'rejected') {
 			return false;
 		}
 
@@ -1739,8 +1549,7 @@ class User extends Entity implements LinkableInterface
 		/** @var \XF\Entity\UserReject $reject */
 		$reject = $this->getRelationOrDefault('Reject');
 
-		if ($byUser)
-		{
+		if ($byUser) {
 			$reject->setFromUser($byUser);
 		}
 
@@ -1751,8 +1560,7 @@ class User extends Entity implements LinkableInterface
 
 	public function rejectUser($reason = '', User $byUser = null)
 	{
-		if ($this->setUserRejected($reason, $byUser))
-		{
+		if ($this->setUserRejected($reason, $byUser)) {
 			$this->save();
 
 			return true;
@@ -1824,11 +1632,11 @@ class User extends Entity implements LinkableInterface
 	 * @api-out string $view_url
 	 */
 	protected function setupApiResultData(
-		\XF\Api\Result\EntityResult $result, $verbosity = self::VERBOSITY_NORMAL, array $options = []
-	)
-	{
-		if (!$this->user_id)
-		{
+		\XF\Api\Result\EntityResult $result,
+		$verbosity = self::VERBOSITY_NORMAL,
+		array $options = []
+	) {
+		if (!$this->user_id) {
 			// possible to be called on a guest user, in which case return a stub
 			$result->skipColumn(['message_count', 'question_solution_count', 'register_date', 'trophy_points', 'is_staff', 'reaction_score', 'vote_score']);
 			return;
@@ -1840,22 +1648,17 @@ class User extends Entity implements LinkableInterface
 		$isBypassingPermissions = \XF::isApiBypassingPermissions();
 		$hasAdminPerms = $visitor->hasAdminPermission('user');
 
-		if ($verbosity < self::VERBOSITY_NORMAL)
-		{
+		if ($verbosity < self::VERBOSITY_NORMAL) {
 			// this indicates that we just want a stub result
 			$includeExtendedProfile = false;
 			$includePrivateProfile = false;
 			$includeInternalProfile = false;
-		}
-		else if ($isBypassingPermissions || !empty($options['full_profile']))
-		{
+		} else if ($isBypassingPermissions || !empty($options['full_profile'])) {
 			// always return everything
 			$includeExtendedProfile = true;
 			$includePrivateProfile = true;
 			$includeInternalProfile = true;
-		}
-		else
-		{
+		} else {
 			$includeExtendedProfile = $isSelf || $this->canViewFullProfile();
 			$includePrivateProfile = $isSelf || $hasAdminPerms;
 			$includeInternalProfile = $hasAdminPerms;
@@ -1874,55 +1677,46 @@ class User extends Entity implements LinkableInterface
 		$result->location = $profile->location;
 
 		$avatarUrls = [];
-		foreach (array_keys($this->app()->container('avatarSizeMap')) AS $avatarSize)
-		{
+		foreach (array_keys($this->app()->container('avatarSizeMap')) as $avatarSize) {
 			$avatarUrls[$avatarSize] = $this->getAvatarUrl($avatarSize, null, true);
 		}
 		$result->avatar_urls = $avatarUrls;
 
 		$profileBannerUrls = [];
-		foreach (array_keys($this->app()->container('profileBannerSizeMap')) AS $bannerSize)
-		{
+		foreach (array_keys($this->app()->container('profileBannerSizeMap')) as $bannerSize) {
 			$profileBannerUrls[$bannerSize] = $profile->getBannerUrl($bannerSize, true);
 		}
 		$result->profile_banner_urls = $profileBannerUrls;
 
-		if (!empty($birthday['age']))
-		{
+		if (!empty($birthday['age'])) {
 			$result->age = $birthday['age'];
 		}
 
-		if ($isBypassingPermissions || $this->canViewOnlineStatus())
-		{
+		if ($isBypassingPermissions || $this->canViewOnlineStatus()) {
 			$result->last_activity = $this->last_activity;
 		}
 
-		if ($visitor->user_id)
-		{
+		if ($visitor->user_id) {
 			$result->includeExtra([
 				'is_ignored' => $visitor->isIgnoring($this),
 				'is_followed' => $visitor->isFollowing($this)
 			]);
 		}
 
-		if ($isBypassingPermissions || $visitor->canViewWarnings())
-		{
+		if ($isBypassingPermissions || $visitor->canViewWarnings()) {
 			$result->includeColumn('warning_points');
 		}
 
-		if ($isBypassingPermissions || $visitor->canBypassUserPrivacy())
-		{
+		if ($isBypassingPermissions || $visitor->canBypassUserPrivacy()) {
 			$result->includeColumn('is_banned');
 		}
 
 		// extended profile
 
-		if ($includeExtendedProfile)
-		{
+		if ($includeExtendedProfile) {
 			$result->website = $profile->website;
 
-			if ($birthday)
-			{
+			if ($birthday) {
 				$result->dob = [
 					'year' => $birthday['age'] ? $profile->dob_year : null,
 					'month' => $profile->dob_month,
@@ -1930,28 +1724,22 @@ class User extends Entity implements LinkableInterface
 				];
 			}
 
-			if ($includePrivateProfile)
-			{
+			if ($includePrivateProfile) {
 				// return all values
 				$fieldValues = $profile->custom_fields->getFieldValues();
-			}
-			else
-			{
+			} else {
 				// only return what's public
 
 				$fieldValues = [];
 				/** @var \XF\CustomField\Definition[] $fields */
 				$fields = $profile->custom_fields->getDefinitionSet()->filterGroup('personal')->filter('profile');
-				foreach ($fields AS $fieldId => $field)
-				{
+				foreach ($fields as $fieldId => $field) {
 					$fieldValues[$fieldId] = $profile->custom_fields->getFieldValue($fieldId);
 				}
 
-				if ($this->canViewIdentities())
-				{
+				if ($this->canViewIdentities()) {
 					$fields = $profile->custom_fields->getDefinitionSet()->filterGroup('contact')->filter('profile');
-					foreach ($fields AS $fieldId => $field)
-					{
+					foreach ($fields as $fieldId => $field) {
 						$fieldValues[$fieldId] = $profile->custom_fields->getFieldValue($fieldId);
 					}
 				}
@@ -1959,16 +1747,14 @@ class User extends Entity implements LinkableInterface
 
 			$result->custom_fields = (object)$fieldValues;
 
-			if ($verbosity > self::VERBOSITY_NORMAL)
-			{
+			if ($verbosity > self::VERBOSITY_NORMAL) {
 				$result->about = $profile->about;
 			}
 		}
 
 		// private profile -- things only shown to the user and to admins
 
-		if ($includePrivateProfile)
-		{
+		if ($includePrivateProfile) {
 			$result->includeColumn([
 				'is_admin',
 				'is_moderator',
@@ -1978,8 +1764,7 @@ class User extends Entity implements LinkableInterface
 			]);
 			$result->includeGetter('is_super_admin');
 
-			if ($verbosity > self::VERBOSITY_NORMAL)
-			{
+			if ($verbosity > self::VERBOSITY_NORMAL) {
 				$result->includeColumn(['email', 'timezone', 'gravatar']);
 
 				$result->includeExtra([
@@ -2007,8 +1792,7 @@ class User extends Entity implements LinkableInterface
 
 		// internal profile -- things only shown to the admin
 
-		if ($includeInternalProfile)
-		{
+		if ($includeInternalProfile) {
 			$result->includeColumn(['user_group_id', 'secondary_group_ids', 'user_state']);
 
 			$result->is_discouraged = $option->is_discouraged;
@@ -2062,13 +1846,15 @@ class User extends Entity implements LinkableInterface
 
 	public static function getStructure(Structure $structure)
 	{
+
 		$structure->table = 'xf_user';
 		$structure->shortName = 'XF:User';
 		$structure->contentType = 'user';
 		$structure->primaryKey = 'user_id';
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true, 'changeLog' => false],
-			'username' => ['type' => self::STR, 'maxLength' => 50,
+			'user_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true, 'changeLog' => false, 'max' => PHP_INT_MAX],
+			'username' => [
+				'type' => self::STR, 'maxLength' => 50,
 				'required' => 'please_enter_valid_name', 'api' => true
 			],
 			'username_date' => ['type' => self::UINT, 'default' => 0, 'changeLog' => false],
@@ -2080,7 +1866,8 @@ class User extends Entity implements LinkableInterface
 			'visible' => ['type' => self::BOOL, 'default' => true],
 			'activity_visible' => ['type' => self::BOOL, 'default' => true],
 			'user_group_id' => ['type' => self::UINT, 'required' => true],
-			'secondary_group_ids' => ['type' => self::LIST_COMMA, 'default' => [],
+			'secondary_group_ids' => [
+				'type' => self::LIST_COMMA, 'default' => [],
 				'list' => ['type' => 'posint', 'unique' => true, 'sort' => SORT_NUMERIC]
 			],
 			'display_style_group_id' => ['type' => self::UINT, 'default' => 0, 'changeLog' => false],
@@ -2098,15 +1885,18 @@ class User extends Entity implements LinkableInterface
 			'avatar_width' => ['type' => self::UINT, 'max' => 65535, 'default' => 0, 'changeLog' => false],
 			'avatar_height' => ['type' => self::UINT, 'max' => 65535, 'default' => 0, 'changeLog' => false],
 			'avatar_highdpi' => ['type' => self::BOOL, 'default' => false, 'changeLog' => false],
-			'gravatar' => ['type' => self::STR, 'maxLength' => 120, 'default' => '',
+			'gravatar' => [
+				'type' => self::STR, 'maxLength' => 120, 'default' => '',
 				'match' => 'email_empty'
 			],
-			'user_state' => ['type' => self::STR, 'default' => 'valid',
+			'user_state' => [
+				'type' => self::STR, 'default' => 'valid',
 				'allowedValues' => [
 					'valid', 'email_confirm', 'email_confirm_edit', 'moderated', 'email_bounce', 'rejected', 'disabled'
 				]
 			],
-			'security_lock' => ['type' => self::STR, 'default' => '',
+			'security_lock' => [
+				'type' => self::STR, 'default' => '',
 				'allowedValues' => [
 					'', 'change', 'reset'
 				]
@@ -2117,7 +1907,8 @@ class User extends Entity implements LinkableInterface
 			'is_banned' => ['type' => self::BOOL, 'default' => false],
 			'reaction_score' => ['type' => self::INT, 'default' => 0, 'changeLog' => false, 'api' => true],
 			'vote_score' => ['type' => self::INT, 'default' => 0, 'changeLog' => false, 'api' => true],
-			'custom_title' => ['type' => self::STR, 'maxLength' => 50, 'default' => '',
+			'custom_title' => [
+				'type' => self::STR, 'maxLength' => 50, 'default' => '',
 				'censor' => true
 			],
 			'warning_points' => ['type' => self::UINT, 'forced' => true, 'default' => 0, 'changeLog' => false],

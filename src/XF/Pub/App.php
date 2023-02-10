@@ -36,48 +36,39 @@ class App extends \XF\App
 		$container['app.classType'] = 'Pub';
 		$container['app.defaultType'] = 'public';
 
-		$container['router'] = function (Container $c)
-		{
+		$container['router'] = function (Container $c) {
 			return $c['router.public'];
 		};
-		$container['session'] = function (Container $c)
-		{
+		$container['session'] = function (Container $c) {
 			return $c['session.public'];
 		};
 
-		$container['pageCache'] = function(Container $c)
-		{
+		$container['pageCache'] = function (Container $c) {
 			$options = $c['config']['pageCache'];
-			if (!$options['enabled'])
-			{
+			if (!$options['enabled']) {
 				return null;
 			}
 
 			$cache = $this->cache('page', false);
-			if (!$cache)
-			{
+			if (!$cache) {
 				return null;
 			}
 
 			$pageCache = new \XF\PageCache($c['request'], $cache, $options['lifetime']);
-			if (!$pageCache->isRequestCacheable())
-			{
+			if (!$pageCache->isRequestCacheable()) {
 				return null;
 			}
 
-			if ($options['routeMatches'] && !$pageCache->routeMatchesPrefixes((array)$options['routeMatches']))
-			{
+			if ($options['routeMatches'] && !$pageCache->routeMatchesPrefixes((array)$options['routeMatches'])) {
 				return null;
 			}
 
 			$pageCache->setRecordSessionActivity($options['recordSessionActivity']);
 
 			$onSetup = $options['onSetup'];
-			if ($onSetup instanceof \Closure)
-			{
+			if ($onSetup instanceof \Closure) {
 				$result = $onSetup($pageCache);
-				if ($result === false)
-				{
+				if ($result === false) {
 					return null;
 				}
 			}
@@ -104,10 +95,8 @@ class App extends \XF\App
 		$guestCacher = self::$allowPageCache ? $this->pageCache() : false;
 		$guestCacheChecked = false;
 
-		if ($allowShortCircuit)
-		{
-			switch ($request->getRequestUri())
-			{
+		if ($allowShortCircuit) {
+			switch ($request->getRequestUri()) {
 				case '/browserconfig.xml':
 				case '/crossdomain.xml':
 				case '/favicon.ico':
@@ -119,27 +108,21 @@ class App extends \XF\App
 
 			$extendedUrl = ltrim($request->getExtendedUrl(), '/');
 			$sitemapCounter = null;
-			if ($extendedUrl == 'sitemap.xml')
-			{
+			if ($extendedUrl == 'sitemap.xml') {
 				$sitemapCounter = 0;
-			}
-			else if (preg_match('#^sitemap-(\d+)\.xml$#', $extendedUrl, $match))
-			{
+			} else if (preg_match('#^sitemap-(\d+)\.xml$#', $extendedUrl, $match)) {
 				$sitemapCounter = intval($match[1]);
 			}
 
-			if ($sitemapCounter !== null)
-			{
+			if ($sitemapCounter !== null) {
 				/** @var \XF\Sitemap\Renderer $renderer */
 				$renderer = $this['sitemap.renderer'];
 				return $renderer->outputSitemap($this->response(), $sitemapCounter);
 			}
 
-			if ($guestCacher && $guestCacher->isDefinitelyGuest())
-			{
+			if ($guestCacher && $guestCacher->isDefinitelyGuest()) {
 				$cacheResponse = $guestCacher->getCachedPage($this);
-				if ($cacheResponse)
-				{
+				if ($cacheResponse) {
 					$this->isServedFromCache = true;
 					return $cacheResponse;
 				}
@@ -148,31 +131,27 @@ class App extends \XF\App
 		}
 
 		$session = $this->session();
-		if (!$session->exists())
-		{
+
+		if (!$session->exists()) {
 			$this->onSessionCreation($session);
 		}
 
 		$user = $this->getVisitorFromSession($session);
+
 		\XF::setVisitor($user);
 
-		if ($allowShortCircuit && !$user->user_id && $guestCacher && !$guestCacheChecked)
-		{
+		if ($allowShortCircuit && !$user->user_id && $guestCacher && !$guestCacheChecked) {
 			$cacheResponse = $guestCacher->getCachedPage($this);
-			if ($cacheResponse)
-			{
+			if ($cacheResponse) {
 				$this->isServedFromCache = true;
 				return $cacheResponse;
 			}
 		}
 
 		$visitor = \XF::visitor();
-		if ($visitor->user_id)
-		{
+		if ($visitor->user_id) {
 			$languageId = $visitor->language_id;
-		}
-		else
-		{
+		} else {
 			$styleId = intval($request->getCookie('style_id', 0));
 			$languageId = intval($request->getCookie('language_id', 0));
 			$username = $request->filter('_xfUsername', 'str', '');
@@ -185,8 +164,7 @@ class App extends \XF\App
 		}
 
 		$language = $this->language($languageId);
-		if (!$language->isUsable($visitor))
-		{
+		if (!$language->isUsable($visitor)) {
 			$language = $this->language(0);
 		}
 
@@ -206,69 +184,56 @@ class App extends \XF\App
 		$visitor = \XF::visitor();
 		$session = $this->session();
 
-		if (!$visitor->user_id)
-		{
+		if (!$visitor->user_id) {
 			return;
 		}
 
-		if ($this->options()->enableNotices)
-		{
-			if (!$session->keyExists('dismissedNotices'))
-			{
+		if ($this->options()->enableNotices) {
+			if (!$session->keyExists('dismissedNotices')) {
 				$updateDismissed = true;
-			}
-			else
-			{
+			} else {
 				$sessionLastNoticeUpdate = intval($session->get('lastNoticeUpdate'));
 				$dbLastNoticeReset = $this->get('notices.lastReset');
 				$updateDismissed = ($dbLastNoticeReset > $sessionLastNoticeUpdate);
 			}
 
-			if ($updateDismissed)
-			{
+			if ($updateDismissed) {
 				$session->dismissedNotices = $this->repository('XF:Notice')->getDismissedNoticesForUser($visitor);
 				$session->lastNoticeUpdate = \XF::$time;
 			}
 		}
 
-		if (!$session->promotionChecked)
-		{
+		if (!$session->promotionChecked) {
 			$session->promotionChecked = true;
 
 			// if we've recently been active, let cron handle it
-			if ($visitor->getValue('last_activity') < \XF::$time - 1800)
-			{
+			if ($visitor->getValue('last_activity') < \XF::$time - 1800) {
 				/** @var \XF\Repository\UserGroupPromotion $userGroupPromotionRepo */
 				$userGroupPromotionRepo = $this->repository('XF:UserGroupPromotion');
 				$userGroupPromotionRepo->updatePromotionsForUser($visitor);
 			}
 		}
 
-		if ($this->options()->enableTrophies && !$session->trophyChecked)
-		{
+		if ($this->options()->enableTrophies && !$session->trophyChecked) {
 			$session->trophyChecked = true;
 
 			// if we've recently been active, let cron handle it
-			if ($visitor->getValue('last_activity') < \XF::$time - 1800)
-			{
+			if ($visitor->getValue('last_activity') < \XF::$time - 1800) {
 				/** @var \XF\Repository\Trophy $trophyRepo */
 				$trophyRepo = $this->repository('XF:Trophy');
 				$trophyRepo->updateTrophiesForUser($visitor);
 			}
 		}
 
-		if (!$session->keyExists('previousActivity'))
-		{
+		if (!$session->keyExists('previousActivity')) {
 			$session->previousActivity = $visitor->getValue('last_activity'); // skip the getter to get what's in the DB
 		}
 
-		if ($visitor->alerts_unviewed && !$session->alertCountChecked)
-		{
+		if ($visitor->alerts_unviewed && !$session->alertCountChecked) {
 			$session->alertCountChecked = true;
 
 			// count unread/unviewed alerts if last activity was over 30 days ago (the alert expiry cut off)
-			if ($visitor->getValue('last_activity') < \XF::$time - (30 * 86400))
-			{
+			if ($visitor->getValue('last_activity') < \XF::$time - (30 * 86400)) {
 				/** @var \XF\Repository\UserAlert $alertRepo */
 				$alertRepo = $this->repository('XF:UserAlert');
 				$alertRepo->updateUnviewedCountForUser($visitor);
@@ -276,8 +241,7 @@ class App extends \XF\App
 			}
 		}
 
-		if ($visitor->last_summary_email_date === 0)
-		{
+		if ($visitor->last_summary_email_date === 0) {
 			$visitor->fastUpdate('last_summary_email_date', \XF::$time);
 		}
 	}
@@ -287,18 +251,17 @@ class App extends \XF\App
 		$visitor = \XF::visitor();
 		$session = $this->session();
 
-		if (!$visitor->is_moderator)
-		{
+		if (!$visitor->is_moderator) {
 			return;
 		}
 
 		$sessionReportCounts = $session->reportCounts;
 		$registryReportCounts = $this->container->reportCounts;
 
-		if ($sessionReportCounts === null
+		if (
+			$sessionReportCounts === null
 			|| ($sessionReportCounts && ($sessionReportCounts['lastBuilt'] < $registryReportCounts['lastModified']))
-		)
-		{
+		) {
 			/** @var \XF\Finder\Report $reportsFinder */
 			$reportsFinder = $this->finder('XF:Report');
 			$reports = $reportsFinder->isActive()->fetch()->filterViewable();
@@ -306,11 +269,9 @@ class App extends \XF\App
 			$total = 0;
 			$assigned = 0;
 
-			foreach ($reports AS $reportId => $report)
-			{
+			foreach ($reports as $reportId => $report) {
 				$total++;
-				if ($report->assigned_user_id == $visitor->user_id)
-				{
+				if ($report->assigned_user_id == $visitor->user_id) {
 					$assigned++;
 				}
 			}
@@ -327,10 +288,10 @@ class App extends \XF\App
 		$sessionUnapprovedCounts = $session->unapprovedCounts;
 		$registryUnapprovedCounts = $this->container->unapprovedCounts;
 
-		if ($sessionUnapprovedCounts === null
+		if (
+			$sessionUnapprovedCounts === null
 			|| ($sessionUnapprovedCounts && ($sessionUnapprovedCounts['lastBuilt'] < $registryUnapprovedCounts['lastModified']))
-		)
-		{
+		) {
 			/** @var \XF\Repository\ApprovalQueue $approvalQueueRepo */
 			$approvalQueueRepo = $this->repository('XF:ApprovalQueue');
 
@@ -351,8 +312,7 @@ class App extends \XF\App
 	{
 		$loginUserId = $this->loginFromRememberCookie($session);
 
-		if (!$loginUserId)
-		{
+		if (!$loginUserId) {
 			$this->request()->populateFromSearch($this->response());
 		}
 	}
@@ -360,15 +320,13 @@ class App extends \XF\App
 	protected function loginFromRememberCookie(\XF\Session\Session $session)
 	{
 		$rememberCookie = $this->request()->getCookie('user');
-		if (!$rememberCookie)
-		{
+		if (!$rememberCookie) {
 			return null;
 		}
 
 		/** @var \XF\Repository\UserRemember $rememberRepo */
 		$rememberRepo = $this->repository('XF:UserRemember');
-		if (!$rememberRepo->validateByCookieValue($rememberCookie, $remember))
-		{
+		if (!$rememberRepo->validateByCookieValue($rememberCookie, $remember)) {
 			$this->response()->setCookie('user', false);
 			return null;
 		}
@@ -376,8 +334,7 @@ class App extends \XF\App
 		/** @var \XF\Repository\User $userRepo */
 		$userRepo = $this->repository('XF:User');
 		$user = $userRepo->getVisitor($remember->user_id);
-		if (!$user)
-		{
+		if (!$user) {
 			return null;
 		}
 
@@ -385,8 +342,7 @@ class App extends \XF\App
 
 		/** @var \XF\Repository\Tfa $tfaRepo */
 		$tfaRepo = $this->repository('XF:Tfa');
-		if ($tfaRepo->isUserTfaConfirmationRequired($user, $trustKey))
-		{
+		if ($tfaRepo->isUserTfaConfirmationRequired($user, $trustKey)) {
 			$session->tfaLoginUserId = $user->user_id;
 			$session->tfaLoginDate = time();
 			$session->tfaLoginRedirect = true;
@@ -412,35 +368,28 @@ class App extends \XF\App
 		$visitor = \XF::visitor();
 
 		$viewOptions = $reply->getViewOptions();
-		if (!empty($viewOptions['style_id']))
-		{
+		if (!empty($viewOptions['style_id'])) {
 			$styleId = $viewOptions['style_id'];
 			$forceStyle = true;
-		}
-		else
-		{
+		} else {
 			$styleId = $visitor->style_id;
 			$forceStyle = false;
 		}
 
 		/** @var \XF\Style $style */
 		$style = $this->container->create('style', $styleId);
-		if ($style['style_id'] == $styleId)
-		{
+		if ($style['style_id'] == $styleId) {
 			// true if the style matches the requested one; if it didn't just accept it
-			if (!$forceStyle && !$style->isUsable($visitor))
-			{
+			if (!$forceStyle && !$style->isUsable($visitor)) {
 				$style = $this->container->create('style', 0);
 			}
 		}
 
 		$this->templater()->setStyle($style);
 
-		if (!empty($viewOptions['sessionActivity']) && self::$allowPageCache && !\XF::visitor()->user_id)
-		{
+		if (!empty($viewOptions['sessionActivity']) && self::$allowPageCache && !\XF::visitor()->user_id) {
 			$guestCacher = $this->pageCache();
-			if ($guestCacher)
-			{
+			if ($guestCacher) {
 				$guestCacher->setSessionActivity($viewOptions['sessionActivity']);
 			}
 		}
@@ -452,22 +401,18 @@ class App extends \XF\App
 	{
 		parent::complete($response);
 
-		if ($this->container->isCached('session'))
-		{
+		if ($this->container->isCached('session')) {
 			$session = $this->session();
-			if ($session->isStarted() && $session->hasData())
-			{
+			if ($session->isStarted() && $session->hasData()) {
 				$session->save();
 				$session->applyToResponse($response);
 			}
 			// don't save empty sessions as it would generally be pointless
 		}
 
-		if (self::$allowPageCache && !$this->isServedFromCache && !\XF::visitor()->user_id)
-		{
+		if (self::$allowPageCache && !$this->isServedFromCache && !\XF::visitor()->user_id) {
 			$guestCacher = $this->pageCache();
-			if ($guestCacher)
-			{
+			if ($guestCacher) {
 				$guestCacher->saveToCache($response, $this);
 			}
 		}
@@ -478,21 +423,18 @@ class App extends \XF\App
 	protected function renderPageHtml($content, array $params, AbstractReply $reply, AbstractRenderer $renderer)
 	{
 		$templateName = $params['template'] ?? 'PAGE_CONTAINER';
-		if (!$templateName)
-		{
+		if (!$templateName) {
 			return $content;
 		}
 
 		$templater = $this->templater();
 
-		if (!strpos($templateName, ':'))
-		{
+		if (!strpos($templateName, ':')) {
 			$templateName = 'public:' . $templateName;
 		}
 
 		$pageSection = $reply->getSectionContext();
-		if (isset($params['section']))
-		{
+		if (isset($params['section'])) {
 			$pageSection = $params['section'];
 			$reply->setSectionContext($pageSection);
 		}
@@ -506,17 +448,12 @@ class App extends \XF\App
 		$params['containerKey'] = $reply->getContainerKey();
 		$params['contentKey'] = $reply->getContentKey();
 
-		if ($reply instanceof \XF\Mvc\Reply\View)
-		{
+		if ($reply instanceof \XF\Mvc\Reply\View) {
 			$params['view'] = $reply->getViewClass();
 			$params['template'] = $reply->getTemplateName();
-		}
-		else if ($reply instanceof \XF\Mvc\Reply\Error || $reply->getResponseCode() >= 400)
-		{
+		} else if ($reply instanceof \XF\Mvc\Reply\Error || $reply->getResponseCode() >= 400) {
 			$params['template'] = 'error';
-		}
-		else if ($reply instanceof \XF\Mvc\Reply\Message)
-		{
+		} else if ($reply instanceof \XF\Mvc\Reply\Message) {
 			$params['template'] = 'message_page';
 		}
 
@@ -527,12 +464,9 @@ class App extends \XF\App
 		$params['navTree'] = $navTree;
 
 		// note that this intentionally only selects a top level entry
-		if (isset($navTree[$pageSection]))
-		{
+		if (isset($navTree[$pageSection])) {
 			$selectedNavEntry = $navTree[$pageSection];
-		}
-		else
-		{
+		} else {
 			$defaultNavId = $this->get('defaultNavigationId');
 			$selectedNavEntry = $navTree[$defaultNavId] ?? null;
 		}
@@ -546,8 +480,7 @@ class App extends \XF\App
 		$skipSidebarWidgets = $params['skipSidebarWidgets'] ?? false;
 
 		// TODO: These positions should receive some context (could just pass in $params but we want this for non global positions too)
-		if (!$skipSidebarWidgets)
-		{
+		if (!$skipSidebarWidgets) {
 			$topWidgets = $templater->widgetPosition('pub_sidebar_top');
 			$bottomWidgets = $templater->widgetPosition('pub_sidebar_bottom');
 			$templater->modifySidebarHtml('_xfWidgetPositionPubSidebarTop', $topWidgets, 'prepend');
@@ -567,17 +500,14 @@ class App extends \XF\App
 		$navigation = null;
 
 		$file = \XF\Util\File::getCodeCachePath() . '/' . $this->container['navigation.file'];
-		if (file_exists($file))
-		{
+		if (file_exists($file)) {
 			$closure = include($file);
-			if ($closure)
-			{
+			if ($closure) {
 				$navigation = $this->templater()->renderNavigationClosure($closure, $selectedNav, $params);
 			}
 		}
 
-		if (!$navigation || !isset($navigation['tree']))
-		{
+		if (!$navigation || !isset($navigation['tree'])) {
 			$navigation = [
 				'tree' => [],
 				'flat' => []
@@ -596,16 +526,13 @@ class App extends \XF\App
 		$noticeList = new $class($this, \XF::visitor(), $pageParams);
 
 		$dismissedNotices = $this->session()->dismissedNotices;
-		if ($dismissedNotices)
-		{
+		if ($dismissedNotices) {
 			$noticeList->setDismissed($dismissedNotices);
 		}
 		$this->addDefaultNotices($noticeList, $pageParams);
 
-		if ($this->options()->enableNotices)
-		{
-			foreach ($this->container('notices') AS $key => $notice)
-			{
+		if ($this->options()->enableNotices) {
+			foreach ($this->container('notices') as $key => $notice) {
 				$noticeList->addConditionalNotice($key, $notice['notice_type'], $notice['message'], $notice);
 			}
 		}
@@ -621,46 +548,52 @@ class App extends \XF\App
 		$visitor = \XF::visitor();
 		$templater = $this->templater();
 
-		if (\XF::$debugMode && \XF::$versionId != $options->currentVersionId)
-		{
-			$noticeList->addNotice('upgrade_pending', 'block',
+		if (\XF::$debugMode && \XF::$versionId != $options->currentVersionId) {
+			$noticeList->addNotice(
+				'upgrade_pending',
+				'block',
 				$templater->renderTemplate('public:notice_upgrade_pending', $pageParams),
 				['display_style' => 'accent']
 			);
 		}
 
-		if (!$options->boardActive && $visitor->is_admin)
-		{
-			$noticeList->addNotice('board_closed', 'block',
+		if (!$options->boardActive && $visitor->is_admin) {
+			$noticeList->addNotice(
+				'board_closed',
+				'block',
 				$templater->renderTemplate('public:notice_board_closed', $pageParams),
 				['display_style' => 'accent']
 			);
 		}
 
-		if ($visitor->user_id && in_array($visitor->user_state, ['email_confirm', 'email_confirm_edit']))
-		{
-			$noticeList->addNotice('confirm_email', 'block',
+		if ($visitor->user_id && in_array($visitor->user_state, ['email_confirm', 'email_confirm_edit'])) {
+			$noticeList->addNotice(
+				'confirm_email',
+				'block',
 				$templater->renderTemplate('public:notice_confirm_email', $pageParams)
 			);
 		}
 
-		if ($visitor->user_id && $visitor->user_state == 'email_bounce')
-		{
-			$noticeList->addNotice('email_bounce', 'block',
+		if ($visitor->user_id && $visitor->user_state == 'email_bounce') {
+			$noticeList->addNotice(
+				'email_bounce',
+				'block',
 				$templater->renderTemplate('public:notice_email_bounce', $pageParams)
 			);
 		}
 
-		if ($visitor->user_id && $visitor->user_state == 'moderated')
-		{
-			$noticeList->addNotice('moderated', 'block',
+		if ($visitor->user_id && $visitor->user_state == 'moderated') {
+			$noticeList->addNotice(
+				'moderated',
+				'block',
 				$templater->renderTemplate('public:notice_moderated', $pageParams)
 			);
 		}
 
-		if ($visitor->canUsePushNotifications())
-		{
-			$noticeList->addNotice('enable_push', 'bottom_fixer',
+		if ($visitor->canUsePushNotifications()) {
+			$noticeList->addNotice(
+				'enable_push',
+				'bottom_fixer',
 				$templater->renderTemplate('public:notice_enable_push', $pageParams),
 				[
 					'display_style' => 'custom',
@@ -669,9 +602,10 @@ class App extends \XF\App
 			);
 		}
 
-		if (!$visitor->user_id && $this->options()->showFirstCookieNotice)
-		{
-			$noticeList->addNotice('cookies', 'bottom_fixer',
+		if (!$visitor->user_id && $this->options()->showFirstCookieNotice) {
+			$noticeList->addNotice(
+				'cookies',
+				'bottom_fixer',
 				$templater->renderTemplate('public:notice_cookies', $pageParams),
 				[
 					'dismissible' => true,

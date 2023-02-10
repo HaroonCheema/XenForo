@@ -35,7 +35,7 @@ class UserReject extends Entity
 		$structure->primaryKey = 'user_id';
 		$structure->columns = [
 			'user_id' => ['type' => self::UINT, 'required' => true,
-				'unique' => 'this_user_is_already_rejected'
+				'unique' => 'this_user_is_already_rejected', 'max' => PHP_INT_MAX
 			],
 			'reject_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'reject_user_id' => ['type' => self::UINT, 'default' => 0],

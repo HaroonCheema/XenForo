@@ -48,7 +48,7 @@ class Draft extends Entity
 		$structure->columns = [
 			'draft_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'draft_key' => ['type' => self::STR, 'maxLength' => 75, 'required' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'last_update' => ['type' => self::UINT, 'default' => \XF::$time],
 			'message' => ['type' => self::STR],
 			'extra_data' => ['type' => self::JSON_ARRAY, 'default' => []]

@@ -14,6 +14,7 @@ return array (
   'permission.conversation_start' => 'Start conversations',
   'permission.conversation_uploadAttachment' => 'Upload attachments to conversations',
   'permission.conversation_uploadVideo' => 'Upload video/audio to conversations',
+  'permission.formThreadModeration_canViewParentThread' => 'Can View Parent Thread',
   'permission.forum_approveUnapprove' => 'Approve / unapprove threads / posts',
   'permission.forum_contentVote' => 'Vote on threads/posts (when applicable)',
   'permission.forum_deleteAnyPost' => 'Delete any post',
@@ -115,4 +116,7 @@ return array (
   'permission.signature_maxSmilies' => 'Maximum smilies',
   'permission.signature_maxTextSize' => 'Maximum text size (1 - 7)',
   'permission.signature_media' => 'Allow embedded media',
+  'permission.snogForms_canApproveForms' => 'Can approve/deny submitted forms',
+  'permission.snogForms_canExtendPolls' => 'Can extend promotion poll end date',
+  'permission.snogForms_canViewForms' => 'Can view forms',
 );

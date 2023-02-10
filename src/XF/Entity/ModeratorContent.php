@@ -77,7 +77,7 @@ class ModeratorContent extends Entity
 			'moderator_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'content_id' => ['type' => self::UINT, 'required' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true]
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX]
 		];
 		$structure->getters = [
 			'content_title' => false

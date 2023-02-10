@@ -39,12 +39,9 @@ class UserProfile extends Entity
 {
 	public function isFollowing($user)
 	{
-		if ($user instanceof User)
-		{
+		if ($user instanceof User) {
 			$userId = $user->user_id;
-		}
-		else
-		{
+		} else {
 			$userId = $user;
 		}
 
@@ -53,18 +50,15 @@ class UserProfile extends Entity
 
 	protected function verifyLocation($location)
 	{
-		if ($this->getOption('admin_edit'))
-		{
+		if ($this->getOption('admin_edit')) {
 			return true;
 		}
 
-		if ($this->isUpdate() && $location == $this->getExistingValue('location'))
-		{
+		if ($this->isUpdate() && $location == $this->getExistingValue('location')) {
 			return true;
 		}
 
-		if ($this->getOption('location_required') && $location === '')
-		{
+		if ($this->getOption('location_required') && $location === '') {
 			$this->error(\XF::phrase('please_enter_valid_location'), 'location');
 			return false;
 		}
@@ -75,8 +69,7 @@ class UserProfile extends Entity
 	protected function verifyLongStringField($value, $key)
 	{
 		$maxLength = $this->getOption('max_long_string_length');
-		if ($maxLength && utf8_strlen($value) > $maxLength)
-		{
+		if ($maxLength && utf8_strlen($value) > $maxLength) {
 			$this->error(\XF::phrase('please_enter_message_with_no_more_than_x_characters', ['count' => $maxLength]), $key);
 			return false;
 		}
@@ -90,26 +83,24 @@ class UserProfile extends Entity
 		$month = intval($month);
 		$year = intval($year);
 
-		if (!$day || !$month)
-		{
+		if (!$day || !$month) {
 			$this->dob_day = 0;
 			$this->dob_month = 0;
 			$this->dob_year = 0;
 			return true;
 		}
 
-		if ($year && $year < 100)
-		{
+		if ($year && $year < 100) {
 			$year += $year < 30 ? 2000 : 1900;
 		}
 
 		$testYear = $year ? $year : 2008; // leap year
 
-		if ($testYear < 1900
+		if (
+			$testYear < 1900
 			|| !checkdate($month, $day, $testYear)
 			|| gmmktime(0, 0, 0, $month, $day, $testYear) > \XF::$time + 86400 // +1 day to be careful with TZs ahead of GMT
-		)
-		{
+		) {
 			$this->dob_day = 0;
 			$this->dob_month = 0;
 			$this->dob_year = 0;
@@ -129,8 +120,7 @@ class UserProfile extends Entity
 	{
 		list($cYear, $cMonth, $cDay) = explode('-', $this->app()->language()->date(\XF::$time, 'Y-m-d'));
 		$age = $cYear - $year;
-		if ($cMonth < $month || ($cMonth == $month && $cDay < $day))
-		{
+		if ($cMonth < $month || ($cMonth == $month && $cDay < $day)) {
 			$age--;
 		}
 
@@ -143,17 +133,13 @@ class UserProfile extends Entity
 	 */
 	public function getAge($bypassPrivacy = false)
 	{
-		if (empty($this->dob_year) || empty($this->dob_month) || empty($this->dob_day))
-		{
+		if (empty($this->dob_year) || empty($this->dob_month) || empty($this->dob_day)) {
 			return false;
 		}
 
-		if ($this->dob_year && ($bypassPrivacy || ($this->User->Option->show_dob_date && $this->User->Option->show_dob_year)))
-		{
+		if ($this->dob_year && ($bypassPrivacy || ($this->User->Option->show_dob_date && $this->User->Option->show_dob_year))) {
 			return $this->calculateAge($this->dob_year, $this->dob_month, $this->dob_day);
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -165,27 +151,21 @@ class UserProfile extends Entity
 	 */
 	public function getBirthday($bypassPrivacy = false)
 	{
-		if ($this->dob_day && ($bypassPrivacy || $this->User->Option->show_dob_date))
-		{
-			if ($this->dob_year && ($bypassPrivacy || $this->User->Option->show_dob_year))
-			{
+		if ($this->dob_day && ($bypassPrivacy || $this->User->Option->show_dob_date)) {
+			if ($this->dob_year && ($bypassPrivacy || $this->User->Option->show_dob_year)) {
 				return [
 					'age' => $this->getAge($bypassPrivacy),
 					'timeStamp' => new \DateTime("$this->dob_year-$this->dob_month-$this->dob_day"),
 					'format' => 'absolute'
 				];
-			}
-			else
-			{
+			} else {
 				return [
 					'age' => false,
 					'timeStamp' => new \DateTime("2000-$this->dob_month-$this->dob_day"),
 					'format' => 'monthDay'
 				];
 			}
-		}
-		else
-		{
+		} else {
 			return [];
 		}
 	}
@@ -194,7 +174,8 @@ class UserProfile extends Entity
 	{
 		$userId = $this->user_id;
 
-		return sprintf('data://profile_banners/%s/%d/%d.jpg',
+		return sprintf(
+			'data://profile_banners/%s/%d/%d.jpg',
 			$size,
 			floor($userId / 1000),
 			$userId
@@ -206,22 +187,18 @@ class UserProfile extends Entity
 		$app = $this->app();
 
 		$sizeMap = $app->container('profileBannerSizeMap');
-		if (!isset($sizeMap[$sizeCode]))
-		{
+		if (!isset($sizeMap[$sizeCode])) {
 			// Always fallback to 'l' by default in the event of an unknown size (most common)
 			$sizeCode = 'l';
 		}
 
-		if ($this->banner_date)
-		{
+		if ($this->banner_date) {
 			$group = floor($this->user_id / 1000);
 			return $app->applyExternalDataUrl(
 				"profile_banners/{$sizeCode}/{$group}/{$this->user_id}.jpg?{$this->banner_date}",
 				$canonical
 			);
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}
@@ -256,10 +233,8 @@ class UserProfile extends Entity
 	{
 		$user = $this->User;
 
-		if ($this->isUpdate() && $this->isChanged('password_date') && $user->security_lock)
-		{
-			$user->whenSaveable(function (User $user)
-			{
+		if ($this->isUpdate() && $this->isChanged('password_date') && $user->security_lock) {
+			$user->whenSaveable(function (User $user) {
 				$user->security_lock = '';
 				$user->save();
 			});
@@ -272,22 +247,26 @@ class UserProfile extends Entity
 		$structure->shortName = 'XF:UserProfile';
 		$structure->primaryKey = 'user_id';
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true, 'changeLog' => false],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'changeLog' => false, 'max' => PHP_INT_MAX],
 			'dob_day' => ['type' => self::UINT, 'max' => 31, 'default' => 0],
 			'dob_month' => ['type' => self::UINT, 'max' => 12, 'default' => 0],
 			'dob_year' => ['type' => self::UINT, 'max' => 2100, 'default' => 0],
-			'signature' => ['type' => self::STR, 'maxLength' => 20000, 'default' => '',
+			'signature' => [
+				'type' => self::STR, 'maxLength' => 20000, 'default' => '',
 				'verify' => 'verifyLongStringField',
 				'censor' => true
 			],
-			'website' => ['type' => self::STR, 'default' => '',
+			'website' => [
+				'type' => self::STR, 'default' => '',
 				'censor' => true,
 				'match' => 'url_empty'
 			],
-			'location' => ['type' => self::STR, 'maxLength' => 50, 'default' => '',
+			'location' => [
+				'type' => self::STR, 'maxLength' => 50, 'default' => '',
 				'censor' => true
 			],
-			'following' => ['type' => self::LIST_COMMA, 'default' => [],
+			'following' => [
+				'type' => self::LIST_COMMA, 'default' => [],
 				'list' => ['type' => 'posint', 'unique' => true, 'sort' => SORT_NUMERIC],
 				'changeLog' => false
 			],
@@ -296,7 +275,8 @@ class UserProfile extends Entity
 			'avatar_crop_y' => ['type' => self::UINT, 'default' => 0, 'changeLog' => false],
 			'banner_date' => ['type' => self::UINT, 'default' => 0],
 			'banner_position_y' => ['type' => self::UINT, 'max' => 100, 'default' => null, 'nullable' => true, 'changeLog' => false],
-			'about' => ['type' => self::STR, 'maxLength' => 20000, 'default' => '',
+			'about' => [
+				'type' => self::STR, 'maxLength' => 20000, 'default' => '',
 				'verify' => 'verifyLongStringField',
 				'censor' => true
 			],

@@ -97,7 +97,7 @@ class UserRemember extends Entity
 		$structure->primaryKey = 'remember_id';
 		$structure->columns = [
 			'remember_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'remember_key' => ['type' => self::BINARY, 'maxLength' => 32, 'required' => true],
 			'start_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'expiry_date' => ['type' => self::UINT, 'required' => true]

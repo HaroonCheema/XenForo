@@ -29,7 +29,7 @@ class SpamCleanerLog extends Entity
 		$structure->primaryKey = 'spam_cleaner_log_id';
 		$structure->columns = [
 			'spam_cleaner_log_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'username' => ['type' => self::STR, 'required' => true],
 			'applying_user_id' => ['type' => self::UINT, 'required' => true],
 			'applying_username' => ['type' => self::STR, 'required' => true],

@@ -79,7 +79,7 @@ class PermissionCombination extends Entity implements \XF\Mvc\Entity\Proxyable
 		$structure->primaryKey = 'permission_combination_id';
 		$structure->columns = [
 			'permission_combination_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'default' => 0],
+			'user_id' => ['type' => self::UINT, 'default' => 0, 'max' => PHP_INT_MAX],
 			'user_group_list' => ['type' => self::LIST_COMMA, 'required' => true,
 				'list' => ['type' => 'posint', 'unique' => true, 'sort' => SORT_NUMERIC]
 			],

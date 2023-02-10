@@ -25,7 +25,7 @@ class ForumRead extends Entity
 		$structure->primaryKey = 'forum_read_id';
 		$structure->columns = [
 			'forum_read_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'node_id' => ['type' => self::UINT, 'required' => true],
 			'forum_read_date' => ['type' => self::UINT, 'required' => true]
 		];

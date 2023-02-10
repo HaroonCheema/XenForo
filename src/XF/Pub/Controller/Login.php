@@ -15,10 +15,8 @@ class Login extends AbstractController
 
 	public function actionIndex()
 	{
-		if (\XF::visitor()->user_id)
-		{
-			if ($this->filter('check', 'bool'))
-			{
+		if (\XF::visitor()->user_id) {
+			if ($this->filter('check', 'bool')) {
 				return $this->redirect($this->getDynamicRedirectIfNot($this->buildLink('login')), '');
 			}
 
@@ -35,10 +33,8 @@ class Login extends AbstractController
 
 	public function actionLogin()
 	{
-		if (\XF::visitor()->user_id)
-		{
-			if ($this->filter('check', 'bool'))
-			{
+		if (\XF::visitor()->user_id) {
+			if ($this->filter('check', 'bool')) {
 				return $this->redirect($this->getDynamicRedirectIfNot($this->buildLink('login')));
 			}
 
@@ -47,8 +43,7 @@ class Login extends AbstractController
 
 		$redirect = $this->getDynamicRedirectIfNot($this->buildLink('login'));
 
-		if (!$this->isPost())
-		{
+		if (!$this->isPost()) {
 			$providers = $this->repository('XF:ConnectedAccount')->getUsableProviders(false);
 			$viewParams = [
 				'redirect' => $redirect,
@@ -69,12 +64,9 @@ class Login extends AbstractController
 
 		/** @var \XF\Service\User\Login $loginService */
 		$loginService = $this->service('XF:User\Login', $input['login'], $ip);
-		if ($loginService->isLoginLimited($limitType))
-		{
-			if ($limitType == 'captcha')
-			{
-				if (!$this->captchaIsValid(true))
-				{
+		if ($loginService->isLoginLimited($limitType)) {
+			if ($limitType == 'captcha') {
+				if (!$this->captchaIsValid(true)) {
 					$viewParams = [
 						'captcha' => true,
 						'login' => $input['login'],
@@ -83,16 +75,16 @@ class Login extends AbstractController
 					];
 					return $this->view('XF:Login\Form', 'login', $viewParams);
 				}
-			}
-			else
-			{
+			} else {
 				return $this->error(\XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'));
 			}
 		}
 
 		$user = $loginService->validate($input['password'], $error);
-		if (!$user)
-		{
+
+
+
+		if (!$user) {
 			$loginLimited = $loginService->isLoginLimited($limitType);
 			$viewParams = [
 				'captcha' => ($loginLimited && $limitType == 'captcha'),
@@ -112,6 +104,8 @@ class Login extends AbstractController
 				'remember' => $input['remember'] ? 1 : null
 			])
 		);
+
+
 		$loginPlugin->completeLogin($user, $input['remember']);
 
 		// TODO: POST handling?
@@ -131,8 +125,7 @@ class Login extends AbstractController
 		$redirect = $this->getDynamicRedirectIfNot($this->buildLink('login'));
 
 		$result = $loginPlugin->runTfaCheck($redirect);
-		switch ($result->getResult())
-		{
+		switch ($result->getResult()) {
 			case LoginTfaResult::RESULT_ERROR:
 				return $this->error($result->getError());
 
@@ -171,15 +164,13 @@ class Login extends AbstractController
 		/** @var \XF\Entity\ApiLoginToken|null $token */
 		$token = $this->em()->findOne('XF:ApiLoginToken', ['login_token' => $tokenValue]);
 
-		if (!$token || !$token->isValid($this->request->getIp()))
-		{
+		if (!$token || !$token->isValid($this->request->getIp())) {
 			return $this->error(\XF::phrase('page_no_longer_available_back_try_again'));
 		}
 
 		$remember = $this->filter('remember', 'bool');
 
-		if (!\XF::visitor()->user_id)
-		{
+		if (!\XF::visitor()->user_id) {
 			/** @var \XF\ControllerPlugin\Login $loginPlugin */
 			$loginPlugin = $this->plugin('XF:Login');
 			$loginPlugin->completeLogin($token->User, $remember);
@@ -188,8 +179,7 @@ class Login extends AbstractController
 		$token->delete();
 
 		$returnUrl = $this->filter('return_url', 'str');
-		if (!$returnUrl)
-		{
+		if (!$returnUrl) {
 			$returnUrl = $this->buildLink('index');
 		}
 
@@ -198,14 +188,12 @@ class Login extends AbstractController
 
 	public function checkCsrfIfNeeded($action, ParameterBag $params)
 	{
-		switch (strtolower($action))
-		{
+		switch (strtolower($action)) {
 			case 'keepalive':
 				return;
 
 			case 'login':
-				if (!$this->app->config('enableLoginCsrf'))
-				{
+				if (!$this->app->config('enableLoginCsrf')) {
 					return;
 				}
 		}
@@ -213,12 +201,26 @@ class Login extends AbstractController
 		parent::checkCsrfIfNeeded($action, $params);
 	}
 
-	public function updateSessionActivity($action, ParameterBag $params, AbstractReply &$reply) {}
+	public function updateSessionActivity($action, ParameterBag $params, AbstractReply &$reply)
+	{
+	}
 
-	public function assertViewingPermissions($action) {}
-	public function assertCorrectVersion($action) {}
-	public function assertBoardActive($action) {}
-	public function assertTfaRequirement($action) {}
-	public function assertPolicyAcceptance($action) {}
-	public function assertNotSecurityLocked($action) {}
+	public function assertViewingPermissions($action)
+	{
+	}
+	public function assertCorrectVersion($action)
+	{
+	}
+	public function assertBoardActive($action)
+	{
+	}
+	public function assertTfaRequirement($action)
+	{
+	}
+	public function assertPolicyAcceptance($action)
+	{
+	}
+	public function assertNotSecurityLocked($action)
+	{
+	}
 }

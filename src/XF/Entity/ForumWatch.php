@@ -25,7 +25,7 @@ class ForumWatch extends Entity
 		$structure->shortName = 'XF:ForumWatch';
 		$structure->primaryKey = ['user_id', 'node_id'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'node_id' => ['type' => self::UINT, 'required' => true],
 			'notify_on' => ['type' => self::STR, 'default' => '',
 				'allowedValues' => ['', 'thread', 'message']

@@ -63,7 +63,7 @@ class UserIgnored extends Entity
 		$structure->shortName = 'XF:UserIgnored';
 		$structure->primaryKey = ['user_id', 'ignored_user_id'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'ignored_user_id' => ['type' => self::UINT, 'required' => true]
 		];
 		$structure->getters = [];

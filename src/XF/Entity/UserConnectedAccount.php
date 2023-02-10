@@ -45,7 +45,7 @@ class UserConnectedAccount extends Entity
 		$structure->shortName = 'XF:UserConnectedAccount';
 		$structure->primaryKey = ['user_id', 'provider'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'provider' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'provider_key' => ['type' => self::STR, 'required' => true],
 			'extra_data' => ['type' => self::JSON_ARRAY, 'default' => []],

@@ -26,12 +26,10 @@ class App extends \XF\App
 		$container['app.defaultType'] = 'admin';
 		$container['job.manual.allow'] = true;
 
-		$container['router'] = function (Container $c)
-		{
+		$container['router'] = function (Container $c) {
 			return $c['router.admin'];
 		};
-		$container['session'] = function (Container $c)
-		{
+		$container['session'] = function (Container $c) {
 			return $c['session.admin'];
 		};
 	}
@@ -53,14 +51,10 @@ class App extends \XF\App
 		$user = $this->getVisitorFromSession($this->session(), ['Admin']);
 		\XF::setVisitor($user);
 
-		if ($user->user_id)
-		{
-			if ($user->Admin && $user->Admin->admin_language_id)
-			{
+		if ($user->user_id) {
+			if ($user->Admin && $user->Admin->admin_language_id) {
 				$languageId = $user->Admin->admin_language_id;
-			}
-			else
-			{
+			} else {
 				$languageId = $user->language_id;
 			}
 
@@ -75,20 +69,22 @@ class App extends \XF\App
 
 	public function complete(Response $response)
 	{
+
+
 		parent::complete($response);
 
-		if ($this->container->isCached('session'))
-		{
+		if ($this->container->isCached('session')) {
 			$session = $this->session();
 
-			if ($session->isStarted() && $session->hasData())
-			{
+			if ($session->isStarted() && $session->hasData()) {
 				$session->save();
 				$session->applyToResponse($response);
 			}
 		}
 
 		$this->fire('app_admin_complete', [$this, &$response]);
+
+		
 	}
 
 	public function preRender(AbstractReply $reply, $responseType)
@@ -102,13 +98,10 @@ class App extends \XF\App
 	public function renderPage($content, AbstractReply $reply, AbstractRenderer $renderer)
 	{
 		$response = $renderer->getResponse();
-		if ($response->httpCode() >= 300 && $response->httpCode() <= 307)
-		{
-			if ($this->container->isCached('job.manager') && $this->jobManager()->hasManualEnqueued())
-			{
+		if ($response->httpCode() >= 300 && $response->httpCode() <= 307) {
+			if ($this->container->isCached('job.manager') && $this->jobManager()->hasManualEnqueued()) {
 				$pageParams = $renderer->getTemplater()->pageParams;
-				if (empty($pageParams['skipManualJobRun']))
-				{
+				if (empty($pageParams['skipManualJobRun'])) {
 					$onlyIds = implode(',', array_keys($this->jobManager()->getManualEnqueued()));
 
 					$url = $response->redirect();
@@ -128,28 +121,23 @@ class App extends \XF\App
 		$templateName = $params['template'] ?? 'PAGE_CONTAINER';
 
 		$viewOptions = $reply->getViewOptions();
-		if (!empty($viewOptions['force_page_template']))
-		{
+		if (!empty($viewOptions['force_page_template'])) {
 			$templateName = $viewOptions['force_page_template'];
 		}
 
-		if (!$templateName)
-		{
+		if (!$templateName) {
 			return $content;
 		}
 
-		if (!\XF::visitor()->is_admin)
-		{
+		if (!\XF::visitor()->is_admin) {
 			$templateName = 'LOGIN_CONTAINER';
 		}
 
-		if (!strpos($templateName, ':'))
-		{
+		if (!strpos($templateName, ':')) {
 			$templateName = 'admin:' . $templateName;
 		}
 
-		if ($reply instanceof \XF\Mvc\Reply\View)
-		{
+		if ($reply instanceof \XF\Mvc\Reply\View) {
 			$params['view'] = $reply->getViewClass();
 			$params['template'] = $reply->getTemplateName();
 		}
@@ -161,48 +149,35 @@ class App extends \XF\App
 		$sectionContext = $params['section'] ?? $reply->getSectionContext();
 		$path = $navigation->getPathTo($sectionContext, true);
 
-		if ($path)
-		{
+		if ($path) {
 			$sectionGroup = reset($path);
 			$selectedTab = $sectionGroup['navigation_id'];
-		}
-		else
-		{
+		} else {
 			$selectedTab = null;
 		}
 
 		$breadcrumbPath = isset($params['breadcrumbPath']) ? $navigation->getPathTo($params['breadcrumbPath'], true) : $path;
-		if ($breadcrumbPath)
-		{
+		if ($breadcrumbPath) {
 			$finalBreadcrumb = end($breadcrumbPath);
 
-			if (isset($params['skipBreadcrumb']))
-			{
+			if (isset($params['skipBreadcrumb'])) {
 				$skipBreadcrumb = $params['skipBreadcrumb'];
-			}
-			else if ($finalBreadcrumb['link']
+			} else if (
+				$finalBreadcrumb['link']
 				&& $this->request()->getRequestUri() == $this->router()->buildLink($finalBreadcrumb['link'])
-			)
-			{
+			) {
 				$skipBreadcrumb = $finalBreadcrumb['navigation_id'];
-			}
-			else
-			{
+			} else {
 				$skipBreadcrumb = [];
 			}
 
-			if ($skipBreadcrumb === true)
-			{
+			if ($skipBreadcrumb === true) {
 				$breadcrumbPath = [];
-			}
-			else
-			{
-				if (!is_array($skipBreadcrumb))
-				{
+			} else {
+				if (!is_array($skipBreadcrumb)) {
 					$skipBreadcrumb = [$skipBreadcrumb];
 				}
-				foreach ($skipBreadcrumb AS $skip)
-				{
+				foreach ($skipBreadcrumb as $skip) {
 					unset($breadcrumbPath[$skip]);
 				}
 			}
@@ -210,9 +185,7 @@ class App extends \XF\App
 			$appendBreadcrumbs = !empty($params['breadcrumbs']) ? $params['breadcrumbs'] : [];
 			$breadcrumbs = $this->getBreadcrumbs($breadcrumbPath);
 			$breadcrumbs = array_merge($breadcrumbs, $appendBreadcrumbs);
-		}
-		else
-		{
+		} else {
 			$breadcrumbs = !empty($params['breadcrumbs']) ? $params['breadcrumbs'] : [];
 		}
 
@@ -227,8 +200,7 @@ class App extends \XF\App
 		$params['selectedNavLink'] = $sectionContext;
 		$params['breadcrumbs'] = $breadcrumbs;
 
-		$params['upgradePending'] = (
-			\XF::$debugMode
+		$params['upgradePending'] = (\XF::$debugMode
 			&& \XF::$versionId != $this->options()->currentVersionId
 		);
 		$params['listenersDisabled'] = $this->config('enableListeners') ? false : true;
@@ -250,10 +222,8 @@ class App extends \XF\App
 	{
 		$router = $this->router();
 		$breadcrumbs = [];
-		foreach ($breadcrumbPath AS $crumb)
-		{
-			if (!$crumb['link'])
-			{
+		foreach ($breadcrumbPath as $crumb) {
+			if (!$crumb['link']) {
 				continue;
 			}
 

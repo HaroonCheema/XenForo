@@ -137,7 +137,7 @@ class UsernameChange extends Entity
 		$structure->primaryKey = 'change_id';
 		$structure->columns = [
 			'change_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'old_username' => ['type' => self::STR, 'maxLength' => 50, 'required' => true],
 			'new_username' => ['type' => self::STR, 'maxLength' => 50, 'required' => true],
 			'change_reason' => ['type' => self::STR, 'maxLength' => 200, 'default' => ''],

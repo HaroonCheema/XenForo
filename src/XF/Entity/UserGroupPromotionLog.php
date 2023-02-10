@@ -25,7 +25,7 @@ class UserGroupPromotionLog extends Entity
 		$structure->primaryKey = ['promotion_id', 'user_id'];
 		$structure->columns = [
 			'promotion_id' => ['type' => self::UINT, 'required' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'promotion_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'promotion_state' => ['type' => self::STR, 'default' => 'automatic',
 				'allowedValues' => ['automatic', 'manual', 'disabled']

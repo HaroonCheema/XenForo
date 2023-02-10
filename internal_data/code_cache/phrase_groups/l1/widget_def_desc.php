@@ -14,6 +14,8 @@ return array (
   'widget_def_desc.php_callback' => 'Allows you to render the contents of a widget using a PHP callback. The callback should return the \\XF\\Widget\\WidgetRenderer object, set up with the template name and params necessary to render the widget.',
   'widget_def_desc.search_forum' => 'Displays a block containing a list of X threads from a search forum.',
   'widget_def_desc.share_page' => 'Adds a set of sharing buttons into a block to allow the current page to be shared across social media.',
+  'widget_def_desc.snog_forms' => 'Displays a list of available forms.',
+  'widget_def_desc.snog_forms_form' => 'Displays a selected forms.',
   'widget_def_desc.template_syntax' => 'Widget that creates an associated template which will allow you to display XF template syntax and HTML.',
   'widget_def_desc.thread_poll' => 'Displays the specified poll in a widget.',
   'widget_def_desc.visitor_panel' => 'Displays the visitor\'s avatar and basic information to the visitor about themselves.',

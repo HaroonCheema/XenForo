@@ -21,18 +21,21 @@ class UserPrivacy extends Entity
 {
 	public function isPrivacyCheckMet($privacyKey, \XF\Entity\User $user)
 	{
-		if ($this->user_id == $user->user_id || $user->canBypassUserPrivacy())
-		{
+		if ($this->user_id == $user->user_id || $user->canBypassUserPrivacy()) {
 			return true;
 		}
 
-		switch ($this->{$privacyKey})
-		{
-			case 'everyone': return true;
-			case 'none':     return false;
-			case 'members':  return ($user->user_id > 0);
-			case 'followed': return $this->User->isFollowing($user);
-			default:         return true;
+		switch ($this->{$privacyKey}) {
+			case 'everyone':
+				return true;
+			case 'none':
+				return false;
+			case 'members':
+				return ($user->user_id > 0);
+			case 'followed':
+				return $this->User->isFollowing($user);
+			default:
+				return true;
 		}
 	}
 
@@ -40,13 +43,11 @@ class UserPrivacy extends Entity
 	{
 		$choices = ['members', 'followed', 'none'];
 
-		if (!in_array($key, ['allow_post_profile', 'allow_send_personal_conversation']))
-		{
+		if (!in_array($key, ['allow_post_profile', 'allow_send_personal_conversation'])) {
 			$choices[] = 'everyone';
 		}
 
-		if (!in_array(strtolower($choice), $choices))
-		{
+		if (!in_array(strtolower($choice), $choices)) {
 			$choice = 'none';
 		}
 
@@ -71,24 +72,29 @@ class UserPrivacy extends Entity
 		$structure->shortName = 'XF:UserPrivacy';
 		$structure->primaryKey = 'user_id';
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
-			'allow_view_profile' => ['type' => self::STR, 'default' => 'everyone',
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
+			'allow_view_profile' => [
+				'type' => self::STR, 'default' => 'everyone',
 				'allowedValues' => ['everyone', 'members', 'followed', 'none'],
 				'verify' => 'verifyPrivacyChoice'
 			],
-			'allow_post_profile' => ['type' => self::STR, 'default' => 'members',
+			'allow_post_profile' => [
+				'type' => self::STR, 'default' => 'members',
 				'allowedValues' => ['members', 'followed', 'none'],
 				'verify' => 'verifyPrivacyChoice'
 			],
-			'allow_send_personal_conversation' => ['type' => self::STR, 'default' => 'members',
+			'allow_send_personal_conversation' => [
+				'type' => self::STR, 'default' => 'members',
 				'allowedValues' => ['members', 'followed', 'none'],
 				'verify' => 'verifyPrivacyChoice'
 			],
-			'allow_view_identities' => ['type' => self::STR, 'default' => 'everyone',
+			'allow_view_identities' => [
+				'type' => self::STR, 'default' => 'everyone',
 				'allowedValues' => ['everyone', 'members', 'followed', 'none'],
 				'verify' => 'verifyPrivacyChoice'
 			],
-			'allow_receive_news_feed' => ['type' => self::STR, 'default' => 'everyone',
+			'allow_receive_news_feed' => [
+				'type' => self::STR, 'default' => 'everyone',
 				'allowedValues' => ['everyone', 'members', 'followed', 'none'],
 				'verify' => 'verifyPrivacyChoice'
 			]

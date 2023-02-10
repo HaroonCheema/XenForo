@@ -68,7 +68,7 @@ class UserFollow extends Entity
 		$structure->shortName = 'XF:UserFollow';
 		$structure->primaryKey = ['user_id', 'follow_user_id'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'follow_user_id' => ['type' => self::UINT, 'required' => true],
 			'follow_date' => ['type' => self::UINT, 'default' => \XF::$time]
 		];

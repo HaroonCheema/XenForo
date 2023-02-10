@@ -25,7 +25,7 @@ class ThreadRead extends Entity
 		$structure->primaryKey = 'thread_read_id';
 		$structure->columns = [
 			'thread_read_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'thread_id' => ['type' => self::UINT, 'required' => true],
 			'thread_read_date' => ['type' => self::UINT, 'required' => true]
 		];

@@ -134,7 +134,7 @@ class SessionActivity extends Entity
 		$structure->shortName = 'XF:SessionActivity';
 		$structure->primaryKey = ['user_id', 'unique_key'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'unique_key' => ['type' => self::STR, 'maxLength' => 16, 'required' => true],
 			'ip' => ['type' => self::BINARY, 'maxLength' => 16, 'required' => true],
 			'view_date' => ['type' => self::UINT, 'required' => true],

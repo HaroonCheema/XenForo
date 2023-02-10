@@ -26,6 +26,7 @@ return array (
   'nav.registeredMembers' => 'Registered members',
   'nav.searchForums' => 'Search forums',
   'nav.searchProfilePosts' => 'Search profile posts',
+  'nav.snog_forms_nav' => 'Forms',
   'nav.tournament_pub' => 'Tournaments',
   'nav.unansweredThreads' => 'Unanswered threads',
   'nav.watched' => 'Watched',

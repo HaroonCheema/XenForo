@@ -17,6 +17,7 @@ return array (
   'admin_permission.payment' => 'Manage payment providers',
   'admin_permission.reaction' => 'Manage reactions',
   'admin_permission.rebuildCache' => 'Rebuild caches',
+  'admin_permission.snogFormsAdmin' => 'Manage Forms',
   'admin_permission.style' => 'Manage styles, style properties, and templates',
   'admin_permission.tags' => 'Manage tags',
   'admin_permission.thread' => 'Manage threads and posts',

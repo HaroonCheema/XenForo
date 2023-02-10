@@ -411,7 +411,7 @@ class ConversationMaster extends Entity implements LinkableInterface
 				'censor' => true,
 				'api' => true
 			],
-			'user_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'api' => true, 'max' => PHP_INT_MAX],
 			'username' => ['type' => self::STR, 'maxLength' => 50, 'required' => true, 'api' => true],
 			'start_date' => ['type' => self::UINT, 'default' => 0, 'api' => true],
 			'open_invite' => ['type' => self::BOOL, 'default' => false, 'api' => true],

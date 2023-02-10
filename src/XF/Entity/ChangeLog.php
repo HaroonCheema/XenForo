@@ -67,8 +67,8 @@ class ChangeLog extends Entity
 		$structure->columns = [
 			'log_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
-			'content_id' => ['type' => self::UINT, 'required' => true],
-			'edit_user_id' => ['type' => self::UINT, 'default' => 0],
+			'content_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
+			'edit_user_id' => ['type' => self::UINT, 'default' => 0, 'max' => PHP_INT_MAX],
 			'edit_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'field' => ['type' => self::STR, 'maxLength' => 100, 'required' => true],
 			'old_value' => ['type' => self::STR],

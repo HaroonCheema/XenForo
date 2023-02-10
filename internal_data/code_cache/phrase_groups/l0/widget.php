@@ -1,5 +1,6 @@
 <?php
 return array (
+  'widget.aggiungi_recensione' => '',
   'widget.forum_overview_forum_statistics' => '',
   'widget.forum_overview_members_online' => '',
   'widget.forum_overview_new_posts' => '',

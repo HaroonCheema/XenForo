@@ -136,7 +136,7 @@ class Feed extends Entity
 			],
 			'frequency' => ['type' => self::UINT, 'required' => true],
 			'node_id' => ['type' => self::UINT, 'required' => true],
-			'user_id' => ['type' => self::UINT, 'default' => 0],
+			'user_id' => ['type' => self::UINT, 'default' => 0, 'max' => PHP_INT_MAX],
 			'prefix_id' => ['type' => self::UINT, 'default' => 0],
 			'title_template' => ['type' => self::STR, 'maxLength' => 250, 'default' => ''],
 			'message_template' => ['type' => self::STR, 'default' => ''],

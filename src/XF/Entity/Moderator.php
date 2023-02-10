@@ -77,7 +77,7 @@ class Moderator extends Entity
 		$structure->shortName = 'XF:Moderator';
 		$structure->primaryKey = 'user_id';
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'is_super_moderator' => ['type' => self::BOOL, 'default' => false],
 			'extra_user_group_ids' => ['type' => self::LIST_COMMA, 'default' => [],
 				'list' => ['type' => 'posint', 'unique' => true, 'sort' => SORT_NUMERIC]

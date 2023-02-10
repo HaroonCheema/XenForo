@@ -23,7 +23,7 @@ class UserTrophy extends Entity
 		$structure->shortName = 'XF:UserTrophy';
 		$structure->primaryKey = ['user_id', 'trophy_id'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'trophy_id' => ['type' => self::UINT, 'required' => true],
 			'award_date' => ['type' => self::UINT, 'default' => \XF::$time]
 		];

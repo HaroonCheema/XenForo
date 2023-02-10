@@ -14,7 +14,7 @@ class Session implements \ArrayAccess
 
 	protected $config = [
 		'cookie' => 'session',
-		'keyLength' => 32,
+		'keyLength' => 64,
 		'lifetime' => 14400, // 4 hours by default
 		'ipv4CidrMatch' => 24,
 		'ipv6CidrMatch' => 64
@@ -32,15 +32,13 @@ class Session implements \ArrayAccess
 
 	public function start($ownerIp, $sessionId = null)
 	{
-		if ($this->sessionId)
-		{
+		if ($this->sessionId) {
 			throw new \LogicException("The session handler cannot be started twice");
 		}
 
 		$fromCookie = false;
 
-		if ($ownerIp instanceof Request && $sessionId === null)
-		{
+		if ($ownerIp instanceof Request && $sessionId === null) {
 			$sessionId = $ownerIp->getCookie($this->getCookieName());
 			$ownerIp = $ownerIp->getIp();
 			$fromCookie = $sessionId;
@@ -48,28 +46,21 @@ class Session implements \ArrayAccess
 
 		$ownerIp = \XF\Util\Ip::convertIpStringToBinary($ownerIp);
 
-		if ($sessionId)
-		{
+		if ($sessionId) {
 			$data = $this->storage->getSession($sessionId);
-			if (!is_array($data) || !$this->confirmOwnership($ownerIp, $data))
-			{
+			if (!is_array($data) || !$this->confirmOwnership($ownerIp, $data)) {
 				$data = false;
 			}
-		}
-		else
-		{
+		} else {
 			$data = false;
 		}
 
-		if (is_array($data))
-		{
+		if (is_array($data)) {
 			$this->sessionId = $sessionId;
 			$this->data = $data;
 			$this->exists = true;
 			$this->fromCookie = $fromCookie;
-		}
-		else
-		{
+		} else {
 			$this->sessionId = \XF::generateRandomString($this->config['keyLength']);
 			$this->data = ['_ip' => $ownerIp];
 			$this->exists = false;
@@ -80,22 +71,17 @@ class Session implements \ArrayAccess
 
 	protected function confirmOwnership($expectedIp, array $data)
 	{
-		if (!isset($data['_ip']) || empty($data['_ip']) || empty($expectedIp))
-		{
+		if (!isset($data['_ip']) || empty($data['_ip']) || empty($expectedIp)) {
 			return true; // no IP to check against
 		}
 
-		if (strlen($expectedIp) == 4)
-		{
+		if (strlen($expectedIp) == 4) {
 			$cidr = intval($this->config['ipv4CidrMatch']);
-		}
-		else
-		{
+		} else {
 			$cidr = intval($this->config['ipv6CidrMatch']);
 		}
 
-		if (empty($data['userId']) || $cidr <= 0)
-		{
+		if (empty($data['userId']) || $cidr <= 0) {
 			return true; // IP check disabled
 		}
 
@@ -104,8 +90,7 @@ class Session implements \ArrayAccess
 
 	public function __get($key)
 	{
-		if (!$this->sessionId)
-		{
+		if (!$this->sessionId) {
 			throw new \LogicException("Cannot manipulate data when the session is not started");
 		}
 
@@ -124,8 +109,7 @@ class Session implements \ArrayAccess
 
 	public function __set($key, $value)
 	{
-		if (!$this->sessionId)
-		{
+		if (!$this->sessionId) {
 			throw new \LogicException("Cannot manipulate data when the session is not started");
 		}
 
@@ -144,8 +128,7 @@ class Session implements \ArrayAccess
 
 	public function __unset($key)
 	{
-		if (!$this->sessionId)
-		{
+		if (!$this->sessionId) {
 			throw new \LogicException("Cannot manipulate data when the session is not started");
 		}
 
@@ -164,8 +147,7 @@ class Session implements \ArrayAccess
 
 	public function __isset($key)
 	{
-		if (!$this->sessionId)
-		{
+		if (!$this->sessionId) {
 			throw new \LogicException("Cannot manipulate data when the session is not started");
 		}
 
@@ -207,11 +189,11 @@ class Session implements \ArrayAccess
 
 	public function save()
 	{
-		if (!$this->sessionId)
-		{
+
+		if (!$this->sessionId) {
 			return false;
 		}
-
+		
 		$this->storage->writeSession($this->sessionId, $this->data, $this->config['lifetime'], $this->exists);
 		$this->exists = true;
 
@@ -220,8 +202,7 @@ class Session implements \ArrayAccess
 
 	public function expunge()
 	{
-		if ($this->sessionId && $this->exists)
-		{
+		if ($this->sessionId && $this->exists) {
 			$this->storage->deleteSession($this->sessionId);
 		}
 
@@ -234,8 +215,7 @@ class Session implements \ArrayAccess
 
 	public function regenerate($keepExistingData = false)
 	{
-		if (!$this->sessionId)
-		{
+		if (!$this->sessionId) {
 			throw new \LogicException("Cannot regenerate when the session is not started");
 		}
 
@@ -245,8 +225,7 @@ class Session implements \ArrayAccess
 		$this->expunge();
 		$this->start($ip);
 
-		if ($keepExistingData)
-		{
+		if ($keepExistingData) {
 			$this->data = $data;
 		}
 
@@ -257,8 +236,7 @@ class Session implements \ArrayAccess
 	{
 		$passwordDate = $user->Profile ? $user->Profile->password_date : 0;
 
-		if ($this->exists)
-		{
+		if ($this->exists) {
 			$this->regenerate(false);
 		}
 
@@ -270,8 +248,7 @@ class Session implements \ArrayAccess
 
 	public function logoutUser()
 	{
-		if ($this->exists)
-		{
+		if ($this->exists) {
 			$this->regenerate(false);
 		}
 
@@ -283,8 +260,7 @@ class Session implements \ArrayAccess
 
 	public function setHasContentPendingApproval($until = null)
 	{
-		if (!$until || $until < \XF::$time)
-		{
+		if (!$until || $until < \XF::$time) {
 			$until = \XF::$time + 3600;
 		}
 
@@ -303,8 +279,7 @@ class Session implements \ArrayAccess
 
 	public function applyToResponse(Response $response)
 	{
-		if ($this->fromCookie !== $this->sessionId)
-		{
+		if ($this->fromCookie !== $this->sessionId) {
 			$response->setCookie($this->config['cookie'], $this->sessionId);
 		}
 	}

@@ -284,7 +284,7 @@ class AttachmentData extends Entity
 		$structure->primaryKey = 'data_id';
 		$structure->columns = [
 			'data_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'upload_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'filename' => ['type' => self::STR, 'maxLength' => 100, // if this is adjusted, see verifyFileName()
 				'required' => true, 'censor' => true

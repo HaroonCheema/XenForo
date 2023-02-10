@@ -1,0 +1,9 @@
+{
+    "template": "post_macros",
+    "description": "modification",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:if is=\"$hasActionBarMenu\">",
+    "replace": "<xf:if is=\"$xf.visitor.hasPermission('formThreadModeration', 'canViewParentThread') && $thread.parent_thread_id && $post.post_id == $thread.first_post_id\">\n\t\t\t\t<span>\n\t\t\t\t\t{{ phrase('parent_thread') }}:\n\t\t\t\t</span>\t\n\t<xf:set var=\"$parentThread\" value=\"{$thread.getParentThread()}\" />\n\n\t\t\t\t<a href=\"{{ link('threads', $parentThread) }}\">{{$parentThread.title}}</a>\n\n\t\t\t\t<xf:set var=\"$hasActionBarMenu\" value=\"{{ true }}\" />\n\t\t\t</xf:if>\n\t\t\t$0"
+}

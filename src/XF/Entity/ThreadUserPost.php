@@ -24,7 +24,7 @@ class ThreadUserPost extends Entity
 		$structure->primaryKey = ['thread_id', 'user_id'];
 		$structure->columns = [
 			'thread_id' => ['type' => self::UINT,  'required' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'post_count' => ['type' => self::UINT, 'default' => 0]
 		];
 		$structure->relations = [

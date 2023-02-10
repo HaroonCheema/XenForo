@@ -35,7 +35,7 @@ class PurchaseRequest extends Entity
 			'request_key' => ['type' => self::STR, 'maxLength' => 32, 'required' => true,
 				'unique' => true
 			],
-			'user_id' => ['type' => self::UINT, 'default' => 0],
+			'user_id' => ['type' => self::UINT, 'default' => 0, 'max' => PHP_INT_MAX],
 			'provider_id' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'payment_profile_id' => ['type' => self::UINT, 'required' => true],
 			'purchasable_type_id' => ['type' => self::STR, 'maxLength' => 50, 'required' => true],

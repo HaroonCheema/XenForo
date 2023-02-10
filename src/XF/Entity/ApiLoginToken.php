@@ -80,7 +80,7 @@ class ApiLoginToken extends Entity
 		$structure->columns = [
 			'login_token_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'login_token' => ['type' => self::STR, 'required' => true, 'maxlength' => 32],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'expiry_date' => ['type' => self::UINT, 'required' => true],
 			'limit_ip' => ['type' => self::BINARY, 'maxLength' => 16, 'nullable' => true],
 		];

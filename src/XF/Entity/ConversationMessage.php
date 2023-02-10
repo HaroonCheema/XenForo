@@ -284,7 +284,7 @@ class ConversationMessage extends Entity implements LinkableInterface, QuotableI
 			'message_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'conversation_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
 			'message_date' => ['type' => self::UINT, 'default' => \XF::$time, 'api' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'api' => true, 'max' => PHP_INT_MAX],
 			'username' => ['type' => self::STR, 'maxLength' => 50, 'required' => true, 'api' => true],
 			'message' => ['type' => self::STR,
 				'required' => 'please_enter_valid_message', 'api' => true

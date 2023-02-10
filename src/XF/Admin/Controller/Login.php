@@ -16,8 +16,7 @@ class Login extends AbstractController
 	{
 		$this->assertPostOnly();
 
-		if (\XF::visitor()->user_id)
-		{
+		if (\XF::visitor()->user_id) {
 			return $this->redirect($this->getDynamicRedirectIfNot('login'));
 		}
 
@@ -26,35 +25,48 @@ class Login extends AbstractController
 			'password' => 'str'
 		]);
 
+
+
 		$ip = $this->request->getIp();
+
+
 
 		/** @var \XF\Service\User\Login $loginService */
 		$loginService = $this->service('XF:User\Login', $input['login'], $ip);
-		if ($loginService->isLoginLimited($limitType))
-		{
+
+
+		if ($loginService->isLoginLimited($limitType)) {
 			return $this->error(\XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'));
 		}
 
 		$user = $loginService->validate($input['password'], $error);
-		if (!$user)
-		{
+
+
+		if (!$user) {
 			return $this->error($error);
 		}
 
-		if (!$user->is_admin)
-		{
+		if (!$user->is_admin) {
 			return $this->error(\XF::phrase('your_account_does_not_have_admin_privileges'));
 		}
 
-		if ($user->security_lock)
-		{
+
+
+		if ($user->security_lock) {
 			return $this->error(\XF::phrase('your_account_is_currently_security_locked'));
 		}
 
+
+
 		$redirect = $this->getDynamicRedirectIfNot($this->buildLink('login'));
+
+
 
 		/** @var \XF\ControllerPlugin\Login $loginPlugin */
 		$loginPlugin = $this->plugin('XF:Login');
+
+
+
 		$loginPlugin->triggerIfTfaConfirmationRequired(
 			$user,
 			$this->buildLink('login/two-step', null, [
@@ -62,11 +74,13 @@ class Login extends AbstractController
 			])
 		);
 
-		if (empty($user->Option->use_tfa)
+
+
+		if (
+			empty($user->Option->use_tfa)
 			&& \XF::config('enableTfa')
 			&& ($this->options()->adminRequireTfa || $user->hasPermission('general', 'requireTfa'))
-		)
-		{
+		) {
 			return $this->error(\XF::phrase('you_must_enable_two_step_access_control_panel', [
 				'link' => $this->app->router('public')->buildLink('account/two-step')
 			]));
@@ -86,8 +100,7 @@ class Login extends AbstractController
 		$redirect = $this->getDynamicRedirectIfNot($this->buildLink('login'));
 
 		$result = $loginPlugin->runTfaCheck($redirect);
-		switch ($result->getResult())
-		{
+		switch ($result->getResult()) {
 			case LoginTfaResult::RESULT_ERROR:
 				return $this->error($result->getError());
 
@@ -116,37 +129,37 @@ class Login extends AbstractController
 		$ip = $this->request->getIp();
 
 		$this->repository('XF:Ip')->logIp(
-			$user->user_id, $ip,
-			'user', $user->user_id, 'login_admin'
+			$user->user_id,
+			$ip,
+			'user',
+			$user->user_id,
+			'login_admin'
 		);
 
-		if (!$user->Admin && $user->is_admin)
-		{
+		if (!$user->Admin && $user->is_admin) {
 			$admin = $this->em()->create('XF:Admin');
 			$admin->user_id = $user->user_id;
 			$admin->last_login = \XF::$time;
 			$admin->save();
-		}
-		else
-		{
+		} else {
 			$user->Admin->last_login = \XF::$time;
 			$user->Admin->save();
 		}
 
 		$this->session()->passwordConfirm = \XF::$time;
 
+
+
 		/** @var \XF\Session\Session $publicSession */
 		$publicSession = $this->app['session.public'];
-		if (!$publicSession['userId'])
-		{
+		if (!$publicSession['userId']) {
 			$publicSession->changeUser($user);
 			$publicSession->save();
 			$publicSession->applyToResponse($this->app->response());
 		}
 
 		// this is just a sanity check -- faster to run here than on every page if internal_data is remote
-		if (!\XF\Util\File::installLockExists())
-		{
+		if (!\XF\Util\File::installLockExists()) {
 			\XF\Util\File::writeInstallLock();
 		}
 	}
@@ -172,16 +185,21 @@ class Login extends AbstractController
 
 	public function checkCsrfIfNeeded($action, ParameterBag $params)
 	{
-		switch (strtolower($action))
-		{
+		switch (strtolower($action)) {
 			case 'keepalive':
 				return;
 		}
 
 		parent::checkCsrfIfNeeded($action, $params);
 	}
-	
-	public function assertAdmin() {}
-	public function assertCorrectVersion($action) {}
-	public function assertNotSecurityLocked($action) {}
+
+	public function assertAdmin()
+	{
+	}
+	public function assertCorrectVersion($action)
+	{
+	}
+	public function assertNotSecurityLocked($action)
+	{
+	}
 }

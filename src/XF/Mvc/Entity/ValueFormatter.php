@@ -309,14 +309,14 @@ class ValueFormatter
 					{
 						$value = $columnOptions['max'];
 					}
-					else
-					{
-						$error = \XF::phrase('please_enter_number_that_is_no_more_than_x',
-							['max' => $columnOptions['max']]
-						);
+					// else
+					// {
+					// 	$error = \XF::phrase('please_enter_number_that_is_no_more_than_x',
+					// 		['max' => $columnOptions['max']]
+					// 	);
 
-						return false;
-					}
+					// 	return false;
+					// }
 				}
 				break;
 

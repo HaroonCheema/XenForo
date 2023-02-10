@@ -19,7 +19,7 @@ class UserFieldValue extends Entity
 		$structure->shortName = 'XF:UserFieldValue';
 		$structure->primaryKey = ['user_id', 'field_id'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'field_id' => ['type' => self::STR, 'maxLength' => 25,
 				'match' => 'alphanumeric'
 			],

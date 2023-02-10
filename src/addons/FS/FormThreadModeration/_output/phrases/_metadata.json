@@ -1,0 +1,20 @@
+{
+    "parent_thread.txt": {
+        "global_cache": false,
+        "version_id": 1000200,
+        "version_string": "1.0.2",
+        "hash": "86fb25e493e6145e464d6a27a8044c14"
+    },
+    "permission.formThreadModeration_canViewParentThread.txt": {
+        "global_cache": false,
+        "version_id": 1000200,
+        "version_string": "1.0.2",
+        "hash": "1621d0c273f76407f6e61a478b24905c"
+    },
+    "permission_interface.formThreadModeration.txt": {
+        "global_cache": false,
+        "version_id": 1000200,
+        "version_string": "1.0.2",
+        "hash": "d027ae77b985c4070924a044ad408fc7"
+    }
+}

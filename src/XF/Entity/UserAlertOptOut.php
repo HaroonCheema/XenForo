@@ -18,7 +18,7 @@ class UserAlertOptOut extends Entity
 		$structure->shortName = 'XF:UserAlertOptOut';
 		$structure->primaryKey = ['user_id', 'alert'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'alert' => ['type' => self::STR, 'required' => true]
 		];
 		return $structure;

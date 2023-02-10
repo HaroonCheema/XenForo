@@ -17,6 +17,8 @@ return array (
   'widget_pos_desc.online_list_sidebar' => 'Position inside the online_list template sidebar for various online user statistics.',
   'widget_pos_desc.pub_sidebar_bottom' => 'Widget position that appears at the bottom of all public pages. Page specific widgets will always appear above this position.',
   'widget_pos_desc.pub_sidebar_top' => 'Widget position that appears at the top of all public pages. Page specific widgets will always appear below this position.',
+  'widget_pos_desc.snogFormListSidebar' => 'Position inside the Advanced form list sidebar.',
+  'widget_pos_desc.snogFormSidebar' => 'Position inside the Advanced form sidebar.',
   'widget_pos_desc.thread_view_above_messages' => 'A position in the main content area of the thread view, above the messages. Widget templates rendered in this position can use the current thread entity in the <code>{$context.thread}</code> param.',
   'widget_pos_desc.thread_view_below_messages' => 'A position in the main content area of the thread view, below the messages. Widget templates rendered in this position can use the current thread entity in the <code>{$context.thread}</code> param.',
   'widget_pos_desc.thread_view_below_quick_reply' => 'A position in the main content area of the thread view, below the quick reply. Widget templates rendered in this position can use the current thread entity in the <code>{$context.thread}</code> param.',

@@ -905,39 +905,70 @@ return array(
 	if ($__templater->method($__vars['thread'], 'canReply', array()) OR $__vars['isPreRegReply']) {
 		$__finalCompiled .= '
 	';
-		$__templater->includeJs(array(
-			'src' => 'xf/message.js',
-			'min' => '1',
-		));
-		$__finalCompiled .= $__templater->form('
+		if ($__templater->method($__vars['thread'], 'isApplicableFormThread', array())) {
+			$__finalCompiled .= '
+	
+';
+		} else {
+			$__finalCompiled .= '
+	';
+			if (!$__templater->test($__vars['thread']['Form'], 'empty', array()) AND $__vars['thread']['Form']['quickreply']) {
+				$__finalCompiled .= '
+	' . $__templater->callMacro('snog_forms_macro', 'form', array(
+					'form' => $__vars['thread']['Form'],
+					'warnings' => $__vars['formWarnings'],
+					'questions' => $__vars['formQuestions'],
+					'conditionQuestions' => $__vars['conditionQuestions'],
+					'canSubmit' => $__vars['canSubmitForm'],
+					'attachmentData' => $__vars['attachmentData'],
+					'nodeTree' => $__vars['nodeTree'],
+				), $__vars) . '
+
+';
+			} else {
+				$__finalCompiled .= '
+	';
+				$__templater->includeJs(array(
+					'src' => 'xf/message.js',
+					'min' => '1',
+				));
+				$__finalCompiled .= $__templater->form('
 
 		' . '' . '
 
 		<div class="block-container">
 			<div class="block-body">
 				' . $__templater->callMacro('quick_reply_macros', 'body', array(
-			'message' => $__vars['thread']['draft_reply']['message'],
-			'attachmentData' => $__vars['attachmentData'],
-			'forceHash' => $__vars['thread']['draft_reply']['attachment_hash'],
-			'messageSelector' => '.js-post',
-			'multiQuoteHref' => $__templater->func('link', array('threads/multi-quote', $__vars['thread'], ), false),
-			'multiQuoteStorageKey' => 'multiQuoteThread',
-			'lastDate' => $__vars['lastPost']['post_date'],
-			'lastKnownDate' => $__vars['thread']['last_post_date'],
-			'loadExtra' => $__vars['isSimpleDateDisplay'],
-			'showGuestControls' => (!$__vars['isPreRegReply']),
-			'previewUrl' => $__templater->func('link', array('threads/reply-preview', $__vars['thread'], ), false),
-		), $__vars) . '
+					'message' => $__vars['thread']['draft_reply']['message'],
+					'thread' => $__vars['thread'],
+					'attachmentData' => $__vars['attachmentData'],
+					'forceHash' => $__vars['thread']['draft_reply']['attachment_hash'],
+					'messageSelector' => '.js-post',
+					'multiQuoteHref' => $__templater->func('link', array('threads/multi-quote', $__vars['thread'], ), false),
+					'multiQuoteStorageKey' => 'multiQuoteThread',
+					'lastDate' => $__vars['lastPost']['post_date'],
+					'lastKnownDate' => $__vars['thread']['last_post_date'],
+					'loadExtra' => $__vars['isSimpleDateDisplay'],
+					'showGuestControls' => (!$__vars['isPreRegReply']),
+					'previewUrl' => $__templater->func('link', array('threads/reply-preview', $__vars['thread'], ), false),
+				), $__vars) . '
 			</div>
 		</div>
 	', array(
-			'action' => $__templater->func('link', array('threads/add-reply', $__vars['thread'], ), false),
-			'ajax' => 'true',
-			'draft' => $__templater->func('link', array('threads/draft', $__vars['thread'], ), false),
-			'class' => 'block js-quickReply',
-			'data-xf-init' => 'attachment-manager quick-reply' . (($__templater->method($__vars['xf']['visitor'], 'isShownCaptcha', array()) AND (!$__vars['isPreRegReply'])) ? ' guest-captcha' : ''),
-			'data-message-container' => 'div[data-type=\'post\'] .js-replyNewMessageContainer',
-		)) . '
+					'action' => $__templater->func('link', array('threads/add-reply', $__vars['thread'], ), false),
+					'ajax' => 'true',
+					'draft' => $__templater->func('link', array('threads/draft', $__vars['thread'], ), false),
+					'class' => 'block js-quickReply',
+					'data-xf-init' => 'attachment-manager quick-reply' . (($__templater->method($__vars['xf']['visitor'], 'isShownCaptcha', array()) AND (!$__vars['isPreRegReply'])) ? ' guest-captcha' : ''),
+					'data-message-container' => 'div[data-type=\'post\'] .js-replyNewMessageContainer',
+				)) . '
+';
+			}
+			$__finalCompiled .= '
+';
+		}
+		$__finalCompiled .= '
+			 
 ';
 	}
 	$__finalCompiled .= '

@@ -59,7 +59,7 @@ class UserUpgradeActive extends Entity
 		$structure->primaryKey = 'user_upgrade_record_id';
 		$structure->columns = [
 			'user_upgrade_record_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'purchase_request_key' => ['type' => self::STR, 'maxLength' => 32, 'nullable' => true],
 			'user_upgrade_id' => ['type' => self::UINT, 'required' => true],
 			'extra' => ['type' => self::JSON_ARRAY, 'default' => []],

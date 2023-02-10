@@ -16,6 +16,7 @@ return array (
   'cron_entry.rebuildSearchForumCache' => 'Rebuild expired search forum caches',
   'cron_entry.run_successfully' => 'Cron entry was run successfully.',
   'cron_entry.sitemap' => 'Rebuild sitemap',
+  'cron_entry.snogProcessPolls' => 'Process form poll results',
   'cron_entry.trophy' => 'Update user trophies',
   'cron_entry.userGroupPromotions' => 'User group promotions',
   'cron_entry.userconvseration' => 'check register user convesation message Tournament',

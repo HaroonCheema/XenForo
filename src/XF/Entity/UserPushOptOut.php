@@ -18,7 +18,7 @@ class UserPushOptOut extends Entity
 		$structure->shortName = 'XF:UserPushOptOut';
 		$structure->primaryKey = ['user_id', 'push'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'push' => ['type' => self::STR, 'required' => true]
 		];
 		return $structure;

@@ -53,7 +53,7 @@ class ThreadReplyBan extends Entity
 		$structure->columns = [
 			'thread_reply_ban_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'thread_id' => ['type' => self::UINT, 'required' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'ban_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'expiry_date' => ['type' => self::UINT, 'required' => true, 'nullable' => true],
 			'reason' => ['type' => self::STR, 'default' => '', 'maxLength' => 100],

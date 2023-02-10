@@ -44,7 +44,7 @@ class UserTfaTrusted extends Entity
 		$structure->primaryKey = 'tfa_trusted_id';
 		$structure->columns = [
 			'tfa_trusted_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'trusted_key' => ['type' => self::STR, 'maxLength' => 32, 'required' => true],
 			'trusted_until' => ['type' => self::UINT, 'required' => true]
 		];

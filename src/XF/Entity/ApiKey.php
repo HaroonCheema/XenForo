@@ -183,7 +183,7 @@ class ApiKey extends Entity
 			'api_key_hash' => ['type' => self::BINARY, 'required' => true, 'maxlength' => 20],
 			'title' => ['type' => self::STR, 'maxLength' => 50, 'required' => true],
 			'is_super_user' => ['type' => self::BOOL, 'default' => false],
-			'user_id' => ['type' => self::UINT, 'default' => 0],
+			'user_id' => ['type' => self::UINT, 'default' => 0, 'max' => PHP_INT_MAX],
 			'allow_all_scopes' => ['type' => self::BOOL, 'default' => false],
 			'scopes' => ['type' => self::JSON_ARRAY, 'default' => []],
 			'active' => ['type' => self::BOOL, 'default' => true],

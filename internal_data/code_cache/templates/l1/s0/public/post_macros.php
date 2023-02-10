@@ -733,6 +733,57 @@ return array(
 	$__compilerTemp2 .= '
 
 			';
+	if ($__templater->method($__vars['xf']['visitor'], 'hasPermission', array('formThreadModeration', 'canViewParentThread', )) AND ($__vars['thread']['parent_thread_id'] AND ($__vars['post']['post_id'] == $__vars['thread']['first_post_id']))) {
+		$__compilerTemp2 .= '
+				<span>
+					' . 'Parent Thread' . ':
+				</span>	
+	';
+		$__vars['parentThread'] = $__templater->method($__vars['thread'], 'getParentThread', array());
+		$__compilerTemp2 .= '
+
+				<a href="' . $__templater->func('link', array('threads', $__vars['parentThread'], ), true) . '">' . $__templater->escape($__vars['parentThread']['title']) . '</a>
+
+				';
+		$__vars['hasActionBarMenu'] = true;
+		$__compilerTemp2 .= '
+			';
+	}
+	$__compilerTemp2 .= '
+			';
+	if (!$__templater->test($__vars['post']['Promotions'], 'empty', array())) {
+		$__compilerTemp2 .= '
+	';
+		if ($__templater->method($__vars['xf']['visitor'], 'canApproveAdvancedForms', array()) AND $__vars['post']['Promotions']['approve']) {
+			$__compilerTemp2 .= '
+		<a href="' . $__templater->func('link', array('form/approve', array('posid' => $__vars['post']['post_id'], ), ), true) . '"
+		   class="actionBar-action actionBar-action--warn actionBar-action--menuItem"
+		   data-xf-click="overlay">
+			' . 'Approve' . '
+		</a>
+	
+		<a href="' . $__templater->func('link', array('form/deny', array('posid' => $__vars['post']['post_id'], ), ), true) . '"
+		   class="actionBar-action actionBar-action--warn actionBar-action--menuItem"
+		   data-xf-click="overlay">
+			' . 'Deny' . '
+		</a>
+	';
+		}
+		$__compilerTemp2 .= '
+	';
+		if ($__templater->method($__vars['xf']['visitor'], 'canExtendAdvancedFormsPolls', array()) AND $__vars['post']['Promotions']['poll_id']) {
+			$__compilerTemp2 .= '
+		<a href="' . $__templater->func('link', array('form/extend', array('posid' => $__vars['post']['post_id'], ), ), true) . '"
+		   class="actionBar-action actionBar-action--warn actionBar-action--menuItem">
+			' . 'Extend' . '
+		</a>
+	';
+		}
+		$__compilerTemp2 .= '
+';
+	}
+	$__compilerTemp2 .= '
+';
 	if ($__vars['hasActionBarMenu']) {
 		$__compilerTemp2 .= '
 				<a class="actionBar-action actionBar-action--menuTrigger"

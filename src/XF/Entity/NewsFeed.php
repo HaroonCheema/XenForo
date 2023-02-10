@@ -86,7 +86,7 @@ class NewsFeed extends Entity
 		$structure->primaryKey = 'news_feed_id';
 		$structure->columns = [
 			'news_feed_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'default' => 0],
+			'user_id' => ['type' => self::UINT, 'default' => 0, 'max' => PHP_INT_MAX],
 			'username' => ['type' => self::STR, 'maxLength' => 50, 'default' => ''],
 			'content_type' => ['type' => self::STR, 'maxLength' => 25],
 			'content_id' => ['type' => self::UINT],

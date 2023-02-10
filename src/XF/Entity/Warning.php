@@ -223,7 +223,7 @@ class Warning extends Entity
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'content_id' => ['type' => self::UINT, 'required' => true],
 			'content_title' => ['type' => self::STR, 'maxLength' => 255, 'default' => ''],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'warning_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'warning_user_id' => ['type' => self::UINT, 'required' => true],
 			'warning_definition_id' => ['type' => self::UINT, 'required' => true],

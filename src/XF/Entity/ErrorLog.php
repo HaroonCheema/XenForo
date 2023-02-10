@@ -31,7 +31,7 @@ class ErrorLog extends Entity
 		$structure->columns = [
 			'error_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'exception_date' => ['type' => self::UINT, 'default' => \XF::$time],
-			'user_id' => ['type' => self::UINT, 'nullable' => true, 'default' => null],
+			'user_id' => ['type' => self::UINT, 'nullable' => true, 'default' => null, 'max' => PHP_INT_MAX],
 			'ip_address' => ['type' => self::BINARY, 'maxLength' => 16, 'default' => ''],
 			'exception_type' => ['type' => self::STR, 'maxLength' => 75],
 			'message' => ['type' => self::STR, 'default' => ''],

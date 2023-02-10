@@ -13,6 +13,7 @@ return array (
 You may set a user into \'discouraged\' mode by editing their user profile, or discourage an IP address or IP address range.',
   'option_group_description.discussionOptions' => 'Messages are contained within a discussion container, and options relating to these can be found here.',
   'option_group_description.emailOptions' => '',
+  'option_group_description.form_thread_moderation' => '',
   'option_group_description.imageLinkProxy' => 'Controls the system for proxying and logging posted links and images',
   'option_group_description.logging' => 'Options that control what data is logged and how long it is maintained.',
   'option_group_description.mediaEmbedding' => 'Contains settings related to embedding external media such as videos, audio clips and social media content.',
@@ -21,6 +22,7 @@ You may set a user into \'discouraged\' mode by editing their user profile, or d
 <br />
 It is possible to filter the news feed down to just users you follow, or a single user.',
   'option_group_description.nodeList' => 'The node and forum list is the primary navigational structure for XenForo\'s forums and pages.',
+  'option_group_description.ozzmodz_forms' => '',
   'option_group_description.performance' => 'Options here allow you to turn off or tweak systems in order to fine-tune the performance of your site.',
   'option_group_description.pwa' => 'This group controls the options that will be shown on the PWA setup helper.',
   'option_group_description.searchOptions' => 'These options control the behavior of the search system built-in to XenForo to allow searching of messages and other content.',

@@ -18,13 +18,11 @@ class User extends Repository
 	 */
 	public function getVisitor($userId, array $with = [])
 	{
-		if ($userId)
-		{
+
+		if ($userId) {
 			$with = $this->getVisitorWith($with);
 			$user = $this->em->find('XF:User', $userId, $with);
-		}
-		else
-		{
+		} else {
 			$user = null;
 		}
 
@@ -53,12 +51,10 @@ class User extends Repository
 	 */
 	public function getPreRegActionUser()
 	{
-		$manipulator = function(array $data)
-		{
+		$manipulator = function (array $data) {
 			$preRegActionOption = $this->options()->preRegAction;
 
-			if ($preRegActionOption['enabled'] && $preRegActionOption['permissionCombinationId'])
-			{
+			if ($preRegActionOption['enabled'] && $preRegActionOption['permissionCombinationId']) {
 				$data['permission_combination_id'] = $preRegActionOption['permissionCombinationId'];
 
 				$userGroupId = array_shift($preRegActionOption['userGroups']);
@@ -91,38 +87,30 @@ class User extends Repository
 		];
 
 		$defaultGuestData = $this->getGuestDefaultData();
-		if ($defaultDataManipulator)
-		{
+		if ($defaultDataManipulator) {
 			$defaultGuestData = $defaultDataManipulator($defaultGuestData);
 		}
 
 		$relationsData = $defaultGuestData['_relations'];
 		unset($defaultGuestData['_relations']);
 
-		if (is_string($username))
-		{
+		if (is_string($username)) {
 			$defaultGuestData['username'] = $username;
 		}
 
 		$vf = $this->em->getValueFormatter();
 
-		foreach ($structure->columns AS $name => $column)
-		{
-			if (array_key_exists($name, $defaultGuestData))
-			{
+		foreach ($structure->columns as $name => $column) {
+			if (array_key_exists($name, $defaultGuestData)) {
 				$data['values'][$name] = $defaultGuestData[$name];
-			}
-			else if (array_key_exists('default', $column))
-			{
+			} else if (array_key_exists('default', $column)) {
 				// when instantiating an entity, values are source encoded, but the default values aren't, so encode them
 				$data['values'][$name] = $vf->encodeValueForSource($column['type'], $column['default']);
 			}
 		}
 
-		foreach ($structure->relations AS $name => $relation)
-		{
-			if (array_key_exists($name, $relationsData))
-			{
+		foreach ($structure->relations as $name => $relation) {
+			if (array_key_exists($name, $relationsData)) {
 				$data['relations'][$name] = [
 					'entity' => $relation['entity'],
 					'values' => $relationsData[$name],
@@ -180,8 +168,7 @@ class User extends Repository
 	protected function _hydrateGuestUserData(array $data)
 	{
 		$relations = [];
-		foreach ($data['relations'] AS $name => $subData)
-		{
+		foreach ($data['relations'] as $name => $subData) {
 			$relations[$name] = $this->_hydrateGuestUserData($subData);
 		}
 
@@ -198,8 +185,7 @@ class User extends Repository
 	 */
 	public function setupBaseUser(\XF\Entity\User $user = null)
 	{
-		if (!$user)
-		{
+		if (!$user) {
 			$user = $this->em->create('XF:User');
 		}
 
@@ -219,12 +205,10 @@ class User extends Repository
 	 */
 	public function getUserByNameOrEmail($nameOrEmail, array $with = [])
 	{
-		if (strpos($nameOrEmail, '@'))
-		{
+		if (strpos($nameOrEmail, '@')) {
 			/** @var \XF\Entity\User $user */
 			$user = $this->em->findOne('XF:User', ['email' => $nameOrEmail], $with);
-			if ($user)
-			{
+			if ($user) {
 				return $user;
 			}
 		}
@@ -247,73 +231,58 @@ class User extends Repository
 	public function getUsersByNames(array $usernames, &$notFound = [], $with = [], $validOnly = false, $extraWhere = [])
 	{
 		$usernames = array_map('trim', $usernames);
-		foreach ($usernames AS $key => $username)
-		{
-			if ($username === '')
-			{
+		foreach ($usernames as $key => $username) {
+			if ($username === '') {
 				unset($usernames[$key]);
 			}
 		}
 
 		$notFound = [];
 
-		if (!$usernames)
-		{
+		if (!$usernames) {
 			return $this->em->getEmptyCollection();
 		}
 
 		$finder = $this->finder('XF:User')
 			->where('username', $usernames)
 			->with($with);
-		if ($validOnly)
-		{
+		if ($validOnly) {
 			$finder->isValidUser();
 		}
-		if ($extraWhere)
-		{
+		if ($extraWhere) {
 			$finder->where($extraWhere);
 		}
 
 		$users = $finder->fetch();
-		if ($users->count() != count($usernames))
-		{
+		if ($users->count() != count($usernames)) {
 			$usernamesLower = array_map('strtolower', $usernames);
 			$notFound = $usernames;
 
-			foreach ($users AS $user)
-			{
-				do
-				{
+			foreach ($users as $user) {
+				do {
 					$foundKey = array_search(strtolower($user['username']), $usernamesLower);
-					if ($foundKey !== false)
-					{
+					if ($foundKey !== false) {
 						unset($notFound[$foundKey]);
 						unset($usernamesLower[$foundKey]);
 					}
-				}
-				while ($foundKey !== false);
+				} while ($foundKey !== false);
 			}
 		}
 
 		//return $users;
 
 		$orderedUsers = [];
-		foreach ($usernames AS $searchUsername)
-		{
+		foreach ($usernames as $searchUsername) {
 			$searchUsername = utf8_deaccent(utf8_strtolower($searchUsername));
-			foreach ($users AS $id => $user)
-			{
+			foreach ($users as $id => $user) {
 				$testUsername = utf8_deaccent(utf8_strtolower($user->username));
-				if ($searchUsername == $testUsername && !isset($orderedUsers[$id]))
-				{
+				if ($searchUsername == $testUsername && !isset($orderedUsers[$id])) {
 					$orderedUsers[$id] = $user;
 				}
 			}
 		}
-		foreach ($users AS $id => $user)
-		{
-			if (!isset($orderedUsers[$id]))
-			{
+		foreach ($users as $id => $user) {
+			if (!isset($orderedUsers[$id])) {
 				$orderedUsers[$id] = $user;
 			}
 		}
@@ -323,8 +292,7 @@ class User extends Repository
 
 	public function getUsersByIdsOrdered(array $ids, $with = [])
 	{
-		if (!$ids)
-		{
+		if (!$ids) {
 			return $this->em->getEmptyCollection();
 		}
 

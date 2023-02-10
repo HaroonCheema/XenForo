@@ -14,6 +14,8 @@ return array (
   'widget_def.php_callback' => 'PHP callback',
   'widget_def.search_forum' => 'Search forum',
   'widget_def.share_page' => 'Share this page',
+  'widget_def.snog_forms' => 'Form list',
+  'widget_def.snog_forms_form' => 'Form',
   'widget_def.template_syntax' => 'Template syntax',
   'widget_def.thread_poll' => 'Thread poll',
   'widget_def.visitor_panel' => 'Visitor panel',

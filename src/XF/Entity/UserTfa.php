@@ -50,7 +50,7 @@ class UserTfa extends Entity
 		$structure->primaryKey = 'user_tfa_id';
 		$structure->columns = [
 			'user_tfa_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'provider_id' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'provider_data' => ['type' => self::JSON_ARRAY, 'default' => []],
 			'last_used_date' => ['type' => self::UINT, 'default' => \XF::$time]

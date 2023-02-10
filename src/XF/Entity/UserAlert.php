@@ -197,7 +197,7 @@ class UserAlert extends Entity
 		$structure->columns = [
 			'alert_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'alerted_user_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
-			'user_id' => ['type' => self::UINT, 'default' => 0, 'api' => true],
+			'user_id' => ['type' => self::UINT, 'default' => 0, 'api' => true, 'max' => PHP_INT_MAX],
 			'username' => ['type' => self::STR, 'maxLength' => 50, 'default' => '', 'api' => true],
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true, 'api' => true],
 			'content_id' => ['type' => self::UINT, 'required' => true, 'api' => true],

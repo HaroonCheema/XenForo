@@ -34,7 +34,7 @@ class EmailBounceLog extends Entity
 			'email_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'message_type' => ['type' => self::STR, 'maxLength' => 25, 'default' => 'unknown'],
 			'action_taken' => ['type' => self::STR, 'maxLength' => 25, 'default' => ''],
-			'user_id' => ['type' => self::UINT, 'nullable' => true],
+			'user_id' => ['type' => self::UINT, 'nullable' => true, 'max' => PHP_INT_MAX],
 			'recipient' => ['type' => self::STR, 'maxLength' => 255, 'nullable' => true],
 			'raw_message' => ['type' => self::BINARY, 'default' => ''],
 			'status_code' => ['type' => self::STR, 'maxLength' => 25, 'nullable' => true],

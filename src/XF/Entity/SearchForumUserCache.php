@@ -88,7 +88,7 @@ class SearchForumUserCache extends Entity
 			],
 			'user_id' => [
 				'type' => self::UINT,
-				'required' => true
+				'required' => true, 'max' => PHP_INT_MAX
 			],
 			'results' => [
 				'type' => self::LIST_COMMA,

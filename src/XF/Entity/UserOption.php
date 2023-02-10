@@ -35,8 +35,7 @@ class UserOption extends Entity
 
 	public function doesReceivePush($contentType, $action)
 	{
-		if (!\XF::isPushUsable())
-		{
+		if (!\XF::isPushUsable()) {
 			return false;
 		}
 
@@ -47,35 +46,29 @@ class UserOption extends Entity
 
 	protected function _postSave()
 	{
-		if ($this->isChanged('alert_optout'))
-		{
+		if ($this->isChanged('alert_optout')) {
 			$inserts = [];
-			foreach ($this->alert_optout AS $optOut)
-			{
+			foreach ($this->alert_optout as $optOut) {
 				$inserts[] = [
 					'user_id' => $this->user_id,
 					'alert' => $optOut
 				];
 			}
 			$this->db()->delete('xf_user_alert_optout', 'user_id = ?', $this->user_id);
-			if ($inserts)
-			{
+			if ($inserts) {
 				$this->db()->insertBulk('xf_user_alert_optout', $inserts, true);
 			}
 		}
-		if ($this->isChanged('push_optout'))
-		{
+		if ($this->isChanged('push_optout')) {
 			$inserts = [];
-			foreach ($this->push_optout AS $optOut)
-			{
+			foreach ($this->push_optout as $optOut) {
 				$inserts[] = [
 					'user_id' => $this->user_id,
 					'push' => $optOut
 				];
 			}
 			$this->db()->delete('xf_user_push_optout', 'user_id = ?', $this->user_id);
-			if ($inserts)
-			{
+			if ($inserts) {
 				$this->db()->insertBulk('xf_user_push_optout', $inserts, true);
 			}
 		}
@@ -102,7 +95,7 @@ class UserOption extends Entity
 		$structure->shortName = 'XF:UserOption';
 		$structure->primaryKey = 'user_id';
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true, 'changeLog' => false],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'changeLog' => false, 'max' => PHP_INT_MAX],
 			'show_dob_year' => ['type' => self::BOOL, 'default' => true],
 			'show_dob_date' => ['type' => self::BOOL, 'default' => true],
 			'content_show_signature' => ['type' => self::BOOL, 'default' => true],
@@ -110,17 +103,21 @@ class UserOption extends Entity
 			'email_on_conversation' => ['type' => self::BOOL, 'default' => true],
 			'push_on_conversation' => ['type' => self::BOOL, 'default' => true],
 			'is_discouraged' => ['type' => self::BOOL, 'default' => false],
-			'creation_watch_state' => ['type' => self::STR, 'default' => '',
+			'creation_watch_state' => [
+				'type' => self::STR, 'default' => '',
 				'allowedValues' => ['', 'watch_no_email', 'watch_email']
 			],
-			'interaction_watch_state' => ['type' => self::STR, 'default' => '',
+			'interaction_watch_state' => [
+				'type' => self::STR, 'default' => '',
 				'allowedValues' => ['', 'watch_no_email', 'watch_email']
 			],
-			'alert_optout' => ['type' => self::LIST_COMMA, 'default' => [],
+			'alert_optout' => [
+				'type' => self::LIST_COMMA, 'default' => [],
 				'list' => ['type' => 'str', 'unique' => true, 'sort' => true],
 				'changeLog' => false
 			],
-			'push_optout' => ['type' => self::LIST_COMMA, 'default' => [],
+			'push_optout' => [
+				'type' => self::LIST_COMMA, 'default' => [],
 				'list' => ['type' => 'str', 'unique' => true, 'sort' => true],
 				'changeLog' => false
 			],

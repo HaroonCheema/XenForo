@@ -23,7 +23,7 @@ class ThreadWatch extends Entity
 		$structure->shortName = 'XF:ThreadWatch';
 		$structure->primaryKey = ['user_id', 'thread_id'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'thread_id' => ['type' => self::UINT, 'required' => true],
 			'email_subscribe' => ['type' => self::BOOL, 'default' => false]
 		];

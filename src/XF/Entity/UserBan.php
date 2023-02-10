@@ -105,7 +105,7 @@ class UserBan extends Entity
 		$structure->primaryKey = 'user_id';
 		$structure->columns = [
 			'user_id' => ['type' => self::UINT, 'required' => true,
-				'unique' => 'this_user_is_already_banned'
+				'unique' => 'this_user_is_already_banned', 'max' => PHP_INT_MAX
 			],
 			'ban_user_id' => ['type' => self::UINT, 'required' => true],
 			'ban_date' => ['type' => self::UINT, 'default' => \XF::$time],

@@ -20,13 +20,11 @@ class Login extends AbstractPlugin
 
 	public function getTfaLoginUserId()
 	{
-		if (!$this->session->tfaLoginUserId || \XF::visitor()->user_id)
-		{
+		if (!$this->session->tfaLoginUserId || \XF::visitor()->user_id) {
 			return null;
 		}
 
-		if (!$this->session->tfaLoginDate || $this->session->tfaLoginDate < time() - 900)
-		{
+		if (!$this->session->tfaLoginDate || $this->session->tfaLoginDate < time() - 900) {
 			return null;
 		}
 
@@ -39,8 +37,7 @@ class Login extends AbstractPlugin
 	public function getTfaLoginUser()
 	{
 		$userId = $this->getTfaLoginUserId();
-		if (!$userId)
-		{
+		if (!$userId) {
 			return null;
 		}
 
@@ -61,16 +58,12 @@ class Login extends AbstractPlugin
 
 	public function triggerIfTfaConfirmationRequired(\XF\Entity\User $user, $callbackOrUrl)
 	{
-		if ($this->isTfaConfirmationRequired($user))
-		{
+		if ($this->isTfaConfirmationRequired($user)) {
 			$this->setTfaSessionCheck($user);
 
-			if ($callbackOrUrl instanceof \Closure)
-			{
+			if ($callbackOrUrl instanceof \Closure) {
 				$callbackOrUrl();
-			}
-			else
-			{
+			} else {
 				throw $this->exception($this->redirect($callbackOrUrl, ''));
 			}
 		}
@@ -84,14 +77,12 @@ class Login extends AbstractPlugin
 	 */
 	public function runTfaCheck($redirect, $providerId = null)
 	{
-		if ($providerId === null)
-		{
+		if ($providerId === null) {
 			$providerId = $this->request->filter('provider', 'str');
 		}
 
 		$user = $this->getTfaLoginUser();
-		if (!$user)
-		{
+		if (!$user) {
 			$this->clearTfaSessionCheck();
 			return LoginTfaResult::newSkipped($redirect);
 		}
@@ -99,8 +90,7 @@ class Login extends AbstractPlugin
 		/** @var \XF\Service\User\Tfa $tfaService */
 		$tfaService = $this->service('XF:User\Tfa', $user);
 
-		if (!$tfaService->isTfaAvailable())
-		{
+		if (!$tfaService->isTfaAvailable()) {
 			$this->clearTfaSessionCheck();
 			return LoginTfaResult::newSuccess($user, $redirect);
 		}
@@ -109,26 +99,20 @@ class Login extends AbstractPlugin
 			$this->request->isPost()
 			&& $this->request->filter('confirm', 'bool')
 			&& $tfaService->isProviderValid($providerId)
-		)
-		{
-			if ($tfaService->hasTooManyTfaAttempts())
-			{
+		) {
+			if ($tfaService->hasTooManyTfaAttempts()) {
 				return LoginTfaResult::newError(
 					\XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts')
 				);
 			}
 
 			$verified = $tfaService->verify($this->request, $providerId);
-			if (!$verified)
-			{
+			if (!$verified) {
 				return LoginTfaResult::newError(\XF::phrase('two_step_verification_value_could_not_be_confirmed'));
-			}
-			else
-			{
+			} else {
 				$this->clearTfaSessionCheck();
 
-				if ($this->filter('trust', 'bool'))
-				{
+				if ($this->filter('trust', 'bool')) {
 					$this->setDeviceTrusted($user->user_id);
 				}
 
@@ -170,16 +154,13 @@ class Login extends AbstractPlugin
 
 	public function completeLogin(\XF\Entity\User $user, $remember)
 	{
-		if ($user->user_id !== \XF::visitor()->user_id)
-		{
-			if (!empty($this->options()->preRegAction['enabled']))
-			{
+		if ($user->user_id !== \XF::visitor()->user_id) {
+			if (!empty($this->options()->preRegAction['enabled'])) {
 				/** @var \XF\Repository\PreRegAction $preRegActionRepo */
 				$preRegActionRepo = $this->repository('XF:PreRegAction');
 
 				$preRegActionKey = $this->session->preRegActionKey;
-				if ($preRegActionKey)
-				{
+				if ($preRegActionKey) {
 					$preRegActionRepo->associateActionWithUser($preRegActionKey, $user->user_id);
 				}
 
@@ -187,6 +168,8 @@ class Login extends AbstractPlugin
 			}
 
 			$this->session->changeUser($user);
+
+
 			\XF::setVisitor($user);
 		}
 
@@ -195,12 +178,14 @@ class Login extends AbstractPlugin
 		$this->repository('XF:SessionActivity')->clearUserActivity(0, $ip);
 
 		$this->repository('XF:Ip')->logIp(
-			$user->user_id, $ip,
-			'user', $user->user_id, 'login'
+			$user->user_id,
+			$ip,
+			'user',
+			$user->user_id,
+			'login'
 		);
 
-		if ($remember)
-		{
+		if ($remember) {
 			$this->createVisitorRememberKey();
 		}
 	}
@@ -210,8 +195,7 @@ class Login extends AbstractPlugin
 		$redirect = $this->controller->getDynamicRedirectIfNot($this->buildLink('login'));
 		$visitor = \XF::visitor();
 
-		if (!$visitor->user_id)
-		{
+		if (!$visitor->user_id) {
 			return $this->redirect($redirect, '');
 		}
 
@@ -219,14 +203,12 @@ class Login extends AbstractPlugin
 
 		/** @var \XF\Service\User\Login $loginService */
 		$loginService = $this->service('XF:User\Login', $visitor->username, $this->request->getIp());
-		if ($loginService->isLoginLimited())
-		{
+		if ($loginService->isLoginLimited()) {
 			return $this->error(\XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'));
 		}
 
 		$password = $this->filter('password', 'str');
-		if (!$loginService->validate($password, $error))
-		{
+		if (!$loginService->validate($password, $error)) {
 			return $this->error($error);
 		}
 
@@ -239,8 +221,7 @@ class Login extends AbstractPlugin
 		$this->controller->assertPostOnly();
 
 		// if there's no cookie, then we need to generate a new one
-		if ($this->request->getCookie('csrf'))
-		{
+		if ($this->request->getCookie('csrf')) {
 			$this->controller->assertValidCsrfToken(null, 0); // ignore time errors and allow it to be updated in all cases
 		}
 
@@ -257,8 +238,7 @@ class Login extends AbstractPlugin
 	public function createVisitorRememberKey()
 	{
 		$visitor = \XF::visitor();
-		if (!$visitor->user_id)
-		{
+		if (!$visitor->user_id) {
 			return;
 		}
 
@@ -283,14 +263,12 @@ class Login extends AbstractPlugin
 	{
 		$visitor = \XF::visitor();
 		$userId = $visitor->user_id;
-		if (!$userId)
-		{
+		if (!$userId) {
 			return;
 		}
 
 		$activity = $visitor->Activity;
-		if (!$activity)
-		{
+		if (!$activity) {
 			return;
 		}
 
@@ -303,13 +281,11 @@ class Login extends AbstractPlugin
 	public function deleteVisitorRememberRecord($deleteCookie = true)
 	{
 		$userRemember = $this->validateVisitorRememberKey();
-		if ($userRemember)
-		{
+		if ($userRemember) {
 			$userRemember->delete();
 		}
 
-		if ($deleteCookie)
-		{
+		if ($deleteCookie) {
 			$this->app->response()->setCookie('user', false);
 		}
 	}
@@ -320,19 +296,15 @@ class Login extends AbstractPlugin
 	public function validateVisitorRememberKey()
 	{
 		$rememberCookie = $this->request->getCookie('user');
-		if (!$rememberCookie)
-		{
+		if (!$rememberCookie) {
 			return null;
 		}
 
 		/** @var \XF\Repository\UserRemember $rememberRepo */
 		$rememberRepo = $this->repository('XF:UserRemember');
-		if ($rememberRepo->validateByCookieValue($rememberCookie, $remember))
-		{
+		if ($rememberRepo->validateByCookieValue($rememberCookie, $remember)) {
 			return $remember;
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}
@@ -347,10 +319,8 @@ class Login extends AbstractPlugin
 		$skip = $this->clearCookieSkipList();
 		$response = $this->app->response();
 
-		foreach ($this->request->getCookies() AS $cookie => $null)
-		{
-			if (in_array($cookie, $skip))
-			{
+		foreach ($this->request->getCookies() as $cookie => $null) {
+			if (in_array($cookie, $skip)) {
 				continue;
 			}
 
@@ -368,8 +338,7 @@ class Login extends AbstractPlugin
 	public function handleVisitorPasswordChange()
 	{
 		$visitor = \XF::visitor();
-		if (!$visitor->user_id)
-		{
+		if (!$visitor->user_id) {
 			return;
 		}
 
@@ -380,8 +349,7 @@ class Login extends AbstractPlugin
 
 		$rememberRepo->clearUserRememberRecords($visitor->user_id);
 
-		if ($userRemember)
-		{
+		if ($userRemember) {
 			// had a remember key before which has been invalidated, so give another one
 			$this->createVisitorRememberKey();
 		}

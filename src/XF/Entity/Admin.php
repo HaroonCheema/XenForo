@@ -141,7 +141,7 @@ class Admin extends Entity
 		$structure->shortName = 'XF:Admin';
 		$structure->primaryKey = 'user_id';
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'unique' => 'specified_user_is_already_administrator'],
+			'user_id' => ['type' => self::UINT, 'unique' => 'specified_user_is_already_administrator', 'max' => PHP_INT_MAX],
 			'extra_user_group_ids' => ['type' => self::LIST_COMMA, 'default' => [],
 				'list' => ['type' => 'posint', 'unique' => true, 'sort' => SORT_NUMERIC]
 			],

@@ -43,7 +43,7 @@ class PollVote extends Entity
 		$structure->shortName = 'XF:PollVote';
 		$structure->primaryKey = ['poll_response_id', 'user_id'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'poll_response_id' => ['type' => self::UINT, 'required' => true],
 			'poll_id' => ['type' => self::UINT, 'required' => true],
 			'vote_date' => ['type' => self::UINT, 'default' => \XF::$time]

@@ -796,7 +796,7 @@ class ProfilePost extends Entity implements RenderableContentInterface, Linkable
 		$structure->columns = [
 			'profile_post_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'profile_user_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'api' => true, 'max' => PHP_INT_MAX],
 			'username' => ['type' => self::STR, 'maxLength' => 50,
 				'required' => 'please_enter_valid_name'
 			],

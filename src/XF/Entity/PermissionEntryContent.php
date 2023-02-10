@@ -32,7 +32,7 @@ class PermissionEntryContent extends Entity
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'content_id' => ['type' => self::UINT, 'required' => true],
 			'user_group_id' => ['type' => self::UINT, 'default' => 0],
-			'user_id' => ['type' => self::UINT, 'default' => 0],
+			'user_id' => ['type' => self::UINT, 'default' => 0, 'max' => PHP_INT_MAX],
 			'permission_group_id' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'permission_id' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'permission_value' => ['type' => self::STR, 'required' => true,

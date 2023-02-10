@@ -63,7 +63,7 @@ class ConversationRecipient extends Entity
 		$structure->primaryKey = ['conversation_id', 'user_id'];
 		$structure->columns = [
 			'conversation_id' => ['type' => self::UINT, 'required' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'recipient_state' => ['type' => self::STR, 'required' => true,
 				'allowedValues' => ['active', 'deleted', 'deleted_ignored']
 			],

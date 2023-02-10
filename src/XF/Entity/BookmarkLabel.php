@@ -48,7 +48,7 @@ class BookmarkLabel extends Entity
 			'label_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'label' => ['type' => self::STR, 'required' => true, 'maxLength' => 100],
 			'label_url' => ['type' => self::STR, 'required' => true, 'maxLength' => 100],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'use_count' => ['type' => self::UINT, 'forced' => true, 'default' => 0],
 			'last_use_date' => ['type' => self::UINT, 'default' => 0],
 		];

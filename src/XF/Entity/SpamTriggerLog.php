@@ -52,7 +52,7 @@ class SpamTriggerLog extends Entity
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'content_id' => ['type' => self::UINT, 'required' => true],
 			'log_date' => ['type' => self::UINT, 'default' => \XF::$time],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'ip_address' => ['type' => self::BINARY, 'maxLength' => 16],
 			'result' => ['type' => self::STR, 'required' => true],
 			'details' => ['type' => self::JSON_ARRAY, 'required' => true],

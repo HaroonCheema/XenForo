@@ -72,7 +72,7 @@ class ModeratorLog extends Entity
 		$structure->columns = [
 			'moderator_log_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'log_date' => ['type' => self::UINT, 'default' => \XF::$time],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'ip_address' => ['type' => self::BINARY, 'maxLength' => 16, 'default' => ''],
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'content_id' => ['type' => self::UINT, 'required' => true],

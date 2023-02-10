@@ -24,7 +24,7 @@ class FindNewDefault extends Entity
 		$structure->primaryKey = 'find_new_default_id';
 		$structure->columns = [
 			'find_new_default_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'filters' => ['type' => self::JSON_ARRAY, 'default' => []]
 		];

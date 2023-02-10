@@ -17,6 +17,8 @@ return array (
   'widget_pos.online_list_sidebar' => 'Online list: Sidebar',
   'widget_pos.pub_sidebar_bottom' => 'Public: Sidebar bottom',
   'widget_pos.pub_sidebar_top' => 'Public: Sidebar top',
+  'widget_pos.snogFormListSidebar' => 'Advanced Form List: Sidebar',
+  'widget_pos.snogFormSidebar' => 'Advanced Form: Sidebar',
   'widget_pos.thread_view_above_messages' => 'Thread view: Above messages',
   'widget_pos.thread_view_below_messages' => 'Thread view: Below messages',
   'widget_pos.thread_view_below_quick_reply' => 'Thread view: Below quick reply',

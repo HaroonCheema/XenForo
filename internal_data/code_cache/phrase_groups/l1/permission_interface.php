@@ -3,6 +3,7 @@ return array (
   'permission_interface.bookmarkPermissions' => 'Bookmark permissions',
   'permission_interface.conversationModeratorPermissions' => 'Conversation moderator permissions',
   'permission_interface.conversationPermissions' => 'Conversation permissions',
+  'permission_interface.formThreadModeration' => 'Form Thread Moderation',
   'permission_interface.forumModeratorPermissions' => 'Forum moderator permissions',
   'permission_interface.forumPermissions' => 'Forum permissions',
   'permission_interface.generalModeratorPermissions' => 'General moderator permissions',
@@ -11,4 +12,5 @@ return array (
   'permission_interface.profilePostModeratorPermissions' => 'Profile post moderator permissions',
   'permission_interface.profilePostPermissions' => 'Profile post permissions',
   'permission_interface.signaturePermissions' => 'Signature permissions',
+  'permission_interface.snogForms' => 'Advanced Forms Permissions',
 );

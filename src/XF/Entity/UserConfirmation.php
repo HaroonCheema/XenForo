@@ -45,7 +45,7 @@ class UserConfirmation extends Entity
 		$structure->shortName = 'XF:UserConfirmation';
 		$structure->primaryKey = ['user_id', 'confirmation_type'];
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'confirmation_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'confirmation_key' => ['type' => self::STR, 'maxLength' => 16, 'required' => true],
 			'confirmation_date' => ['type' => self::UINT, 'default' => \XF::$time]

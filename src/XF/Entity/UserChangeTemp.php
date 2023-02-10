@@ -37,7 +37,7 @@ class UserChangeTemp extends Entity
 		$structure->primaryKey = 'user_change_temp_id';
 		$structure->columns = [
 			'user_change_temp_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'change_key' => ['type' => self::STR, 'maxLength' => 50, 'required' => true, 'nullable' => true],
 			'action_type' => ['type' => self::STR, 'required' => true,
 				'allowedValues' => ['field', 'groups']

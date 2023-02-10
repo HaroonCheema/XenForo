@@ -84,7 +84,7 @@ class PreRegAction extends Entity
 		$structure->columns = [
 			'action_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'guest_key' => ['type' => self::STR, 'maxLength' => 75, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'nullable' => true],
+			'user_id' => ['type' => self::UINT, 'nullable' => true, 'max' => PHP_INT_MAX],
 			'content_id' => ['type' => self::UINT, 'required' => true],
 			'ip_address' => ['type' => self::BINARY, 'maxLength' => 16, 'default' => ''],
 			'last_update' => ['type' => self::UINT, 'default' => \XF::$time],

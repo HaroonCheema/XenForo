@@ -69,8 +69,7 @@ class Finder implements \IteratorAggregate
 
 	public function setParentFinder(Finder $parent, $relationPath)
 	{
-		if ($this->conditions || $this->order || $this->joins)
-		{
+		if ($this->conditions || $this->order || $this->joins) {
 			throw new \LogicException("Cannot setup a parent finder when criteria has been set");
 		}
 
@@ -87,13 +86,11 @@ class Finder implements \IteratorAggregate
 
 	public function __get($relationName)
 	{
-		if (isset($this->childFinders[$relationName]))
-		{
+		if (isset($this->childFinders[$relationName])) {
 			return $this->childFinders[$relationName];
 		}
 
-		if (!isset($this->structure->relations[$relationName]))
-		{
+		if (!isset($this->structure->relations[$relationName])) {
 			$table = $this->structure->table;
 			throw new \LogicException("Unknown relation $relationName accessed on $table");
 		}
@@ -108,16 +105,11 @@ class Finder implements \IteratorAggregate
 
 	protected function writeSqlCondition($condition)
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			$this->parentFinder->writeSqlCondition($condition);
-		}
-		else if (is_array($this->conditionBuilding))
-		{
+		} else if (is_array($this->conditionBuilding)) {
 			$this->conditionBuilding[] = $condition;
-		}
-		else
-		{
+		} else {
 			$this->conditions[] = $condition;
 		}
 	}
@@ -125,13 +117,20 @@ class Finder implements \IteratorAggregate
 	public function where($condition, $operator = null, $value = null)
 	{
 		$argCount = func_num_args();
-		switch ($argCount)
-		{
-			case 1: $condition = $this->buildCondition($condition); break;
-			case 2: $condition = $this->buildCondition($condition, $operator); break;
-			case 3: $condition = $this->buildCondition($condition, $operator, $value); break;
 
-			default: $condition = call_user_func_array([$this, 'buildCondition'], func_get_args());
+		switch ($argCount) {
+			case 1:
+				$condition = $this->buildCondition($condition);
+				break;
+			case 2:
+				$condition = $this->buildCondition($condition, $operator);
+				break;
+			case 3:
+				$condition = $this->buildCondition($condition, $operator, $value);
+				break;
+
+			default:
+				$condition = call_user_func_array([$this, 'buildCondition'], func_get_args());
 		}
 
 		$this->writeSqlCondition($condition);
@@ -151,27 +150,18 @@ class Finder implements \IteratorAggregate
 		$args = $conditionB === null ? $conditionA : func_get_args();
 		$conditions = [];
 
-		if (!$args)
-		{
+		if (!$args) {
 			throw new \InvalidArgumentException("Where OR called with no conditions");
 		}
 
-		foreach ($args AS $k => $arg)
-		{
-			if ($arg instanceof FinderExpression)
-			{
+		foreach ($args as $k => $arg) {
+			if ($arg instanceof FinderExpression) {
 				$conditions[] = $arg->renderSql($this, true);
-			}
-			else if (is_array($arg) && $this->arrayRepresentsCondition($arg))
-			{
+			} else if (is_array($arg) && $this->arrayRepresentsCondition($arg)) {
 				$conditions[] = $this->buildConditionFromArray($arg);
-			}
-			else if (is_array($arg))
-			{
+			} else if (is_array($arg)) {
 				$conditions[] = $this->buildCondition($arg);
-			}
-			else
-			{
+			} else {
 				throw new \InvalidArgumentException("Argument $k is not an array/FinderExpression");
 			}
 		}
@@ -185,71 +175,52 @@ class Finder implements \IteratorAggregate
 	{
 		$argCount = func_num_args();
 
-		if ($argCount == 1)
-		{
-			if ($condition instanceof FinderExpression)
-			{
+		if ($argCount == 1) {
+			if ($condition instanceof FinderExpression) {
 				return $condition->renderSql($this, true);
 			}
 
-			if ($condition instanceof \Closure)
-			{
+			if ($condition instanceof \Closure) {
 				$conditionBuilding = $this->conditionBuilding;
 				$this->conditionBuilding = [];
 
 				$result = $condition($this);
-				if (!$result)
-				{
+				if (!$result) {
 					$result = $this->conditionBuilding;
 				}
 
 				$this->conditionBuilding = $conditionBuilding;
 
-				if ($result)
-				{
+				if ($result) {
 					return is_array($result) ? implode(' AND ', $result) : $result;
-				}
-				else
-				{
+				} else {
 					return '1';
 				}
 			}
 
-			if ($condition === true)
-			{
+			if ($condition === true) {
 				return '1';
 			}
 
-			if ($condition === false)
-			{
+			if ($condition === false) {
 				return '0';
 			}
 
-			if (!is_array($condition))
-			{
+			if (!is_array($condition)) {
 				throw new \InvalidArgumentException('Condition must be array if only 1 argument is provided');
 			}
 
 			$conditions = [];
 
-			if ($this->arrayRepresentsCondition($condition))
-			{
+			if ($this->arrayRepresentsCondition($condition)) {
 				$conditions[] = $this->buildConditionFromArray($condition);
-			}
-			else
-			{
-				foreach ($condition AS $name => $value)
-				{
-					if (is_int($name) && $value instanceof FinderExpression)
-					{
+			} else {
+				foreach ($condition as $name => $value) {
+					if (is_int($name) && $value instanceof FinderExpression) {
 						$conditions[] = $value->renderSql($this, true);
-					}
-					else if (is_int($name) && is_array($value))
-					{
+					} else if (is_int($name) && is_array($value)) {
 						$conditions[] = $this->buildConditionFromArray($value);
-					}
-					else
-					{
+					} else {
 						$conditions[] = $this->buildCondition($name, $value);
 					}
 				}
@@ -258,17 +229,13 @@ class Finder implements \IteratorAggregate
 			return $conditions ? implode(' AND ', $conditions) : "1";
 		}
 
-		if ($condition instanceof FinderExpression)
-		{
+		if ($condition instanceof FinderExpression) {
 			$lhs = $condition->renderSql($this, true);
-		}
-		else
-		{
+		} else {
 			$lhs = $this->columnSqlName($condition, true);
 		}
 
-		if ($argCount == 2)
-		{
+		if ($argCount == 2) {
 			// 2 args is implicit equals
 			$value = $operator;
 			$operator = '=';
@@ -276,8 +243,7 @@ class Finder implements \IteratorAggregate
 
 		$operator = strtoupper($operator);
 
-		switch ($operator)
-		{
+		switch ($operator) {
 			case '=':
 			case '<>':
 			case '!=':
@@ -296,10 +262,8 @@ class Finder implements \IteratorAggregate
 
 		$hasValue = true;
 
-		if ($value === null)
-		{
-			switch ($operator)
-			{
+		if ($value === null) {
+			switch ($operator) {
 				case '=':
 					$operator = 'IS NULL';
 					$hasValue = false;
@@ -313,17 +277,14 @@ class Finder implements \IteratorAggregate
 			}
 		}
 
-		if (!$hasValue)
-		{
+		if (!$hasValue) {
 			return "$lhs $operator";
 		}
 
 		$quoted = $this->db->quote($value);
 
-		if (!is_array($value))
-		{
-			switch ($operator)
-			{
+		if (!is_array($value)) {
+			switch ($operator) {
 				case 'BETWEEN':
 					throw new \InvalidArgumentException("Between operators require array values");
 					break;
@@ -332,27 +293,20 @@ class Finder implements \IteratorAggregate
 			return "$lhs $operator $quoted";
 		}
 
-		switch ($operator)
-		{
+		switch ($operator) {
 			case '=':
-				if (strlen($quoted))
-				{
+				if (strlen($quoted)) {
 					$condition = "$lhs IN (" . $quoted . ')';
-				}
-				else
-				{
+				} else {
 					$condition = '0'; // can't match
 				}
 				break;
 
 			case '<>':
 			case '!=':
-				if (strlen($quoted))
-				{
+				if (strlen($quoted)) {
 					$condition = "$lhs NOT IN (" . $quoted . ')';
-				}
-				else
-				{
+				} else {
 					// otherwise ignore
 					$condition = '1';
 				}
@@ -361,20 +315,15 @@ class Finder implements \IteratorAggregate
 			case 'LIKE':
 			case 'NOT LIKE':
 				$parts = [];
-				foreach ($value AS $v)
-				{
-					if (strlen($v))
-					{
+				foreach ($value as $v) {
+					if (strlen($v)) {
 						$parts[] = "$lhs $operator " . $this->db->quote($v);
 					}
 				}
-				if ($parts)
-				{
+				if ($parts) {
 					// if you say NOT LIKE [a, b, c], you can't match any, so need AND
 					$condition = implode($operator == 'LIKE' ? ' OR ' : ' AND ', $parts);
-				}
-				else
-				{
+				} else {
 					// otherwise ignore
 					$condition = '1';
 				}
@@ -395,32 +344,31 @@ class Finder implements \IteratorAggregate
 
 	protected function buildConditionFromArray(array $value)
 	{
-		switch (count($value))
-		{
-			case 1: return $this->buildCondition($value[0]);
-			case 2: return $this->buildCondition($value[0], $value[1]);
-			case 3: return $this->buildCondition($value[0], $value[1], $value[2]);
-			default: return call_user_func_array([$this, 'buildCondition'], $value);
+		switch (count($value)) {
+			case 1:
+				return $this->buildCondition($value[0]);
+			case 2:
+				return $this->buildCondition($value[0], $value[1]);
+			case 3:
+				return $this->buildCondition($value[0], $value[1], $value[2]);
+			default:
+				return call_user_func_array([$this, 'buildCondition'], $value);
 		}
 	}
 
 	protected function arrayRepresentsCondition(array $array)
 	{
-		if (!isset($array[0]))
-		{
+		if (!isset($array[0])) {
 			return false;
 		}
 
-		foreach ($array AS $k => $null)
-		{
-			if (!is_int($k))
-			{
+		foreach ($array as $k => $null) {
+			if (!is_int($k)) {
 				return false;
 			}
 		}
 
-		if (is_array($array[0]))
-		{
+		if (is_array($array[0])) {
 			return false;
 		}
 
@@ -429,37 +377,30 @@ class Finder implements \IteratorAggregate
 
 	public function whereId($id)
 	{
+
 		$primaryKey = $this->structure->primaryKey;
 
-		if (is_array($primaryKey) && count($primaryKey) === 1)
-		{
+
+
+		if (is_array($primaryKey) && count($primaryKey) === 1) {
 			$primaryKey = reset($primaryKey);
 		}
 
-		if (is_array($primaryKey))
-		{
-			if (!is_array($id))
-			{
+		if (is_array($primaryKey)) {
+			if (!is_array($id)) {
 				throw new \InvalidArgumentException("Primary key is compound but non array ID given");
 			}
-			foreach ($primaryKey AS $i => $key)
-			{
-				if (array_key_exists($key, $id))
-				{
+			foreach ($primaryKey as $i => $key) {
+				if (array_key_exists($key, $id)) {
 					$this->where($key, $id[$key]);
-				}
-				else if (array_key_exists($i, $id))
-				{
+				} else if (array_key_exists($i, $id)) {
 					$this->where($key, $id[$i]);
-				}
-				else
-				{
+				} else {
 					throw new \InvalidArgumentException("Expected array key $key or $i to exist in ID");
 				}
 			}
-		}
-		else
-		{
+		} else {
+
 			$this->where($primaryKey, $id);
 		}
 
@@ -468,8 +409,7 @@ class Finder implements \IteratorAggregate
 
 	public function whereIds(array $ids)
 	{
-		if (!$ids)
-		{
+		if (!$ids) {
 			// no IDs so nothing to match
 			$this->whereImpossible();
 
@@ -478,35 +418,25 @@ class Finder implements \IteratorAggregate
 
 		$primaryKey = $this->structure->primaryKey;
 
-		if (is_array($primaryKey) && count($primaryKey) === 1)
-		{
+		if (is_array($primaryKey) && count($primaryKey) === 1) {
 			$primaryKey = reset($primaryKey);
 		}
 
-		if (is_array($primaryKey))
-		{
+		if (is_array($primaryKey)) {
 			$columns = [];
-			foreach ($primaryKey AS $i => $key)
-			{
+			foreach ($primaryKey as $i => $key) {
 				$columns[] = $this->columnSqlName($key, true);
 			}
 
 			$values = [];
-			foreach ($ids AS $id)
-			{
+			foreach ($ids as $id) {
 				$row = [];
-				foreach ($primaryKey AS $i => $key)
-				{
-					if (array_key_exists($key, $id))
-					{
+				foreach ($primaryKey as $i => $key) {
+					if (array_key_exists($key, $id)) {
 						$row[] = $this->quote($id[$key]);
-					}
-					else if (array_key_exists($i, $id))
-					{
+					} else if (array_key_exists($i, $id)) {
 						$row[] = $this->quote($id[$i]);
-					}
-					else
-					{
+					} else {
 						throw new \InvalidArgumentException("Expected array key $key or $i to exist in ID");
 					}
 				}
@@ -515,9 +445,7 @@ class Finder implements \IteratorAggregate
 			}
 
 			$this->whereSql('(' . implode(', ', $columns) . ') IN (' . implode(', ', $values) . ')');
-		}
-		else
-		{
+		} else {
 			$this->where($primaryKey, $ids);
 		}
 
@@ -527,8 +455,7 @@ class Finder implements \IteratorAggregate
 	public function whereSql($sql)
 	{
 		$args = func_get_args();
-		if (count($args) > 1)
-		{
+		if (count($args) > 1) {
 			array_shift($args);
 			$args = array_map([$this->db, 'quote'], $args);
 			$sql = vsprintf($sql, $args);
@@ -550,15 +477,12 @@ class Finder implements \IteratorAggregate
 		$relation = $options['relation'];
 		$column = $options['column'];
 
-		if ($options['disableProcessing'])
-		{
+		if ($options['disableProcessing']) {
 			$activeLimit = [
 				["{$relation}.active", 1],
 				["{$relation}.is_processing", 0]
 			];
-		}
-		else
-		{
+		} else {
 			$activeLimit = ["{$relation}.active", 1];
 		}
 
@@ -588,8 +512,7 @@ class Finder implements \IteratorAggregate
 
 	public function resetWhere()
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot reset the where clause with a parent finder");
 		}
 
@@ -610,8 +533,7 @@ class Finder implements \IteratorAggregate
 		array_shift($args);
 
 		// passed the references in as an array, otherwise as separate args
-		if (count($args) == 1 && is_array($args[0]))
-		{
+		if (count($args) == 1 && is_array($args[0])) {
 			$args = $args[0];
 		}
 
@@ -645,15 +567,11 @@ class Finder implements \IteratorAggregate
 
 	public function with($name, $mustExist = false)
 	{
-		if (is_array($name))
-		{
-			foreach ($name AS $join)
-			{
+		if (is_array($name)) {
+			foreach ($name as $join) {
 				$this->join($join, true, false, $mustExist);
 			}
-		}
-		else
-		{
+		} else {
 			$this->join($name, true, false, $mustExist);
 		}
 
@@ -662,15 +580,11 @@ class Finder implements \IteratorAggregate
 
 	public function exists($name, $fetch = false)
 	{
-		if (is_array($name))
-		{
-			foreach ($name AS $join)
-			{
+		if (is_array($name)) {
+			foreach ($name as $join) {
 				$this->join($join, $fetch, true, true);
 			}
-		}
-		else
-		{
+		} else {
 			$this->join($name, $fetch, true, true);
 		}
 
@@ -679,13 +593,11 @@ class Finder implements \IteratorAggregate
 
 	protected function join($name, $fetch = false, $fundamental = false, $mustExist = false)
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			return $this->parentFinder->join("$this->relationPath.$name", $fetch, $fundamental, $mustExist);
 		}
 
-		if ($mustExist)
-		{
+		if ($mustExist) {
 			$fundamental = true;
 		}
 
@@ -697,60 +609,45 @@ class Finder implements \IteratorAggregate
 		$autoWith = [];
 		$isWithAlias = false;
 
-		foreach ($parts AS $part)
-		{
-			if ($isWithAlias)
-			{
+		foreach ($parts as $part) {
+			if ($isWithAlias) {
 				throw new \LogicException("A withAlias must be the last relation requested");
 			}
 
 			$hasRelationValue = explode('|', $part, 2);
-			if (isset($hasRelationValue[1]))
-			{
+			if (isset($hasRelationValue[1])) {
 				$relationValue = $hasRelationValue[1];
 				$relationName = $hasRelationValue[0];
-			}
-			else
-			{
+			} else {
 				$relationName = $part;
 				$relationValue = null;
 			}
 
-			if (empty($structure->relations[$relationName]))
-			{
-				if (isset($structure->withAliases[$relationName]))
-				{
+			if (empty($structure->relations[$relationName])) {
+				if (isset($structure->withAliases[$relationName])) {
 					$isWithAlias = true;
 					$withAliasPrefix = ($partialName ? $partialName . '.' : '');
 
-					if ($relationValue)
-					{
+					if ($relationValue) {
 						$withAliasParams = explode('+', $relationValue);
 						$withAliasParams = array_fill_keys($withAliasParams, true);
-					}
-					else
-					{
+					} else {
 						$withAliasParams = [];
 					}
 
-					foreach ($structure->withAliases[$relationName] AS $withAlias)
-					{
-						if ($withAlias instanceof \Closure)
-						{
+					foreach ($structure->withAliases[$relationName] as $withAlias) {
+						if ($withAlias instanceof \Closure) {
 							$withAlias = $withAlias($withAliasParams, $this, $relationValue);
 						}
-						if (!$withAlias)
-						{
+						if (!$withAlias) {
 							// closures may not return anything
 							continue;
 						}
-						if (!is_array($withAlias))
-						{
+						if (!is_array($withAlias)) {
 							$withAlias = [$withAlias];
 						}
 
-						foreach ($withAlias AS $w)
-						{
+						foreach ($withAlias as $w) {
 							$this->join($withAliasPrefix . $w, $fetch, $fundamental, $mustExist);
 						}
 					}
@@ -766,10 +663,8 @@ class Finder implements \IteratorAggregate
 			$relation = $structure->relations[$relationName];
 			$relationStructure = $this->em->getEntityStructure($relation['entity']);
 
-			if ($relationValue !== null)
-			{
-				if (empty($relation['key']))
-				{
+			if ($relationValue !== null) {
+				if (empty($relation['key'])) {
 					throw new \LogicException("Attempting to get a specific value of a relation that doesn't support it");
 				}
 
@@ -777,35 +672,28 @@ class Finder implements \IteratorAggregate
 				$relation['type'] = Entity::TO_ONE;
 			}
 
-			if ($relation['type'] !== Entity::TO_ONE)
-			{
+			if ($relation['type'] !== Entity::TO_ONE) {
 				throw new \Exception("Joins only support TO_ONE relationships currently");
 				// TODO: joins only work on TO_ONE relationships - need to run separate queries for TO_MANY
 			}
 
-			if (isset($this->joins[$partialName]))
-			{
+			if (isset($this->joins[$partialName])) {
 				$finalJoin = $this->joins[$partialName];
 				$joinTable = $finalJoin['alias'];
 				$structure = $relationStructure;
-				if ($fetch)
-				{
-					if (!empty($relation['with']) && !$this->joins[$partialName]['fetch'])
-					{
-						foreach ((array)$relation['with'] AS $with)
-						{
+				if ($fetch) {
+					if (!empty($relation['with']) && !$this->joins[$partialName]['fetch']) {
+						foreach ((array)$relation['with'] as $with) {
 							$autoWith["$partialName.$with"] = true;
 						}
 					}
 
 					$this->joins[$partialName]['fetch'] = true;
 				}
-				if ($fundamental)
-				{
+				if ($fundamental) {
 					$this->joins[$partialName]['fundamental'] = true;
 				}
-				if ($mustExist)
-				{
+				if ($mustExist) {
 					$this->joins[$partialName]['exists'] = true;
 				}
 				continue;
@@ -815,54 +703,36 @@ class Finder implements \IteratorAggregate
 
 			$joinConditions = [];
 			$conditions = $relation['conditions'];
-			if (!is_array($conditions))
-			{
+			if (!is_array($conditions)) {
 				$conditions = [$conditions];
 			}
-			foreach ($conditions AS $condition)
-			{
-				if (is_string($condition))
-				{
+			foreach ($conditions as $condition) {
+				if (is_string($condition)) {
 					$joinConditions[] = "`$alias`.`$condition` = `$joinTable`.`$condition`";
-				}
-				else
-				{
+				} else {
 					list($field, $operator, $value) = $condition;
 
-					if (count($condition) > 3)
-					{
+					if (count($condition) > 3) {
 						$readValue = [];
-						foreach (array_slice($condition, 2) AS $v)
-						{
-							if ($v && $v[0] == '$')
-							{
+						foreach (array_slice($condition, 2) as $v) {
+							if ($v && $v[0] == '$') {
 								$readValue[] = "`$joinTable`.`" . substr($v, 1) . '`';
-							}
-							else
-							{
+							} else {
 								$readValue[] = $this->db->quote($v);
 							}
 						}
 
 						$value = 'CONCAT(' . implode(', ', $readValue) . ')';
-					}
-					else if ($value instanceof \Closure)
-					{
+					} else if ($value instanceof \Closure) {
 						$value = $value('join', $joinTable);
-					}
-					else if (is_string($value) && $value && $value[0] == '$')
-					{
+					} else if (is_string($value) && $value && $value[0] == '$') {
 						$value = "`$joinTable`.`" . substr($value, 1) . '`';
-					}
-					else if (is_array($value))
-					{
-						if (!$value)
-						{
+					} else if (is_array($value)) {
+						if (!$value) {
 							throw new \LogicException("Array join conditions require a value");
 						}
 
-						switch ($operator)
-						{
+						switch ($operator) {
 							case '=':
 								$operator = 'IN';
 								break;
@@ -877,18 +747,13 @@ class Finder implements \IteratorAggregate
 						}
 
 						$value = '(' . $this->db->quote($value) . ')';
-					}
-					else
-					{
+					} else {
 						$value = $this->db->quote($value);
 					}
 
-					if ($field[0] == '$')
-					{
+					if ($field[0] == '$') {
 						$fromJoinAlias = "`$joinTable`.`" . substr($field, 1) . '`';
-					}
-					else
-					{
+					} else {
 						$fromJoinAlias = "`$alias`.`$field`";
 					}
 
@@ -896,8 +761,7 @@ class Finder implements \IteratorAggregate
 				}
 			}
 
-			if ($relationValue !== null)
-			{
+			if ($relationValue !== null) {
 				$relation['key'] = $this->getColumnAlias($relationStructure, $relation['key']);
 				$joinConditions[] = "`$alias`.`$relation[key]` = " . $this->db->quote($relationValue);
 			}
@@ -919,10 +783,8 @@ class Finder implements \IteratorAggregate
 				'entity' => $relation['entity'],
 			];
 
-			if (!empty($relation['with']) && $fetch)
-			{
-				foreach ((array)$relation['with'] AS $with)
-				{
+			if (!empty($relation['with']) && $fetch) {
+				foreach ((array)$relation['with'] as $with) {
 					$autoWith["$partialName.$with"] = true;
 				}
 			}
@@ -932,8 +794,7 @@ class Finder implements \IteratorAggregate
 			$finalJoin = $this->joins[$partialName];
 		}
 
-		foreach (array_keys($autoWith) AS $extraWith)
-		{
+		foreach (array_keys($autoWith) as $extraWith) {
 			$this->join($extraWith, true);
 		}
 
@@ -942,12 +803,9 @@ class Finder implements \IteratorAggregate
 
 	protected function writeSqlOrder($order)
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			$this->parentFinder->writeSqlOrder($order);
-		}
-		else
-		{
+		} else {
 			$this->order[] = $order;
 		}
 	}
@@ -962,8 +820,7 @@ class Finder implements \IteratorAggregate
 	{
 		$direction = $direction ? strtoupper($direction) : 'ASC';
 
-		switch ($direction)
-		{
+		switch ($direction) {
 			case 'ASC':
 			case 'DESC':
 				break;
@@ -972,12 +829,9 @@ class Finder implements \IteratorAggregate
 				throw new \InvalidArgumentException("Unknown order by direction $direction");
 		}
 
-		if (is_array($field))
-		{
-			if (count($field) == 2 && isset($field[1]) && is_string($field[1]))
-			{
-				switch (strtoupper($field[1]))
-				{
+		if (is_array($field)) {
+			if (count($field) == 2 && isset($field[1]) && is_string($field[1])) {
+				switch (strtoupper($field[1])) {
 					case 'ASC':
 					case 'DESC':
 						// this is ['column', 'ASC'] format
@@ -985,32 +839,20 @@ class Finder implements \IteratorAggregate
 				}
 			}
 
-			foreach ($field AS $entry)
-			{
-				if (is_array($entry))
-				{
+			foreach ($field as $entry) {
+				if (is_array($entry)) {
 					$this->order($entry[0], $entry[1] ?? $direction);
-				}
-				else
-				{
+				} else {
 					$this->order($entry, $direction);
 				}
 			}
-		}
-		else
-		{
-			if ($field == self::ORDER_RANDOM)
-			{
+		} else {
+			if ($field == self::ORDER_RANDOM) {
 				$this->writeSqlOrder(self::ORDER_RANDOM);
-			}
-			else
-			{
-				if ($field instanceof FinderExpression)
-				{
+			} else {
+				if ($field instanceof FinderExpression) {
 					$order = $field->renderSql($this, true);
-				}
-				else
-				{
+				} else {
 					$order = $this->columnSqlName($field, true);
 				}
 
@@ -1023,8 +865,7 @@ class Finder implements \IteratorAggregate
 
 	public function resetOrder()
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot reset the order clause with a parent finder");
 		}
 
@@ -1045,43 +886,32 @@ class Finder implements \IteratorAggregate
 		$testOrder = $this->standardizeOrderingValue($testOrder);
 		$testOrderParts = $this->renderToOrderSqlParts($testOrder);
 
-		if ($this->order)
-		{
+		if ($this->order) {
 			$orderParts = $this->order;
-		}
-		else if ($this->defaultOrder)
-		{
+		} else if ($this->defaultOrder) {
 			$orderParts = $this->renderToOrderSqlParts($this->defaultOrder);
-		}
-		else
-		{
+		} else {
 			$orderParts = [];
 		}
 
-		foreach ($testOrderParts AS $i => $part)
-		{
-			if (!isset($orderParts[$i]))
-			{
+		foreach ($testOrderParts as $i => $part) {
+			if (!isset($orderParts[$i])) {
 				// our test order has more orders than the actual finder, can't match
 				return false;
 			}
 
 			$expectedPart = $orderParts[$i];
-			if ($part != $expectedPart)
-			{
+			if ($part != $expectedPart) {
 				return false;
 			}
 		}
 
 		// at this point, everything in the test order has matched
 
-		if ($requireFullMatch)
-		{
+		if ($requireFullMatch) {
 			// if we need a full match, the finder can't have any more order components
 			return count($testOrderParts) === count($orderParts);
-		}
-		else
-		{
+		} else {
 			// only a prefix match so extras don't matter
 			return true;
 		}
@@ -1089,14 +919,11 @@ class Finder implements \IteratorAggregate
 
 	protected function standardizeOrderingValue($field, $direction = 'ASC')
 	{
-		if (is_array($field))
-		{
-			if (count($field) == 2 && isset($field[1]) && is_string($field[1]))
-			{
+		if (is_array($field)) {
+			if (count($field) == 2 && isset($field[1]) && is_string($field[1])) {
 				$dir = strtoupper($field[1]);
 
-				switch ($dir)
-				{
+				switch ($dir) {
 					case 'ASC':
 					case 'DESC':
 						// this is array('column', 'ASC') format
@@ -1106,18 +933,14 @@ class Finder implements \IteratorAggregate
 
 			$output = [];
 
-			foreach ($field AS $entry)
-			{
-				if (is_array($entry))
-				{
+			foreach ($field as $entry) {
+				if (is_array($entry)) {
 					$direction = strtoupper($entry[1] ?? 'ASC');
-					if (!$direction)
-					{
+					if (!$direction) {
 						$direction = 'ASC';
 					}
 
-					switch ($direction)
-					{
+					switch ($direction) {
 						case 'ASC':
 						case 'DESC':
 							break;
@@ -1127,25 +950,19 @@ class Finder implements \IteratorAggregate
 					}
 
 					$output[] = [$entry[0], $direction];
-				}
-				else
-				{
+				} else {
 					$output[] = [$entry, 'ASC'];
 				}
 			}
 
 			return $output;
-		}
-		else
-		{
+		} else {
 			$direction = strtoupper($direction);
-			if (!$direction)
-			{
+			if (!$direction) {
 				$direction = 'ASC';
 			}
 
-			switch ($direction)
-			{
+			switch ($direction) {
 				case 'ASC':
 				case 'DESC':
 					break;
@@ -1162,16 +979,12 @@ class Finder implements \IteratorAggregate
 	{
 		$parts = [];
 
-		foreach ($orders AS $order)
-		{
+		foreach ($orders as $order) {
 			$orderCol = $order[0];
 
-			if ($orderCol instanceof FinderExpression)
-			{
+			if ($orderCol instanceof FinderExpression) {
 				$orderCol = $orderCol->renderSql($this, true);
-			}
-			else
-			{
+			} else {
 				$orderCol = $this->columnSqlName($orderCol, true);
 			}
 
@@ -1185,8 +998,7 @@ class Finder implements \IteratorAggregate
 	{
 		$hintType = strtoupper($hintType);
 
-		switch ($hintType)
-		{
+		switch ($hintType) {
 			case 'IGNORE':
 			case 'USE':
 			case 'FORCE':
@@ -1211,26 +1023,22 @@ class Finder implements \IteratorAggregate
 	 */
 	public function limitByPage($page, $perPage, $thisPageExtra = 0)
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot apply a limit with a parent finder");
 		}
 
 		$page = intval($page);
-		if ($page < 1)
-		{
+		if ($page < 1) {
 			$page = 1;
 		}
 
 		$perPage = intval($perPage);
-		if ($perPage < 1)
-		{
+		if ($perPage < 1) {
 			$perPage = 1;
 		}
 
 		$thisPageExtra = intval($thisPageExtra);
-		if ($thisPageExtra < 0)
-		{
+		if ($thisPageExtra < 0) {
 			$thisPageExtra = 0;
 		}
 
@@ -1242,14 +1050,12 @@ class Finder implements \IteratorAggregate
 
 	public function limit($limit, $offset = null)
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot apply a limit with a parent finder");
 		}
 
 		$this->limit = $limit === null ? null : intval($limit);
-		if ($offset !== null)
-		{
+		if ($offset !== null) {
 			$this->offset = intval($offset);
 		}
 
@@ -1258,8 +1064,7 @@ class Finder implements \IteratorAggregate
 
 	public function offset($offset)
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot apply a limit with a parent finder");
 		}
 
@@ -1270,14 +1075,14 @@ class Finder implements \IteratorAggregate
 
 	public function keyedBy($keyedBy)
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot apply a key function with a parent finder");
 		}
 
-		if ($keyedBy && !($keyedBy instanceof \Closure))
-		{
-			$keyedBy = function ($e) use ($keyedBy) { return $e->{$keyedBy}; };
+		if ($keyedBy && !($keyedBy instanceof \Closure)) {
+			$keyedBy = function ($e) use ($keyedBy) {
+				return $e->{$keyedBy};
+			};
 		}
 		$this->keyedBy = $keyedBy;
 
@@ -1292,19 +1097,18 @@ class Finder implements \IteratorAggregate
 	 */
 	public function pluckFrom($pluckFrom, $keyedBy = null)
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot apply a pluck function with a parent finder");
 		}
 
-		if ($pluckFrom && !($pluckFrom instanceof \Closure))
-		{
-			$pluckFrom = function ($e) use ($pluckFrom) { return $e->{$pluckFrom}; };
+		if ($pluckFrom && !($pluckFrom instanceof \Closure)) {
+			$pluckFrom = function ($e) use ($pluckFrom) {
+				return $e->{$pluckFrom};
+			};
 		}
 		$this->pluckFrom = $pluckFrom;
 
-		if ($keyedBy !== null)
-		{
+		if ($keyedBy !== null) {
 			$this->keyedBy($keyedBy);
 		}
 
@@ -1313,8 +1117,7 @@ class Finder implements \IteratorAggregate
 
 	public function fetchProxied($value = true)
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot apply a proxy fetching with a parent finder");
 		}
 
@@ -1326,8 +1129,7 @@ class Finder implements \IteratorAggregate
 	 */
 	public function total()
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot execute with a parent finder");
 		}
 
@@ -1345,16 +1147,14 @@ class Finder implements \IteratorAggregate
 			'limit' => 1,
 			'offset' => $offset
 		]))->fetchAliasGrouped();
-		if (!$row)
-		{
+		if (!$row) {
 			return null;
 		}
 
 		$entity = $this->em->hydrateFromGrouped($row, $this->getHydrationMap());
 
 		$pluckFrom = $this->pluckFrom;
-		if ($entity && $pluckFrom)
-		{
+		if ($entity && $pluckFrom) {
 			$entity = $pluckFrom($entity);
 		}
 
@@ -1378,21 +1178,16 @@ class Finder implements \IteratorAggregate
 			'limit' => $limit,
 			'offset' => $offset
 		]));
-		while ($row = $results->fetchAliasGrouped())
-		{
+		while ($row = $results->fetchAliasGrouped()) {
 			$entity = $this->em->hydrateFromGrouped($row, $map);
 			$id = $keyedBy ? $keyedBy($entity) : $entity->getIdentifier();
-			if ($pluckFrom)
-			{
+			if ($pluckFrom) {
 				$entity = $pluckFrom($entity);
 			}
 
-			if ($id !== null)
-			{
+			if ($id !== null) {
 				$output[$id] = $entity;
-			}
-			else
-			{
+			} else {
 				$output[] = $entity;
 			}
 		}
@@ -1409,8 +1204,7 @@ class Finder implements \IteratorAggregate
 			'limit' => $limit,
 			'offset' => $offset
 		]));
-		while ($row = $results->fetchAliasGrouped())
-		{
+		while ($row = $results->fetchAliasGrouped()) {
 			$entity = $this->em->hydrateFromGrouped($row, $map);
 			$output[] = $entity;
 		}
@@ -1426,12 +1220,9 @@ class Finder implements \IteratorAggregate
 
 	public function fetchColumns($column)
 	{
-		if (is_array($column) && func_num_args() == 1)
-		{
+		if (is_array($column) && func_num_args() == 1) {
 			$columns = $column;
-		}
-		else
-		{
+		} else {
 			$columns = func_get_args();
 		}
 
@@ -1440,8 +1231,7 @@ class Finder implements \IteratorAggregate
 
 	public function getQuery(array $options = [])
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot get the query with a parent finder");
 		}
 
@@ -1456,8 +1246,7 @@ class Finder implements \IteratorAggregate
 		$fetchOnly = $options['fetchOnly'];
 
 		$defaultOrderSql = [];
-		if (!$this->order && $this->defaultOrder)
-		{
+		if (!$this->order && $this->defaultOrder) {
 			$defaultOrderSql = $this->renderToOrderSqlParts($this->defaultOrder);
 		}
 
@@ -1465,60 +1254,45 @@ class Finder implements \IteratorAggregate
 		$coreTable = $this->structure->table;
 		$joins = [];
 
-		if (is_array($fetchOnly))
-		{
-			if (!$fetchOnly)
-			{
+		if (is_array($fetchOnly)) {
+			if (!$fetchOnly) {
 				throw new \InvalidArgumentException("Must specify one or more specific columns to fetch");
 			}
 
-			foreach ($fetchOnly AS $key => $fetchValue)
-			{
+			foreach ($fetchOnly as $key => $fetchValue) {
 				$fetchSql = $this->columnSqlName(is_int($key) ? $fetchValue : $key);
 				$fetch[] = $fetchSql . (!is_int($key) ? " AS '$fetchValue'" : '');
 			}
-		}
-		else
-		{
+		} else {
 			$fetch[] = '`' . $coreTable . '`.*';
 		}
 
-		if ($this->indexHints)
-		{
+		if ($this->indexHints) {
 			$indexHints = ' ' . implode(' ', $this->indexHints);
-		}
-		else
-		{
+		} else {
 			$indexHints = '';
 		}
 
-		foreach ($this->joins AS $join)
-		{
-			if ($countOnly && !$join['fundamental'])
-			{
+		foreach ($this->joins as $join) {
+			if ($countOnly && !$join['fundamental']) {
 				continue;
 			}
 
 			$joinType = $join['exists'] ? 'INNER' : 'LEFT';
 
 			$joins[] = "$joinType JOIN `$join[table]` AS `$join[alias]` ON ($join[condition])";
-			if ($join['fetch'] && !is_array($fetchOnly))
-			{
+			if ($join['fetch'] && !is_array($fetchOnly)) {
 				$fetch[] = "`$join[alias]`.*";
 			}
 		}
 
-		if ($this->conditions)
-		{
+		if ($this->conditions) {
 			$where = 'WHERE (' . implode(') AND (', $this->conditions) . ')';
-		}
-		else
-		{
+		} else {
 			$where = '';
 		}
 
-		if ($countOnly)
-		{
+		if ($countOnly) {
 			return "
 				SELECT COUNT(*)
 				FROM `$coreTable`$indexHints
@@ -1527,28 +1301,21 @@ class Finder implements \IteratorAggregate
 			";
 		}
 
-		if ($this->order)
-		{
+		if ($this->order) {
 			$orderBy = 'ORDER BY ' . implode(', ', $this->order);
-		}
-		else if ($defaultOrderSql)
-		{
+		} else if ($defaultOrderSql) {
 			$orderBy = 'ORDER BY ' . implode(', ', $defaultOrderSql);
-		}
-		else
-		{
+		} else {
 			$orderBy = '';
 		}
 
 		$limit = $options['limit'];
-		if ($limit === null)
-		{
+		if ($limit === null) {
 			$limit = $this->limit;
 		}
 
 		$offset = $options['offset'];
-		if ($offset === null)
-		{
+		if ($offset === null) {
 			$offset = $this->offset;
 		}
 
@@ -1573,16 +1340,13 @@ class Finder implements \IteratorAggregate
 
 	public function getHydrationMap()
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			throw new \LogicException("Cannot get the hydration map with a parent finder");
 		}
 
 		$map = [];
-		foreach ($this->joins AS $name => $join)
-		{
-			if (empty($join['fetch']))
-			{
+		foreach ($this->joins as $name => $join) {
+			if (empty($join['fetch'])) {
 				continue;
 			}
 
@@ -1611,32 +1375,26 @@ class Finder implements \IteratorAggregate
 
 	public function isColumnValid($field)
 	{
-		try
-		{
+		try {
 			$this->resolveFieldToTableAndColumn($field, false);
 			return true;
-		}
-		catch (\InvalidArgumentException $e)
-		{
+		} catch (\InvalidArgumentException $e) {
 			return false;
 		}
 	}
 
 	public function resolveFieldToTableAndColumn($field, $markJoinFundamental = true)
 	{
-		if ($this->parentFinder)
-		{
+		if ($this->parentFinder) {
 			return $this->parentFinder->resolveFieldToTableAndColumn("$this->relationPath.$field", $markJoinFundamental);
 		}
 
 		$parts = explode('.', $field);
 
-		if (count($parts) == 1)
-		{
+		if (count($parts) == 1) {
 			$field = $this->getColumnAlias($this->structure, $field);
 
-			if (!isset($this->structure->columns[$field]))
-			{
+			if (!isset($this->structure->columns[$field])) {
 				throw new \InvalidArgumentException("Unknown column $field on {$this->structure->shortName}");
 			}
 
@@ -1648,8 +1406,7 @@ class Finder implements \IteratorAggregate
 
 		$joinStructure = $joinInfo['structure'];
 		$column = $this->getColumnAlias($joinStructure, $column);
-		if (!isset($joinStructure->columns[$column]))
-		{
+		if (!isset($joinStructure->columns[$column])) {
 			throw new \InvalidArgumentException("Unknown column $column on relation $joinInfo[relation] ({$joinStructure->shortName})");
 		}
 
@@ -1658,8 +1415,7 @@ class Finder implements \IteratorAggregate
 
 	protected function getColumnAlias(Structure $structure, $column)
 	{
-		if ($structure->columnAliases && isset($structure->columnAliases[$column]))
-		{
+		if ($structure->columnAliases && isset($structure->columnAliases[$column])) {
 			$column = $structure->columnAliases[$column];
 		}
 

@@ -62,7 +62,7 @@ class ReportComment extends Entity implements \XF\BbCode\RenderableContentInterf
 			'report_comment_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'report_id' => ['type' => self::UINT, 'required' => true],
 			'comment_date' => ['type' => self::UINT, 'default' => \XF::$time],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'username' => ['type' => self::STR, 'maxLength' => 50,
 				'required' => 'please_enter_valid_name'
 			],

@@ -61,7 +61,7 @@ class AdminLog extends Entity
 		$structure->primaryKey = 'admin_log_id';
 		$structure->columns = [
 			'admin_log_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'request_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'request_url' => ['type' => self::STR, 'required' => true],
 			'request_data' => ['type' => self::JSON_ARRAY, 'default' => []],

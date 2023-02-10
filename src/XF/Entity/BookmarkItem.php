@@ -206,7 +206,7 @@ class BookmarkItem extends Entity
 		$structure->primaryKey = 'bookmark_id';
 		$structure->columns = [
 			'bookmark_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'content_id' => ['type' => self::UINT, 'required' => true],
 			'bookmark_date' => ['type' => self::UINT, 'default' => \XF::$time],

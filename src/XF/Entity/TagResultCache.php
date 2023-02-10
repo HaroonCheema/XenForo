@@ -55,7 +55,7 @@ class TagResultCache extends Entity
 		$structure->columns = [
 			'result_cache_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'tag_id' => ['type' => self::UINT, 'required' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'cache_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'expiry_date' => ['type' => self::UINT, 'default' => 0],
 			'results' => ['type' => self::JSON_ARRAY, 'required' => true]

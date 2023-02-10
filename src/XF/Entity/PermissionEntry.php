@@ -28,7 +28,7 @@ class PermissionEntry extends Entity
 		$structure->columns = [
 			'permission_entry_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'user_group_id' => ['type' => self::UINT, 'default' => 0],
-			'user_id' => ['type' => self::UINT, 'default' => 0],
+			'user_id' => ['type' => self::UINT, 'default' => 0, 'max' => PHP_INT_MAX],
 			'permission_group_id' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'permission_id' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'permission_value' => ['type' => self::STR, 'required' => true,

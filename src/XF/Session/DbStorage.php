@@ -28,12 +28,9 @@ class DbStorage implements StorageInterface
 			WHERE session_id = ?
 				AND expiry_date >= ?
 		', [$sessionId, \XF::$time]);
-		if ($result)
-		{
+		if ($result) {
 			return @unserialize($result);
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -45,6 +42,7 @@ class DbStorage implements StorageInterface
 
 	public function writeSession($sessionId, array $data, $lifetime, $existing)
 	{
+
 		$this->db->query('
 			-- XFDB=noForceAllWrite
 			INSERT INTO ' . $this->table . '
@@ -55,7 +53,9 @@ class DbStorage implements StorageInterface
 				session_data = VALUES(session_data),
 				expiry_date = VALUES(expiry_date)
 		', [$sessionId, serialize($data), \XF::$time + $lifetime]);
+
 	}
+
 
 	public function deleteExpiredSessions()
 	{

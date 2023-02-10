@@ -25,7 +25,7 @@ class WarningActionTrigger extends Entity
 		$structure->columns = [
 			'action_trigger_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
 			'warning_action_id' => ['type' => self::UINT, 'required' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'trigger_points' => ['type' => self::UINT, 'required' => true],
 			'action_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'action' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],

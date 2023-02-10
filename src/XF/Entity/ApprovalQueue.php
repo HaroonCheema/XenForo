@@ -119,7 +119,7 @@ class ApprovalQueue extends Entity
 		$structure->primaryKey = ['content_type', 'content_id'];
 		$structure->columns = [
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
-			'content_id' => ['type' => self::UINT, 'required' => true],
+			'content_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'content_date' => ['type' => self::UINT, 'default' => \XF::$time, 'required' => true]
 		];
 		$structure->getters = [

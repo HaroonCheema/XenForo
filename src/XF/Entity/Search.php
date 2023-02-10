@@ -101,7 +101,7 @@ class Search extends Entity
 			'search_grouping' => ['type' => self::BOOL, 'default' => false],
 			'user_results' => ['type' => self::JSON_ARRAY, 'default' => []],
 			'warnings' => ['type' => self::JSON_ARRAY, 'default' => []],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'search_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'query_hash' => ['type' => self::STR, 'maxLength' => 32, 'default' => '']
 		];

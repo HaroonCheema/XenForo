@@ -43,11 +43,9 @@ class Manager
 
 	public function getEntityClassName($shortName)
 	{
-		if (!isset($this->entityClassNameMap[$shortName]))
-		{
+		if (!isset($this->entityClassNameMap[$shortName])) {
 			$class = \XF::stringToClass($shortName, '%s\Entity\%s');
-			if (!class_exists($class))
-			{
+			if (!class_exists($class)) {
 				throw new \LogicException("Entity $shortName (class: $class) could not be found");
 			}
 			$class = $this->extension->extendClass($class);
@@ -65,8 +63,7 @@ class Manager
 	public function getEntityStructure($shortName)
 	{
 		$className = $this->getEntityClassName($shortName);
-		if (!isset($this->structures[$className]))
-		{
+		if (!isset($this->structures[$className])) {
 			$structure = $className::getStructure(new Structure());
 			$structure->shortName = $shortName;
 
@@ -88,8 +85,7 @@ class Manager
 	 */
 	public function entityIsA(Entity $entity, $isA)
 	{
-		if (!is_object($isA))
-		{
+		if (!is_object($isA)) {
 			$isA = $this->getEntityClassName($isA);
 		}
 
@@ -115,37 +111,36 @@ class Manager
 	 */
 	public function find($shortName, $id, $with = null)
 	{
-		if ($id === null || $id === false)
-		{
+
+		if ($id === null || $id === false) {
 			return null;
 		}
 
 		$className = $this->getEntityClassName($shortName);
 		$lookup = $this->getEntityCacheLookupString((array)$id);
-		if (isset($this->entities[$className][$lookup]))
-		{
+
+		if (isset($this->entities[$className][$lookup])) {
 			return $this->entities[$className][$lookup];
-		}
-		else
-		{
+		} else {
 			$finder = $this->getFinder($shortName);
-			if ($id === 0 || $id === '0')
-			{
+			if ($id === 0 || $id === '0') {
 				$structure = $finder->getStructure();
+
 				$pKey = $structure->primaryKey;
-				if (is_string($pKey) && !empty($structure->columns[$pKey]['autoIncrement']))
-				{
+				if (is_string($pKey) && !empty($structure->columns[$pKey]['autoIncrement'])) {
 					// if we're trying to fetch a value of 0 from an auto increment field, we know it will fail
 					// as 0 will be replaced with an auto increment value
 					return null;
 				}
 			}
 
+
+
 			$finder->whereId($id);
-			if ($with)
-			{
+			if ($with) {
 				$finder->with($with);
 			}
+
 			return $finder->fetchOne();
 		}
 	}
@@ -161,8 +156,7 @@ class Manager
 	{
 		$finder = $this->getFinder($shortName);
 		$finder->where($where);
-		if ($with)
-		{
+		if ($with) {
 			$finder->with($with);
 		}
 		return $finder->fetchOne();
@@ -178,12 +172,9 @@ class Manager
 	{
 		$className = $this->getEntityClassName($shortName);
 		$lookup = $this->getEntityCacheLookupString((array)$id);
-		if (isset($this->entities[$className][$lookup]))
-		{
+		if (isset($this->entities[$className][$lookup])) {
 			return $this->entities[$className][$lookup];
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -197,15 +188,13 @@ class Manager
 	 */
 	public function findByIds($shortName, array $ids, $with = null)
 	{
-		if (!$ids)
-		{
+		if (!$ids) {
 			return $this->getEmptyCollection();
 		}
 
 		$finder = $this->getFinder($shortName);
 		$finder->whereIds($ids);
-		if ($with)
-		{
+		if ($with) {
 			$finder->with($with);
 		}
 
@@ -224,15 +213,13 @@ class Manager
 
 		$finderClass = \XF::stringToClass($shortName, '%s\Finder\%s');
 		$finderClass = $this->extension->extendClass($finderClass, '\XF\Mvc\Entity\Finder');
-		if (!$finderClass || !class_exists($finderClass))
-		{
+		if (!$finderClass || !class_exists($finderClass)) {
 			$finderClass = '\XF\Mvc\Entity\Finder';
 		}
 
 		/** @var Finder $finder */
 		$finder = new $finderClass($this, $structure);
-		if ($includeDefaultWith && $structure->defaultWith)
-		{
+		if ($includeDefaultWith && $structure->defaultWith) {
 			$finder->with($structure->defaultWith);
 		}
 
@@ -246,15 +233,13 @@ class Manager
 	 */
 	public function getRepository($identifier)
 	{
-		if (isset($this->repositories[$identifier]))
-		{
+		if (isset($this->repositories[$identifier])) {
 			return $this->repositories[$identifier];
 		}
 
 		$repositoryClass = \XF::stringToClass($identifier, '%s\Repository\%s');
 		$repositoryClass = $this->extension->extendClass($repositoryClass, '\XF\Mvc\Entity\Repository');
-		if (!$repositoryClass || !class_exists($repositoryClass))
-		{
+		if (!$repositoryClass || !class_exists($repositoryClass)) {
 			throw new \LogicException("Could not find repository '$repositoryClass' for '$identifier'");
 		}
 
@@ -276,78 +261,56 @@ class Manager
 	public function getRelation(array $relation, Entity $entity, $fetchType = 'current')
 	{
 		$conditions = $relation['conditions'];
-		if (!is_array($conditions))
-		{
+		if (!is_array($conditions)) {
 			$conditions = [$conditions];
 		}
 
 		$method = $fetchType == 'current' ? 'getValue' : 'getExistingValue';
 
-		if ($relation['type'] == Entity::TO_ONE && !empty($relation['primary']))
-		{
+		if ($relation['type'] == Entity::TO_ONE && !empty($relation['primary'])) {
 			$key = [];
-			foreach ($conditions AS $condition)
-			{
-				if (is_string($condition))
-				{
+			foreach ($conditions as $condition) {
+				if (is_string($condition)) {
 					$value = $entity->$method($condition);
-					if ($value === null)
-					{
+					if ($value === null) {
 						return null;
 					}
 
 					$key[$condition] = $value;
-				}
-				else
-				{
+				} else {
 					list($field, $operator, $value) = $condition;
 
-					if ($field[0] == '$')
-					{
+					if ($field[0] == '$') {
 						throw new \LogicException("Cannot do a primary key lookup when the LHS of the condition refers to a value");
 					}
 
-					if ($operator !== '=')
-					{
+					if ($operator !== '=') {
 						throw new \LogicException("Cannot do a primary key lookup with a non-equality operator");
 					}
 
-					if (count($condition) > 3)
-					{
+					if (count($condition) > 3) {
 						$readValue = '';
-						foreach (array_slice($condition, 2) AS $v)
-						{
-							if ($v && $v[0] == '$')
-							{
+						foreach (array_slice($condition, 2) as $v) {
+							if ($v && $v[0] == '$') {
 								$v = $entity->$method(substr($v, 1));
-								if ($v === null)
-								{
+								if ($v === null) {
 									return null;
 								}
 								$readValue .= $v;
-							}
-							else
-							{
+							} else {
 								$readValue .= $v;
 							}
 						}
 						$key[$field] = $readValue;
-					}
-					else if (is_string($value) && $value[0] == '$')
-					{
+					} else if (is_string($value) && $value[0] == '$') {
 						$value = $entity->$method(substr($value, 1));
-						if ($value === null)
-						{
+						if ($value === null) {
 							return null;
 						}
 						$key[$field] = $value;
-					}
-					else if (is_array($value))
-					{
+					} else if (is_array($value)) {
 						throw new \LogicException("Cannot do a primary key lookup when the relation has an array of values");
-					}
-					else
-					{
+					} else {
 						$key[$field] = $value;
 					}
 				}
@@ -359,22 +322,15 @@ class Manager
 
 		$finder = $this->getRelationFinder($relation, $entity, $fetchType);
 
-		if ($relation['type'] == Entity::TO_ONE)
-		{
+		if ($relation['type'] == Entity::TO_ONE) {
 			$result = $finder->fetchOne();
-			if (!$result)
-			{
+			if (!$result) {
 				$result = null;
 			}
-		}
-		else
-		{
-			if (!empty($relation['key']))
-			{
+		} else {
+			if (!empty($relation['key'])) {
 				$result = new FinderCollection($finder, $relation['key']);
-			}
-			else
-			{
+			} else {
 				$result = $finder->fetch();
 			}
 		}
@@ -394,80 +350,58 @@ class Manager
 		$finder = $this->getFinder($relation['entity']);
 
 		$conditions = $relation['conditions'];
-		if (!is_array($conditions))
-		{
+		if (!is_array($conditions)) {
 			$conditions = [$conditions];
 		}
 
 		$method = $fetchType == 'current' ? 'getValue' : 'getExistingValue';
 
-		foreach ($conditions AS $condition)
-		{
-			if (is_string($condition))
-			{
+		foreach ($conditions as $condition) {
+			if (is_string($condition)) {
 				$finder->where($condition, '=', $entity->$method($condition));
-			}
-			else
-			{
+			} else {
 				list($field, $operator, $value) = $condition;
 
-				if (is_string($field) && $field && $field[0] == '$')
-				{
+				if (is_string($field) && $field && $field[0] == '$') {
 					$field = $finder->expression($this->db->quote($entity->$method(substr($field, 1))));
 				}
 
-				if (count($condition) > 3)
-				{
+				if (count($condition) > 3) {
 					$readValue = '';
-					foreach (array_slice($condition, 2) AS $v)
-					{
-						if ($v && $v[0] == '$')
-						{
+					foreach (array_slice($condition, 2) as $v) {
+						if ($v && $v[0] == '$') {
 							$readValue .= $entity->$method(substr($v, 1));
-						}
-						else
-						{
+						} else {
 							$readValue .= $v;
 						}
 					}
 					$finder->where($field, $operator, $readValue);
-				}
-				else if ($value instanceof \Closure)
-				{
+				} else if ($value instanceof \Closure) {
 					$finder->where($field, $operator, $value('value', $entity));
-				}
-				else if (is_string($value) && $value && $value[0] == '$')
-				{
+				} else if (is_string($value) && $value && $value[0] == '$') {
 					$finder->where($field, $operator, $entity->$method(substr($value, 1)));
-				}
-				else
-				{
+				} else {
 					// value can be an array here
 					$finder->where($field, $operator, $value);
 				}
 			}
 		}
 
-		if (!empty($relation['with']))
-		{
-			foreach ((array)$relation['with'] AS $extraWith)
-			{
+		if (!empty($relation['with'])) {
+			foreach ((array)$relation['with'] as $extraWith) {
 				$finder->with($extraWith);
 			}
 		}
 
-		if (!empty($relation['order']))
-		{
+		if (!empty($relation['order'])) {
 			$finder->setDefaultOrder($relation['order']);
 		}
 
-		if (!empty($relation['key']))
-		{
+		if (!empty($relation['key'])) {
 			$finder->keyedBy($relation['key']);
 		}
 
-		if (!empty($relation['proxy']))
-		{
+		if (!empty($relation['proxy'])) {
 			$finder->fetchProxied();
 		}
 
@@ -484,21 +418,17 @@ class Manager
 	public function getBehaviors(Entity $entity, array $behaviors)
 	{
 		$output = [];
-		foreach ($behaviors AS $behavior => $config)
-		{
-			if (is_int($behavior))
-			{
+		foreach ($behaviors as $behavior => $config) {
+			if (is_int($behavior)) {
 				$behavior = $config;
 				$config = [];
 			}
-			if (!is_array($config))
-			{
+			if (!is_array($config)) {
 				throw new \InvalidArgumentException("Behavior $behavior must provide config as an array");
 			}
 
 			$class = \XF::stringToClass($behavior, '%s\Behavior\%s');
-			if (!class_exists($class))
-			{
+			if (!class_exists($class)) {
 				throw new \LogicException("Behavior $behavior (class: $class) could not be found");
 			}
 			$class = $this->extension->extendClass($class);
@@ -552,8 +482,7 @@ class Manager
 		$entityRelations = [];
 		$finderRelations = [];
 
-		foreach ($map AS $name => $info)
-		{
+		foreach ($map as $name => $info) {
 			$data = $row[$info['alias']];
 			$entity = $this->instantiateEntity(
 				$info['entity'],
@@ -561,20 +490,15 @@ class Manager
 				isset($entityRelations[$name]) ? $entityRelations[$name] : [],
 				self::INSTANTIATE_ALLOW_INVALID | ($info['proxy'] ? self::INSTANTIATE_PROXIED : 0)
 			);
-			if ($entity && isset($finderRelations[$name]))
-			{
-				foreach ($finderRelations[$name] AS $relation => $relationData)
-				{
+			if ($entity && isset($finderRelations[$name])) {
+				foreach ($finderRelations[$name] as $relation => $relationData) {
 					$entity->hydrateFinderRelation($relation, $relationData);
 				}
 			}
 
-			if ($info['relationValue'] !== null)
-			{
+			if ($info['relationValue'] !== null) {
 				$finderRelations[$info['parentRelation']][$info['relation']][$info['relationValue']] = $entity;
-			}
-			else
-			{
+			} else {
 				$entityRelations[$info['parentRelation']][$info['relation']] = $entity;
 			}
 		}
@@ -584,71 +508,55 @@ class Manager
 
 	public function hydrateDefaultFromRelation(Entity $parent, array $relation)
 	{
-		if ($relation['type'] != Entity::TO_ONE)
-		{
+		if ($relation['type'] != Entity::TO_ONE) {
 			throw new \LogicException("Cannot hydrate from a relation that is not to one");
 		}
 
 		$entity = $this->create($relation['entity']);
 
 		$conditions = $relation['conditions'];
-		if (!is_array($conditions))
-		{
+		if (!is_array($conditions)) {
 			$conditions = [$conditions];
 		}
 
 		$columnDefinitions = $entity->structure()->columns;
 
-		foreach ($conditions AS $condition)
-		{
-			if (is_string($condition))
-			{
-				if (!empty($columnDefinitions[$condition]['autoIncrement']))
-				{
-					if ($parent->getValue($condition))
-					{
+		foreach ($conditions as $condition) {
+			if (is_string($condition)) {
+				if (!empty($columnDefinitions[$condition]['autoIncrement'])) {
+					if ($parent->getValue($condition)) {
 						throw new \LogicException("Cannot hydrate relation with non-empty autoIncrement field ($condition)");
-					}
-					else
-					{
+					} else {
 						continue;
 					}
 				}
 
 				$entity->$condition = $this->getDeferredValue(
-					function() use ($parent, $condition) { return $parent->getValue($condition); },
+					function () use ($parent, $condition) {
+						return $parent->getValue($condition);
+					},
 					'save'
 				);
-			}
-			else
-			{
+			} else {
 				list($field, $operator, $value) = $condition;
 
-				if ($field[0] == '$')
-				{
+				if ($field[0] == '$') {
 					// doesn't make sense to populate a value from the parent entity
 					continue;
 				}
 
-				if ($operator !== '=')
-				{
+				if ($operator !== '=') {
 					throw new \LogicException("Cannot hydrate from a relation with a non-equality operator");
 				}
 
-				if (count($condition) > 3)
-				{
+				if (count($condition) > 3) {
 					$entity->$field = $this->getDeferredValue(
-						function() use ($parent, $condition)
-						{
+						function () use ($parent, $condition) {
 							$readValue = '';
-							foreach (array_slice($condition, 2) AS $v)
-							{
-								if ($v && $v[0] == '$')
-								{
+							foreach (array_slice($condition, 2) as $v) {
+								if ($v && $v[0] == '$') {
 									$readValue .= $parent->getValue(substr($v, 1));
-								}
-								else
-								{
+								} else {
 									$readValue .= $v;
 								}
 							}
@@ -656,42 +564,34 @@ class Manager
 						},
 						'save'
 					);
-				}
-				else if ($value instanceof \Closure)
-				{
+				} else if ($value instanceof \Closure) {
 					$entity->$field = $this->getDeferredValue(
-						function() use ($entity, $value) { return $value('value', $entity); },
+						function () use ($entity, $value) {
+							return $value('value', $entity);
+						},
 						'save'
 					);
-				}
-				else if (is_string($value) && $value && $value[0] == '$')
-				{
+				} else if (is_string($value) && $value && $value[0] == '$') {
 					$parentColumn = substr($value, 1);
 
-					if (!empty($columnDefinitions[$field]['autoIncrement']))
-					{
-						if ($parent->getValue($parentColumn))
-						{
+					if (!empty($columnDefinitions[$field]['autoIncrement'])) {
+						if ($parent->getValue($parentColumn)) {
 							throw new \LogicException("Cannot hydrate relation with non-empty autoIncrement field ($parentColumn)");
-						}
-						else
-						{
+						} else {
 							continue;
 						}
 					}
 
 					$entity->$field = $this->getDeferredValue(
-						function() use ($parent, $parentColumn) { return $parent->getValue($parentColumn); },
+						function () use ($parent, $parentColumn) {
+							return $parent->getValue($parentColumn);
+						},
 						'save'
 					);
-				}
-				else if (is_array($value))
-				{
+				} else if (is_array($value)) {
 					// Arrays represent multiple possible values--column IN (a, b)--so we can't set a value
 					// based on this. Ignore it instead.
-				}
-				else
-				{
+				} else {
 					$entity->$field = $value;
 				}
 			}
@@ -720,15 +620,12 @@ class Manager
 	{
 		$className = $this->getEntityClassName($shortName);
 
-		if ($options & self::INSTANTIATE_PROXIED)
-		{
-			if (!is_subclass_of($className, 'XF\Mvc\Entity\Proxyable'))
-			{
+		if ($options & self::INSTANTIATE_PROXIED) {
+			if (!is_subclass_of($className, 'XF\Mvc\Entity\Proxyable')) {
 				throw new \LogicException("Entity $shortName is not proxyable");
 			}
 
-			if ($values)
-			{
+			if ($values) {
 				$className::instantiateProxied($values);
 			}
 
@@ -739,15 +636,12 @@ class Manager
 
 		/** @var Entity $entity */
 		$entity = new $className($this, $structure, $values, $relations);
-		if ($values)
-		{
+		if ($values) {
 			$class = get_class($entity);
 			$keys = $entity->getIdentifierValues();
-			if (!$keys)
-			{
+			if (!$keys) {
 				// must contain nulls, so not a valid entity
-				if (!($options & self::INSTANTIATE_ALLOW_INVALID))
-				{
+				if (!($options & self::INSTANTIATE_ALLOW_INVALID)) {
 					throw new \LogicException("Cannot instantiate $shortName ($className) without primary key values");
 				}
 
@@ -755,13 +649,10 @@ class Manager
 			}
 
 			$primary = $this->getEntityCacheLookupString($keys);
-			if (isset($this->entities[$class][$primary]))
-			{
+			if (isset($this->entities[$class][$primary])) {
 				$entity = $this->entities[$class][$primary];
 				// TODO: how to handle relationships, at least if the existing entity has pending changes?
-			}
-			else
-			{
+			} else {
 				$this->entities[$class][$primary] = $entity;
 			}
 		}
@@ -796,12 +687,9 @@ class Manager
 	{
 		$id = $entity->getUniqueEntityId();
 
-		if (empty($this->cascadeEventDepth[$event]))
-		{
+		if (empty($this->cascadeEventDepth[$event])) {
 			$this->cascadeEventDepth[$event] = 1;
-		}
-		else
-		{
+		} else {
 			$this->cascadeEventDepth[$event]++;
 		}
 
@@ -810,16 +698,14 @@ class Manager
 
 	public function triggerCascadeAttempt($event, Entity $entity)
 	{
-		if (empty($this->cascadeEventDepth[$event]))
-		{
+		if (empty($this->cascadeEventDepth[$event])) {
 			// no cascade logging has been started, can continue
 			return true;
 		}
 
 		$id = $entity->getUniqueEntityId();
 
-		if (isset($this->cascadeEntitySeen[$event][$id]))
-		{
+		if (isset($this->cascadeEntitySeen[$event][$id])) {
 			// already seen, don't continue
 			return false;
 		}
@@ -831,11 +717,9 @@ class Manager
 
 	public function finishCascadeEvent($event)
 	{
-		if (!empty($this->cascadeEventDepth[$event]))
-		{
+		if (!empty($this->cascadeEventDepth[$event])) {
 			$this->cascadeEventDepth[$event]--;
-			if (!$this->cascadeEventDepth[$event])
-			{
+			if (!$this->cascadeEventDepth[$event]) {
 				// no more cascades running, reset
 				unset($this->cascadeEventDepth[$event]);
 				unset($this->cascadeEntitySeen[$event]);
@@ -846,8 +730,7 @@ class Manager
 	public function attachEntity(Entity $entity)
 	{
 		$keys = $entity->getIdentifierValues();
-		if (!$keys)
-		{
+		if (!$keys) {
 			throw new \LogicException("Cannot attach an entity without a valid primary key");
 		}
 
@@ -860,8 +743,7 @@ class Manager
 	public function detachEntity(Entity $entity)
 	{
 		$keys = $entity->getIdentifierValues();
-		if (!$keys)
-		{
+		if (!$keys) {
 			// not attached
 			return;
 		}
@@ -874,13 +756,10 @@ class Manager
 
 	public function clearEntityCache($shortName = null)
 	{
-		if ($shortName)
-		{
+		if ($shortName) {
 			$class = $this->getEntityClassName($shortName);
 			unset($this->entities[$class]);
-		}
-		else
-		{
+		} else {
 			$this->entities = [];
 		}
 

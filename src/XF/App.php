@@ -149,46 +149,37 @@ class App implements \ArrayAccess
 
 		$container['config.file'] = \XF::getSourceDirectory() . '/config.php';
 		$container['config.legacyFile'] = \XF::getRootDirectory() . '/library/config.php';
-		$container['config'] = function (Container $c)
-		{
+		$container['config'] = function (Container $c) {
 			$default = $c['config.default'];
 			$file = $c['config.file'];
 			$legacyFile = $c['config.legacyFile'];
 
-			if (file_exists($file))
-			{
+			if (file_exists($file)) {
 				$config = [];
 				require($file);
 
 				$config = array_replace_recursive($default, $config);
 				$config['exists'] = true;
 				$config['legacyExists'] = null;
-			}
-			else
-			{
-				if (file_exists($legacyFile))
-				{
+			} else {
+				if (file_exists($legacyFile)) {
 					$config = [];
 					require($legacyFile);
 
 					$config = array_replace_recursive($default, $config);
 					$config['legacyExists'] = true;
-				}
-				else
-				{
+				} else {
 					$config = $default;
 					$config['legacyExists'] = false;
 				}
 			}
 
 			// if there's a specific session cache specified, force this to be enabled
-			if (!empty($config['cache']['context']['sessions']))
-			{
+			if (!empty($config['cache']['context']['sessions'])) {
 				$config['cache']['sessions'] = true;
 			}
 
-			foreach ($config['container'] AS $key => $value)
-			{
+			foreach ($config['container'] as $key => $value) {
 				$c[$key] = $value;
 			}
 
@@ -197,8 +188,7 @@ class App implements \ArrayAccess
 
 		$container['jQueryVersion'] = '3.5.1';
 
-		$container['jsVersion'] = function (Container $c)
-		{
+		$container['jsVersion'] = function (Container $c) {
 			return substr(md5(\XF::$versionId . $c['options']->jsLastUpdate), 0, 8);
 		};
 
@@ -221,14 +211,12 @@ class App implements \ArrayAccess
 			'm' => 640
 		];
 
-		$container['request'] = function (Container $c)
-		{
+		$container['request'] = function (Container $c) {
 			$request = new Http\Request($c['inputFilterer']);
 			$request->setCookiePrefix($c['config']['cookie']['prefix']);
 			return $request;
 		};
-		$container['request.paths'] = function (Container $c)
-		{
+		$container['request.paths'] = function (Container $c) {
 			/** @var Http\Request $request */
 			$request = $c['request'];
 			$options = $c['options'];
@@ -242,23 +230,17 @@ class App implements \ArrayAccess
 				'nopath' => '',
 			];
 		};
-		$container['request.pather'] = function (Container $c)
-		{
+		$container['request.pather'] = function (Container $c) {
 			$paths = $c['request.paths'];
 
-			return function($url, $modifier = 'base') use ($paths)
-			{
-				if (preg_match('#^(/|[a-z]+:)#i', $url))
-				{
+			return function ($url, $modifier = 'base') use ($paths) {
+				if (preg_match('#^(/|[a-z]+:)#i', $url)) {
 					return $url;
 				}
 
-				if (isset($paths[$modifier]))
-				{
+				if (isset($paths[$modifier])) {
 					$url = $paths[$modifier] . $url;
-				}
-				else
-				{
+				} else {
 					$url = $paths['base'] . $url;
 				}
 
@@ -266,8 +248,7 @@ class App implements \ArrayAccess
 			};
 		};
 
-		$container['inlineImageTypes'] = function (Container $c)
-		{
+		$container['inlineImageTypes'] = function (Container $c) {
 			return [
 				'gif' => 'image/gif',
 				'jpg' => 'image/jpeg',
@@ -277,8 +258,7 @@ class App implements \ArrayAccess
 			];
 		};
 
-		$container['inlineVideoTypes'] = function (Container $c)
-		{
+		$container['inlineVideoTypes'] = function (Container $c) {
 			return [
 				'm4v' => 'video/mp4',
 				'mov' => 'video/quicktime',
@@ -291,8 +271,7 @@ class App implements \ArrayAccess
 			];
 		};
 
-		$container['inlineAudioTypes'] = function (Container $c)
-		{
+		$container['inlineAudioTypes'] = function (Container $c) {
 			return [
 				'mp3' => 'audio/mpeg',
 				'ogg' => 'audio/ogg',
@@ -300,8 +279,7 @@ class App implements \ArrayAccess
 			];
 		};
 
-		$container['response'] = function (Container $c)
-		{
+		$container['response'] = function (Container $c) {
 			/** @var \XF\Http\Request $request */
 			$request = $c['request'];
 
@@ -312,41 +290,34 @@ class App implements \ArrayAccess
 			$response->setCookieConfig($cookie);
 
 			$config = $c['config'];
-			if ($config['enableClickjackingProtection'])
-			{
+			if ($config['enableClickjackingProtection']) {
 				$response->header('X-Frame-Options', 'SAMEORIGIN');
 			}
-			if (!$config['enableGzip'])
-			{
+			if (!$config['enableGzip']) {
 				$response->compressIfAble(false);
 			}
-			if (!$config['enableContentLength'])
-			{
+			if (!$config['enableContentLength']) {
 				$response->includeContentLength(false);
 			}
 
 			return $response;
 		};
 
-		$container['inputFilterer'] = function(Container $c)
-		{
+		$container['inputFilterer'] = function (Container $c) {
 			$class = $this->extendClass('XF\InputFilterer');
 			return new $class($c['config']['fullUnicode']);
 		};
 
-		$container['dispatcher'] = function ()
-		{
+		$container['dispatcher'] = function () {
 			$class = $this->extendClass('XF\Mvc\Dispatcher');
 			return new $class($this);
 		};
 
-		$container['router'] = function (Container $c)
-		{
+		$container['router'] = function (Container $c) {
 			return $c['router.public'];
 		};
 
-		$container['router.public'] = function (Container $c)
-		{
+		$container['router.public'] = function (Container $c) {
 			$class = $this->extendClass('XF\Mvc\Router');
 
 			/** @var \XF\Mvc\Router $r */
@@ -368,30 +339,26 @@ class App implements \ArrayAccess
 			return $r;
 		};
 
-		$container['router.public.formatter'] = function ($c)
-		{
-			if ($c['options']->useFriendlyUrls)
-			{
-				return function($route, $queryString)
-				{
+		$container['router.public.formatter'] = function ($c) {
+			if ($c['options']->useFriendlyUrls) {
+				return function ($route, $queryString) {
 					return $route . (strlen($queryString) ? '?' . $queryString : '');
 				};
-			}
-			else
-			{
-				return function($route, $queryString)
-				{
+			} else {
+				return function ($route, $queryString) {
 					$suffix = $route . (strlen($queryString) ? (strlen($route) ? '&' : '') . $queryString : '');
 					return strlen($suffix) ? 'index.php?' . $suffix : 'index.php';
 				};
 			}
 		};
-		$container['router.public.routes'] = $this->fromRegistry('routesPublic',
-			function(Container $c) { return $c['em']->getRepository('XF:Route')->rebuildRouteCache('public'); }
+		$container['router.public.routes'] = $this->fromRegistry(
+			'routesPublic',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Route')->rebuildRouteCache('public');
+			}
 		);
 
-		$container['router.install'] = function (Container $c)
-		{
+		$container['router.install'] = function (Container $c) {
 			$class = $this->extendClass('XF\Mvc\Router');
 
 			/** @var \XF\Mvc\Router $r */
@@ -403,13 +370,11 @@ class App implements \ArrayAccess
 
 			return $r;
 		};
-		$container['router.install.formatter'] = $container->wrap(function($route, $queryString)
-		{
+		$container['router.install.formatter'] = $container->wrap(function ($route, $queryString) {
 			$suffix = $route . (strlen($queryString) ? '&' . $queryString : '');
 			return strlen($suffix) ? 'index.php?' . $suffix : 'index.php';
 		});
-		$container['router.install.routes'] = function (Container $c)
-		{
+		$container['router.install.routes'] = function (Container $c) {
 			return [
 				'install' => [
 					'' => [
@@ -432,8 +397,7 @@ class App implements \ArrayAccess
 			];
 		};
 
-		$container['router.admin'] = function (Container $c)
-		{
+		$container['router.admin'] = function (Container $c) {
 			$class = $this->extendClass('XF\Mvc\Router');
 
 			/** @var \XF\Mvc\Router $r */
@@ -446,17 +410,18 @@ class App implements \ArrayAccess
 
 			return $r;
 		};
-		$container['router.admin.formatter'] = $container->wrap(function($route, $queryString)
-		{
+		$container['router.admin.formatter'] = $container->wrap(function ($route, $queryString) {
 			$suffix = $route . (strlen($queryString) ? '&' . $queryString : '');
 			return strlen($suffix) ? 'admin.php?' . $suffix : 'admin.php';
 		});
-		$container['router.admin.routes'] = $this->fromRegistry('routesAdmin',
-			function(Container $c) { return $c['em']->getRepository('XF:Route')->rebuildRouteCache('admin'); }
+		$container['router.admin.routes'] = $this->fromRegistry(
+			'routesAdmin',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Route')->rebuildRouteCache('admin');
+			}
 		);
 
-		$container['router.api'] = function (Container $c)
-		{
+		$container['router.api'] = function (Container $c) {
 			$class = $this->extendClass('XF\Api\Mvc\Router');
 
 			/** @var \XF\Api\Mvc\Router $r */
@@ -469,103 +434,100 @@ class App implements \ArrayAccess
 
 			return $r;
 		};
-		$container['router.api.formatter'] = function ($c)
-		{
+		$container['router.api.formatter'] = function ($c) {
 			// Note: always enforcing friendly URLs for the API for consistency.
 			//if ($c['options']->useFriendlyUrls)
-			if (true)
-			{
-				return function($route, $queryString)
-				{
+			if (true) {
+				return function ($route, $queryString) {
 					return 'api/' . $route . (strlen($queryString) ? '?' . $queryString : '');
 				};
-			}
-			else
-			{
-				return function($route, $queryString)
-				{
+			} else {
+				return function ($route, $queryString) {
 					$suffix = $route . (strlen($queryString) ? (strlen($route) ? '&' : '') . $queryString : '');
 					return 'index.php?api/' . $suffix;
 				};
 			}
 		};
-		$container['router.api.routes'] = $this->fromRegistry('routesApi',
-			function(Container $c) { return $c['em']->getRepository('XF:Route')->rebuildRouteCache('api'); }
+		$container['router.api.routes'] = $this->fromRegistry(
+			'routesApi',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Route')->rebuildRouteCache('api');
+			}
 		);
 
-		$container['logger'] = function($c)
-		{
+		$container['logger'] = function ($c) {
 			$class = $this->extendClass('XF\Logger');
 			return new $class($this);
 		};
 
-		$container['debugger'] = function($c)
-		{
+		$container['debugger'] = function ($c) {
 			$class = $this->extendClass('XF\Debugger');
 			return new $class($this);
 		};
 
-		$container['contactUrl'] = function ($c)
-		{
+		$container['contactUrl'] = function ($c) {
 			$options = $c['options'];
 			$router = $c['router.public'];
 
-			if (!isset($options->contactUrl['type']))
-			{
+			if (!isset($options->contactUrl['type'])) {
 				return '';
 			}
 
-			switch ($options->contactUrl['type'])
-			{
-				case 'default': $url = $router->buildLink('misc/contact'); break;
-				case 'custom': $url = $options->contactUrl['custom']; break;
-				default: $url = '';
+			switch ($options->contactUrl['type']) {
+				case 'default':
+					$url = $router->buildLink('misc/contact');
+					break;
+				case 'custom':
+					$url = $options->contactUrl['custom'];
+					break;
+				default:
+					$url = '';
 			}
 			return $url;
 		};
 
-		$container['privacyPolicyUrl'] = function ($c)
-		{
+		$container['privacyPolicyUrl'] = function ($c) {
 			$options = $c['options'];
 			$router = $c['router.public'];
 
-			if (!isset($options->privacyPolicyUrl['type']))
-			{
+			if (!isset($options->privacyPolicyUrl['type'])) {
 				return '';
 			}
 
-			switch ($options->privacyPolicyUrl['type'])
-			{
+			switch ($options->privacyPolicyUrl['type']) {
 				case 'default':
-					return $router->buildLink('help/privacy-policy/'); break;
+					return $router->buildLink('help/privacy-policy/');
+					break;
 				case 'custom':
-					return $options->privacyPolicyUrl['custom']; break;
+					return $options->privacyPolicyUrl['custom'];
+					break;
 				default:
 					return '';
 			}
 		};
 
-		$container['tosUrl'] = function ($c)
-		{
+		$container['tosUrl'] = function ($c) {
 			$options = $c['options'];
 			$router = $c['router.public'];
 
-			if (!isset($options->tosUrl['type']))
-			{
+			if (!isset($options->tosUrl['type'])) {
 				return '';
 			}
 
-			switch ($options->tosUrl['type'])
-			{
-				case 'default': $url = $router->buildLink('help/terms/'); break;
-				case 'custom': $url = $options->tosUrl['custom']; break;
-				default: $url = '';
+			switch ($options->tosUrl['type']) {
+				case 'default':
+					$url = $router->buildLink('help/terms/');
+					break;
+				case 'custom':
+					$url = $options->tosUrl['custom'];
+					break;
+				default:
+					$url = '';
 			}
 			return $url;
 		};
 
-		$container['homePageUrl'] = function(Container $c)
-		{
+		$container['homePageUrl'] = function (Container $c) {
 			$options = $c['options'];
 			$router = $c['router.public'];
 
@@ -573,8 +535,7 @@ class App implements \ArrayAccess
 
 			$this->extension()->fire('home_page_url', [&$homePageUrl, $router]);
 
-			if ($homePageUrl)
-			{
+			if ($homePageUrl) {
 				/** @var \Closure $pather */
 				$pather = $c['request.pather'];
 				$homePageUrl = $pather($homePageUrl, 'full');
@@ -583,23 +544,23 @@ class App implements \ArrayAccess
 			return $homePageUrl;
 		};
 
-		$container['navigation.compiler'] = function(Container $c)
-		{
+		$container['navigation.compiler'] = function (Container $c) {
 			return new \XF\Navigation\Compiler($c['templateCompiler']);
 		};
 		$container['navigation.file'] = 'navigation_cache.php'; // will be written to code-cache/codeCachePath
 
-		$container['navigation.admin'] = function($c)
-		{
+		$container['navigation.admin'] = function ($c) {
 			$class = \XF::extendClass('XF\AdminNavigation');
 			return new $class($c['navigation.adminEntries']);
 		};
-		$container['navigation.adminEntries'] = $this->fromRegistry('adminNavigation',
-			function(Container $c) { return $c['em']->getRepository('XF:AdminNavigation')->rebuildNavigationCache(); }
+		$container['navigation.adminEntries'] = $this->fromRegistry(
+			'adminNavigation',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:AdminNavigation')->rebuildNavigationCache();
+			}
 		);
 
-		$container['db'] = function ($c)
-		{
+		$container['db'] = function ($c) {
 			$config = $c['config'];
 
 			$dbConfig = $config['db'];
@@ -609,48 +570,39 @@ class App implements \ArrayAccess
 			/** @var \XF\Db\AbstractAdapter $db */
 			$db = new $adapterClass($dbConfig, $config['fullUnicode']);
 
-			if ($db instanceof \XF\Db\ForeignAdapter)
-			{
+			if ($db instanceof \XF\Db\ForeignAdapter) {
 				throw new \LogicException('This database adapter cannot be used natively by XenForo.');
 			}
 
-			if (\XF::$debugMode)
-			{
+			if (\XF::$debugMode) {
 				$db->logQueries(true);
 			}
 
 			return $db;
 		};
 
-		$container->factory('cache', function($context, array $params, Container $c)
-		{
+		$container->factory('cache', function ($context, array $params, Container $c) {
 			$cacheConfig = $c['config']['cache'];
-			if (!$cacheConfig['enabled'])
-			{
+			if (!$cacheConfig['enabled']) {
 				return null;
 			}
 
 			$namespace = $cacheConfig['namespace'];
 
-			if ($context)
-			{
-				if (empty($cacheConfig['context'][$context]))
-				{
+			if ($context) {
+				if (empty($cacheConfig['context'][$context])) {
 					return null;
 				}
 
 				$cacheConfig = $cacheConfig['context'][$context];
-				if (!is_array($cacheConfig) || empty($cacheConfig['provider']))
-				{
+				if (!is_array($cacheConfig) || empty($cacheConfig['provider'])) {
 					return null;
 				}
 
-				if (!isset($cacheConfig['config']))
-				{
+				if (!isset($cacheConfig['config'])) {
 					$cacheConfig['config'] = [];
 				}
-				if (isset($cacheConfig['namespace']))
-				{
+				if (isset($cacheConfig['namespace'])) {
 					$namespace = $cacheConfig['namespace'];
 				}
 			}
@@ -661,63 +613,69 @@ class App implements \ArrayAccess
 			return $factory->create($cacheConfig['provider'], $cacheConfig['config']);
 		});
 
-		$container['cache'] = function(Container $c)
-		{
+		$container['cache'] = function (Container $c) {
 			return $c->create('cache', '');
 		};
-		$container['cache.factory'] = function($c)
-		{
+		$container['cache.factory'] = function ($c) {
 			// this cannot be dynamically extended because it's used by the registry
 			// different types of cache providers can be configured via code in config.php
 			return new CacheFactory();
 		};
 
-		$container['permission.cache'] = function ($c)
-		{
+		$container['permission.cache'] = function ($c) {
 			return new PermissionCache($c['db']);
 		};
-		$container['permission.builder'] = function ($c)
-		{
+		$container['permission.builder'] = function ($c) {
 			return new \XF\Permission\Builder(
-				$c['db'], $c['em'], $this->getContentTypeField('permission_handler_class')
+				$c['db'],
+				$c['em'],
+				$this->getContentTypeField('permission_handler_class')
 			);
 		};
 
-		$container['registry'] = function ($c)
-		{
+		$container['registry'] = function ($c) {
 			return new DataRegistry($c['db'], $this->cache('registry'));
 		};
 
-		$container['simpleCache'] = function ($c)
-		{
+		$container['simpleCache'] = function ($c) {
 			$class = $this->extendClass('XF\SimpleCache');
 			return new $class($c['simpleCache.data']);
 		};
-		$container['simpleCache.data'] = $this->fromRegistry('simpleCache', function() {
+		$container['simpleCache.data'] = $this->fromRegistry('simpleCache', function () {
 			$this->registry()->set('simpleCache', []);
 			return [];
 		});
 
-		$container['options'] = $this->fromRegistry('options',
-			function(Container $c) { return $c['em']->getRepository('XF:Option')->rebuildOptionCache(); },
-			function(array $options)
-			{
+		$container['options'] = $this->fromRegistry(
+			'options',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Option')->rebuildOptionCache();
+			},
+			function (array $options) {
 				return new \ArrayObject($options, \ArrayObject::ARRAY_AS_PROPS);
 			}
 		);
 
-		$container['codeEventListeners'] = $this->fromRegistry('codeEventListeners',
-			function(Container $c) { return $c['em']->getRepository('XF:CodeEventListener')->rebuildListenerCache(); }
+		$container['codeEventListeners'] = $this->fromRegistry(
+			'codeEventListeners',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:CodeEventListener')->rebuildListenerCache();
+			}
 		);
 
-		$container['contentTypes'] = $this->fromRegistry('contentTypes',
-			function(Container $c) { return $c['em']->getRepository('XF:ContentTypeField')->rebuildContentTypeCache(); }
+		$container['contentTypes'] = $this->fromRegistry(
+			'contentTypes',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:ContentTypeField')->rebuildContentTypeCache();
+			}
 		);
 
-		$container['customFields.threads'] = $this->fromRegistry('threadFieldsInfo',
-			function(Container $c) { return $c['em']->getRepository('XF:ThreadField')->rebuildFieldCache(); },
-			function(array $threadFieldsInfo)
-			{
+		$container['customFields.threads'] = $this->fromRegistry(
+			'threadFieldsInfo',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:ThreadField')->rebuildFieldCache();
+			},
+			function (array $threadFieldsInfo) {
 				$class = 'XF\CustomField\DefinitionSet';
 				$class = $this->extendClass($class);
 
@@ -725,55 +683,71 @@ class App implements \ArrayAccess
 			}
 		);
 
-		$container['customFields.users'] = $this->fromRegistry('userFieldsInfo',
-			function(Container $c) { return $c['em']->getRepository('XF:UserField')->rebuildFieldCache(); },
-			function(array $userFieldsInfo)
-			{
+		$container['customFields.users'] = $this->fromRegistry(
+			'userFieldsInfo',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:UserField')->rebuildFieldCache();
+			},
+			function (array $userFieldsInfo) {
 				$class = 'XF\CustomField\DefinitionSet';
 				$class = $this->extendClass($class);
 
 				$definitionSet = new $class($userFieldsInfo);
-				$definitionSet->addFilter('registration', function(array $field)
-				{
+				$definitionSet->addFilter('registration', function (array $field) {
 					return (!empty($field['show_registration']) || !empty($field['required']));
 				});
-				$definitionSet->addFilter('profile', function(array $field)
-				{
+				$definitionSet->addFilter('profile', function (array $field) {
 					return !empty($field['viewable_profile']);
 				});
-				$definitionSet->addFilter('message', function(array $field)
-				{
+				$definitionSet->addFilter('message', function (array $field) {
 					return !empty($field['viewable_message']);
 				});
 				return $definitionSet;
 			}
 		);
 
-		$container['displayStyles'] = $this->fromRegistry('displayStyles',
-			function(Container $c) { return $c['em']->getRepository('XF:UserGroup')->rebuildDisplayStyleCache(); }
+		$container['displayStyles'] = $this->fromRegistry(
+			'displayStyles',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:UserGroup')->rebuildDisplayStyleCache();
+			}
 		);
 
-		$container['reportCounts'] = $this->fromRegistry('reportCounts',
-			function(Container $c) { return $c['em']->getRepository('XF:Report')->rebuildReportCounts(); }
+		$container['reportCounts'] = $this->fromRegistry(
+			'reportCounts',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Report')->rebuildReportCounts();
+			}
 		);
 
-		$container['unapprovedCounts'] = $this->fromRegistry('unapprovedCounts',
-			function(Container $c) { return $c['em']->getRepository('XF:ApprovalQueue')->rebuildUnapprovedCounts(); }
+		$container['unapprovedCounts'] = $this->fromRegistry(
+			'unapprovedCounts',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:ApprovalQueue')->rebuildUnapprovedCounts();
+			}
 		);
 
-		$container['nodeTypes'] = $this->fromRegistry('nodeTypes',
-			function(Container $c) { return $c['em']->getRepository('XF:NodeType')->rebuildNodeTypeCache(); }
+		$container['nodeTypes'] = $this->fromRegistry(
+			'nodeTypes',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:NodeType')->rebuildNodeTypeCache();
+			}
 		);
 
-		$container['notices'] = $this->fromRegistry('notices',
-			function(Container $c) { return $c['em']->getRepository('XF:Notice')->rebuildNoticeCache(); }
+		$container['notices'] = $this->fromRegistry(
+			'notices',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Notice')->rebuildNoticeCache();
+			}
 		);
-		$container['notices.lastReset'] = $this->fromRegistry('noticesLastReset',
-			function(Container $c) { return $c['em']->getRepository('XF:Notice')->rebuildNoticeLastResetCache(); }
+		$container['notices.lastReset'] = $this->fromRegistry(
+			'noticesLastReset',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Notice')->rebuildNoticeLastResetCache();
+			}
 		);
 
-		$container->factory('criteria', function($class, array $params, Container $c)
-		{
+		$container->factory('criteria', function ($class, array $params, Container $c) {
 			$class = \XF::stringToClass($class, '\%s\Criteria\%s');
 			$class = $this->extendClass($class);
 
@@ -782,75 +756,106 @@ class App implements \ArrayAccess
 			return $c->createObject($class, $params);
 		}, false);
 
-		$container['routeFilters'] = $this->fromRegistry('routeFilters',
-			function(Container $c) { return $c['em']->getRepository('XF:RouteFilter')->rebuildRouteFilterCache(); }
+		$container['routeFilters'] = $this->fromRegistry(
+			'routeFilters',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:RouteFilter')->rebuildRouteFilterCache();
+			}
 		);
 
-		$container['reactionDefault'] = function(Container $c)
-		{
+		$container['reactionDefault'] = function (Container $c) {
 			return $c['reactions'][1];
 		};
 
-		$container['reactionColors'] = function(Container $c)
-		{
+		$container['reactionColors'] = function (Container $c) {
 			$output = [];
-			foreach ($c['reactions'] AS $reactionId => $reaction)
-			{
+			foreach ($c['reactions'] as $reactionId => $reaction) {
 				$output[$reactionId] = $reaction['text_color'];
 			}
 			return $output;
 		};
 
-		$container['reactionSprites'] = $this->fromRegistry('reactionSprites',
-			function(Container $c) { return $c['em']->getRepository('XF:Reaction')->rebuildReactionSpriteCache(); }
+		$container['reactionSprites'] = $this->fromRegistry(
+			'reactionSprites',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Reaction')->rebuildReactionSpriteCache();
+			}
 		);
 
-		$container['reactions'] = $this->fromRegistry('reactions',
-			function(Container $c) { return $c['em']->getRepository('XF:Reaction')->rebuildReactionCache(); }
+		$container['reactions'] = $this->fromRegistry(
+			'reactions',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Reaction')->rebuildReactionCache();
+			}
 		);
 
-		$container['smilieSprites'] = $this->fromRegistry('smilieSprites',
-			function(Container $c) { return $c['em']->getRepository('XF:Smilie')->rebuildSmilieSpriteCache(); }
+		$container['smilieSprites'] = $this->fromRegistry(
+			'smilieSprites',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Smilie')->rebuildSmilieSpriteCache();
+			}
 		);
 
-		$container['smilies'] = $this->fromRegistry('smilies',
-			function(Container $c) { return $c['em']->getRepository('XF:Smilie')->rebuildSmilieCache(); }
+		$container['smilies'] = $this->fromRegistry(
+			'smilies',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Smilie')->rebuildSmilieCache();
+			}
 		);
 
-		$container['prefixes.thread'] = $this->fromRegistry('threadPrefixes',
-			function(Container $c) { return $c['em']->getRepository('XF:ThreadPrefix')->rebuildPrefixCache(); }
+		$container['prefixes.thread'] = $this->fromRegistry(
+			'threadPrefixes',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:ThreadPrefix')->rebuildPrefixCache();
+			}
 		);
 
-		$container['userBanners'] = $this->fromRegistry('userBanners',
-			function(Container $c) { return $c['em']->getRepository('XF:UserGroup')->rebuildUserBannerCache(); }
+		$container['userBanners'] = $this->fromRegistry(
+			'userBanners',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:UserGroup')->rebuildUserBannerCache();
+			}
 		);
 
-		$container['userTitleLadder'] = $this->fromRegistry('userTitleLadder',
-			function(Container $c) { return $c['em']->getRepository('XF:UserTitleLadder')->rebuildLadderCache(); }
+		$container['userTitleLadder'] = $this->fromRegistry(
+			'userTitleLadder',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:UserTitleLadder')->rebuildLadderCache();
+			}
 		);
 
-		$container['forumStatistics'] = $this->fromRegistry('forumStatistics',
-			function(Container $c) { return $c['em']->getRepository('XF:Counters')->rebuildForumStatisticsCache(); }
+		$container['forumStatistics'] = $this->fromRegistry(
+			'forumStatistics',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Counters')->rebuildForumStatisticsCache();
+			}
 		);
 
-		$container['connectedAccountCount'] = $this->fromRegistry('connectedAccountCount',
-			function(Container $c) { return $c['em']->getRepository('XF:ConnectedAccount')->rebuildProviderCount(); }
+		$container['connectedAccountCount'] = $this->fromRegistry(
+			'connectedAccountCount',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:ConnectedAccount')->rebuildProviderCount();
+			}
 		);
 
-		$container['helpPageCount'] = $this->fromRegistry('helpPageCount',
-			function(Container $c) { return $c['em']->getRepository('XF:HelpPage')->rebuildHelpPageCount(); }
+		$container['helpPageCount'] = $this->fromRegistry(
+			'helpPageCount',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:HelpPage')->rebuildHelpPageCount();
+			}
 		);
 
-		$container['userUpgradeCount'] = $this->fromRegistry('userUpgradeCount',
-			function(Container $c) { return $c['em']->getRepository('XF:UserUpgrade')->rebuildUpgradeCount(); }
+		$container['userUpgradeCount'] = $this->fromRegistry(
+			'userUpgradeCount',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:UserUpgrade')->rebuildUpgradeCount();
+			}
 		);
 
-		$container['session'] = function ()
-		{
+		$container['session'] = function () {
 			throw new \LogicException('The session key must be overridden.');
 		};
-		$container['session.public'] = function (Container $c)
-		{
+		$container['session.public'] = function (Container $c) {
 			$class = $this->extendClass('XF\Session\Session');
 
 			/** @var \XF\Session\Session $session */
@@ -859,83 +864,68 @@ class App implements \ArrayAccess
 			]);
 			return $session->start($c['request']);
 		};
-		$container['session.public.storage'] = function (Container $c)
-		{
+		$container['session.public.storage'] = function (Container $c) {
 			$storage = null;
 			$cache = $c['cache'];
 
 			$this->fire('session_public_storage_setup', [$c, $cache, &$storage]);
-			if ($storage)
-			{
-				if (!($storage instanceof \XF\Session\StorageInterface))
-				{
+			if ($storage) {
+				if (!($storage instanceof \XF\Session\StorageInterface)) {
 					throw new \LogicException('Storage must be instance of XF\Session\StorageInterface. Received ' . get_class($storage));
 				}
 				return $storage;
 			}
 
-			if ($c['config']['cache']['sessions'] && $cache = $this->cache('sessions'))
-			{
+			if ($c['config']['cache']['sessions'] && $cache = $this->cache('sessions')) {
 				return new \XF\Session\CacheStorage($cache, 'session_');
-			}
-			else
-			{
+			} else {
 				return new \XF\Session\DbStorage($c['db'], 'xf_session');
 			}
 		};
 
-		$container['session.admin'] = function (Container $c)
-		{
+		$container['session.admin'] = function (Container $c) {
 			$session = new \XF\Session\Session($c['session.admin.storage'], [
 				'cookie' => 'session_admin'
 			]);
 			return $session->start($c['request']);
 		};
-		$container['session.admin.storage'] = function (Container $c)
-		{
+		$container['session.admin.storage'] = function (Container $c) {
 			return new \XF\Session\DbStorage($c['db'], 'xf_session_admin');
 		};
 
-		$container['session.install'] = function (Container $c)
-		{
+		$container['session.install'] = function (Container $c) {
 			$session = new \XF\Session\Session($c['session.install.storage'], [
 				'cookie' => 'session_install'
 			]);
 			return $session->start($c['request']);
 		};
-		$container['session.install.storage'] = function (Container $c)
-		{
+		$container['session.install.storage'] = function (Container $c) {
 			/** @var \XF\Db\SchemaManager $sm */
 			$sm = $c['db']->getSchemaManager();
 
-			try
-			{
-				if (!(bool)$sm->getTableStatus('xf_session_install'))
-				{
+			try {
+				if (!(bool)$sm->getTableStatus('xf_session_install')) {
 					$mySql = new \XF\Install\Data\MySql();
 					$tables = $mySql->getTables();
 					$sm->createTable('xf_session_install', $tables['xf_session_install']);
 				}
+			} catch (\Exception $e) {
 			}
-			catch (\Exception $e) {}
 
 			return new \XF\Session\DbStorage($c['db'], 'xf_session_install');
 		};
 
-		$container['session.api'] = function (Container $c)
-		{
+		$container['session.api'] = function (Container $c) {
 			$session = new \XF\Session\Session(new \XF\Session\NullStorage());
 			return $session->start($c['request']);
 		};
 
-		$container['csrf.token'] = function(Container $c)
-		{
+		$container['csrf.token'] = function (Container $c) {
 			/** @var Http\Request $request */
 			$request = $c['request'];
 
 			$token = $request->getCookie('csrf');
-			if (!$token)
-			{
+			if (!$token) {
 				$token = \XF::generateRandomString(16);
 				$this->updateCsrfCookie($token);
 			}
@@ -944,27 +934,22 @@ class App implements \ArrayAccess
 			$validator = $c['csrf.validator'];
 			return \XF::$time . ',' . $validator($token, \XF::$time);
 		};
-		$container['csrf.validator'] = $container->wrap(function($value, $time)
-		{
+		$container['csrf.validator'] = $container->wrap(function ($value, $time) {
 			return hash_hmac('md5', $value . $time, $this->config('globalSalt'));
 		});
 
-		$container['error'] = function ()
-		{
+		$container['error'] = function () {
 			return new Error($this);
 		};
 
-		$container['em'] = function (Container $c)
-		{
+		$container['em'] = function (Container $c) {
 			return new Mvc\Entity\Manager($c['db'], $c['em.valueFormatter'], $c['extension']);
 		};
-		$container['em.valueFormatter'] = function (Container $c)
-		{
+		$container['em.valueFormatter'] = function (Container $c) {
 			return new Mvc\Entity\ValueFormatter();
 		};
 
-		$container['mailer'] = function (Container $c)
-		{
+		$container['mailer'] = function (Container $c) {
 			/** @var \ArrayObject $options */
 			$options = $c['options'];
 
@@ -989,18 +974,15 @@ class App implements \ArrayAccess
 
 			return $mailer;
 		};
-		$container['mailer.transport'] = function(Container $c)
-		{
+		$container['mailer.transport'] = function (Container $c) {
 			$config = $c['config'];
-			if (!$config['enableMail'])
-			{
+			if (!$config['enableMail']) {
 				return new \Swift_NullTransport();
 			}
 
 			$transport = null;
 			$this->fire('mailer_transport_setup', [$c, &$transport]);
-			if ($transport)
-			{
+			if ($transport) {
 				return $transport;
 			}
 
@@ -1009,28 +991,23 @@ class App implements \ArrayAccess
 
 			$mailerClass = $this->extendClass('XF\Mail\Mailer');
 
-			if (is_array($options->emailTransport))
-			{
+			if (is_array($options->emailTransport)) {
 				$method = $options->emailTransport['emailTransport'];
 				$config = $options->emailTransport;
 
-				if (!empty($config['oauth']))
-				{
+				if (!empty($config['oauth'])) {
 					/** @var \XF\Repository\Option $optionRepo */
 					$optionRepo = $this->repository('XF:Option');
 					$config = $optionRepo->refreshEmailAccessTokenIfNeeded('emailTransport');
 				}
-			}
-			else
-			{
+			} else {
 				$method = 'sendmail';
 				$config = [];
 			}
 
 			return $mailerClass::getTransportFromOption($method, $config);
 		};
-		$container['mailer.styler'] = function($c)
-		{
+		$container['mailer.styler'] = function ($c) {
 			$rendererClass = $this->extendClass('XF\CssRenderer');
 			$stylerClass = $this->extendClass('XF\Mail\Styler');
 
@@ -1039,21 +1016,17 @@ class App implements \ArrayAccess
 				new \Pelago\Emogrifier()
 			);
 		};
-		$container['mailer.queue'] = function(Container $c)
-		{
+		$container['mailer.queue'] = function (Container $c) {
 			$config = $c['config'];
-			if (!$config['enableMailQueue'])
-			{
+			if (!$config['enableMailQueue']) {
 				return null;
 			}
 
 			$queueClass = $this->extendClass('XF\Mail\Queue');
 			return new $queueClass($c['db']);
 		};
-		$container['mailer.templater'] = function (Container $c)
-		{
-			if ($c['app.classType'] != 'Pub')
-			{
+		$container['mailer.templater'] = function (Container $c) {
+			if ($c['app.classType'] != 'Pub') {
 				// preload this in bulk as we will load them individually below
 				$this->registry()->get(['routesPublic', 'routeFilters', 'styles']);
 			}
@@ -1064,75 +1037,63 @@ class App implements \ArrayAccess
 			return $templater;
 		};
 
-		$container['fs'] = function(Container $c)
-		{
+		$container['fs'] = function (Container $c) {
 			$mountsClass = $this->extendClass('XF\FsMounts');
 
 			return $mountsClass::loadDefaultMounts($c['config']);
 		};
 
-		$container['spam'] = function($c)
-		{
+		$container['spam'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\Spam');
 			return new $class($c, $this);
 		};
 
-		$container['http'] = function($c)
-		{
+		$container['http'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\Http');
 			return new $class($c, $this);
 		};
 
-		$container['oAuth'] = function($c)
-		{
+		$container['oAuth'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\OAuth');
 			return new $class($c, $this);
 		};
 
-		$container['proxy'] = function($c)
-		{
+		$container['proxy'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\Proxy');
 			return new $class($c, $this);
 		};
 
-		$container['oembed'] = function($c)
-		{
+		$container['oembed'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\Oembed');
 			return new $class($c, $this);
 		};
 
-		$container['bounce'] = function($c)
-		{
+		$container['bounce'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\Bounce');
 			return new $class($c, $this);
 		};
 
-		$container['unsubscribe'] = function($c)
-		{
+		$container['unsubscribe'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\Unsubscribe');
 			return new $class($c, $this);
 		};
 
-		$container['widget'] = function($c)
-		{
+		$container['widget'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\Widget');
 			return new $class($c, $this);
 		};
 
-		$container['import'] = function($c)
-		{
+		$container['import'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\Import');
 			return new $class($c, $this);
 		};
 
-		$container['webManifestRenderer'] = function($c)
-		{
+		$container['webManifestRenderer'] = function ($c) {
 			$class = $this->extendClass('XF\WebManifestRenderer');
 			return new $class($this);
 		};
 
-		$container->set('sitemap.builder', function(Container $c)
-		{
+		$container->set('sitemap.builder', function (Container $c) {
 			$class = 'XF\Sitemap\Builder';
 			$class = $this->extendClass($class);
 
@@ -1142,30 +1103,26 @@ class App implements \ArrayAccess
 			return new $class($this, $user, $types);
 		}, false);
 
-		$container->set('sitemap.renderer', function(Container $c)
-		{
+		$container->set('sitemap.renderer', function (Container $c) {
 			$sitemapRepo = $this->repository('XF:SitemapLog');
 
 			$class = $this->extendClass('XF\Sitemap\Renderer');
 			return new $class($this, $sitemapRepo->getActiveSitemap());
 		}, false);
 
-		$container['imageManager'] = function($c)
-		{
+		$container['imageManager'] = function ($c) {
 			$manager = new \XF\Image\Manager($c['imageManager.defaultDriver'], $c['imageManager.extraDrivers']);
 			$manager->setMaxResizePixels($c['config']['maxImageResizePixelCount']);
 
 			return $manager;
 		};
 
-		$container['imageManager.defaultDriver'] = function($c)
-		{
+		$container['imageManager.defaultDriver'] = function ($c) {
 			return $c['options']->imageLibrary;
 		};
 		$container['imageManager.extraDrivers'] = [];
 
-		$container['adminSearcher'] = function($c)
-		{
+		$container['adminSearcher'] = function ($c) {
 			$class = $this->extendClass('XF\AdminSearch\Searcher');
 
 			return new $class(
@@ -1174,20 +1131,16 @@ class App implements \ArrayAccess
 			);
 		};
 
-		$container['search'] = function($c)
-		{
+		$container['search'] = function ($c) {
 			$class = $this->extendClass('XF\Search\Search');
 
 			return new $class($c['search.source'], $this->getContentTypeField('search_handler_class'));
 		};
-		$container['search.source'] = function($c)
-		{
+		$container['search.source'] = function ($c) {
 			$source = null;
 			$this->fire('search_source_setup_22', [$c, &$source]);
-			if ($source)
-			{
-				if (!($source instanceof \XF\Search\Source\AbstractSource))
-				{
+			if ($source) {
+				if (!($source instanceof \XF\Search\Source\AbstractSource)) {
 					throw new \LogicException('Search source must be instance of XF\Search\Source\AbstractSource. Received ' . get_class($source));
 				}
 				return $source;
@@ -1198,11 +1151,9 @@ class App implements \ArrayAccess
 			return new $mySqlFtClass($c['db'], $c['options']->searchMinWordLength);
 		};
 
-		$container->factory('stats.grouper', function($grouping, array $params, Container $c)
-		{
+		$container->factory('stats.grouper', function ($grouping, array $params, Container $c) {
 			$groupings = $c['stats.groupings'];
-			if (!isset($groupings[$grouping]))
-			{
+			if (!isset($groupings[$grouping])) {
 				throw new \InvalidArgumentException("Unknown grouping '$grouping'");
 			}
 
@@ -1218,116 +1169,107 @@ class App implements \ArrayAccess
 			'monthly' => 'XF:Monthly'
 		];
 
-		$container->factory('language', function($id, array $params, Container $c)
-		{
+		$container->factory('language', function ($id, array $params, Container $c) {
 			$id = intval($id);
 
 			$cache = $c['language.cache'];
-			if (!$id || !isset($cache[$id]))
-			{
+			if (!$id || !isset($cache[$id])) {
 				$id = $c['options']->defaultLanguageId;
 			}
 
-			if (isset($cache[$id]))
-			{
+			if (isset($cache[$id])) {
 				$groupPath = File::getCodeCachePath() . '/phrase_groups';
 
 				$class = $this->extendClass('XF\Language');
 				return new $class($id, $cache[$id], $c['db'], $groupPath);
-			}
-			else
-			{
+			} else {
 				return $c['language.fallback'];
 			}
 		});
 
-		$container['language.fallback'] = function(Container $c)
-		{
+		$container['language.fallback'] = function (Container $c) {
 			$groupPath = File::getCodeCachePath() . '/phrase_groups';
 
 			$class = $this->extendClass('XF\Language');
 			return new $class(0, [], $c['db'], $groupPath);
 		};
-		$container['language.cache'] = $this->fromRegistry('languages',
-			function(Container $c) { return $c['em']->getRepository('XF:Language')->rebuildLanguageCache(); }
+		$container['language.cache'] = $this->fromRegistry(
+			'languages',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Language')->rebuildLanguageCache();
+			}
 		);
-		$container['language.all'] = function(Container $c)
-		{
+		$container['language.all'] = function (Container $c) {
 			$output = [];
-			foreach (array_keys($c['language.cache']) AS $languageId)
-			{
+			foreach (array_keys($c['language.cache']) as $languageId) {
 				$output[$languageId] = $c->create('language', $languageId);
 			}
 
 			return $output;
 		};
 
-		$container->factory('style', function($id, array $params, Container $c)
-		{
+		$container->factory('style', function ($id, array $params, Container $c) {
 			$id = intval($id);
 
 			$cache = $c['style.cache'];
-			if (!$id || !isset($cache[$id]))
-			{
+			if (!$id || !isset($cache[$id])) {
 				$id = $c['options']->defaultStyleId;
 			}
 
-			if (isset($cache[$id]))
-			{
+			if (isset($cache[$id])) {
 				$style = $cache[$id];
 				$masterStyleProperties = $c['style.masterStyleProperties'];
-				if (is_array($style['properties']))
-				{
+				if (is_array($style['properties'])) {
 					$style['properties'] += $masterStyleProperties;
-				}
-				else
-				{
+				} else {
 					$style['properties'] = $masterStyleProperties;
 				}
 
 				$class = $this->extendClass('XF\Style');
 				return new $class($id, $style);
-			}
-			else
-			{
+			} else {
 				return $c['style.fallback'];
 			}
 		});
 
-		$container['style.fallback'] = function(Container $c)
-		{
+		$container['style.fallback'] = function (Container $c) {
 			$lastModified = $c['style.masterModifiedDate'];
 			$masterStyleProperties = $c['style.masterStyleProperties'];
 			$class = $this->extendClass('XF\Style');
 			return new $class(0, $masterStyleProperties, $lastModified);
 		};
-		$container['style.masterModifiedDate'] = $this->fromRegistry('masterStyleModifiedDate',
-			function(Container $c) { return \XF::$time; }
+		$container['style.masterModifiedDate'] = $this->fromRegistry(
+			'masterStyleModifiedDate',
+			function (Container $c) {
+				return \XF::$time;
+			}
 		);
-		$container['style.masterStyleProperties'] = $this->fromRegistry('masterStyleProperties',
-			function(Container $c) { return []; }
+		$container['style.masterStyleProperties'] = $this->fromRegistry(
+			'masterStyleProperties',
+			function (Container $c) {
+				return [];
+			}
 		);
-		$container['style.cache'] = $this->fromRegistry('styles',
-			function(Container $c) { return $c['em']->getRepository('XF:Style')->rebuildStyleCache(); }
+		$container['style.cache'] = $this->fromRegistry(
+			'styles',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Style')->rebuildStyleCache();
+			}
 		);
-		$container['style.all'] = function(Container $c)
-		{
+		$container['style.all'] = function (Container $c) {
 			$output = [];
-			foreach (array_keys($c['style.cache']) AS $styleId)
-			{
+			foreach (array_keys($c['style.cache']) as $styleId) {
 				$output[$styleId] = $c->create('style', $styleId);
 			}
 
 			return $output;
 		};
 
-		$container['defaultNavigationId'] = function(Container $c)
-		{
+		$container['defaultNavigationId'] = function (Container $c) {
 			return '_default';
 		};
 
-		$container['uploadMaxFilesize'] = function(Container $c)
-		{
+		$container['uploadMaxFilesize'] = function (Container $c) {
 			return \XF\Util\Php::getUploadMaxFilesize();
 		};
 
@@ -1335,13 +1277,11 @@ class App implements \ArrayAccess
 		// with the upgrade process. If you must do so, it should not be part of an add-on. It should be done
 		// unconditionally via config.php. However, do so at your own peril as the worst case would potentially be
 		// an un-upgradeable installation.
-		$container['templateCompiler'] = function (Container $c)
-		{
+		$container['templateCompiler'] = function (Container $c) {
 			return new Template\Compiler();
 		};
 
-		$container['templater'] = function (Container $c)
-		{
+		$container['templater'] = function (Container $c) {
 			return $this->setupTemplaterObject($c, '\XF\Template\Templater');
 		};
 		// the default config is in the templater
@@ -1349,8 +1289,7 @@ class App implements \ArrayAccess
 		$container['templater.config.functions'] = [];
 		$container['templater.config.tests'] = [];
 
-		$container['cssWriter'] = function($c)
-		{
+		$container['cssWriter'] = function ($c) {
 			$rendererClass = $this->extendClass('XF\CssRenderer');
 			$renderer = new $rendererClass($this, $c['templater'], $this->cache('css'));
 
@@ -1362,37 +1301,35 @@ class App implements \ArrayAccess
 
 			return $writer;
 		};
-		$container['css.validator'] = $container->wrap(function(array $templates)
-		{
+		$container['css.validator'] = $container->wrap(function (array $templates) {
 			return hash_hmac('sha1', implode(',', $templates), $this->config('globalSalt'));
 		});
 
-		$container['addon.manager'] = function($c)
-		{
+		$container['addon.manager'] = function ($c) {
 			$class = $this->extendClass('XF\AddOn\Manager');
 			return new $class(\XF::getAddOnDirectory());
 		};
-		$container['addon.dataManager'] = function($c)
-		{
+		$container['addon.dataManager'] = function ($c) {
 			$class = $this->extendClass('XF\AddOn\DataManager');
 			return new $class($c['em']);
 		};
-		$container['addon.cache'] = $this->fromRegistry('addOns',
-			function(Container $c) { return $c['addon.dataManager']->rebuildActiveAddOnCache(); }
+		$container['addon.cache'] = $this->fromRegistry(
+			'addOns',
+			function (Container $c) {
+				return $c['addon.dataManager']->rebuildActiveAddOnCache();
+			}
 		);
-		$container['addon.composer'] = $this->fromRegistry('addOnsComposer',
-			function(Container $c)
-			{
+		$container['addon.composer'] = $this->fromRegistry(
+			'addOnsComposer',
+			function (Container $c) {
 				$c['addon.dataManager']->rebuildActiveAddOnCache();
 				return $this->container['registry']['addOnsComposer'];
 			}
 		);
 
-		$container['giphy.api'] = function ($c)
-		{
+		$container['giphy.api'] = function ($c) {
 			$giphyOption = $c['options']['giphy'];
-			if (!$giphyOption['enabled'] || !$giphyOption['api_key'])
-			{
+			if (!$giphyOption['enabled'] || !$giphyOption['api_key']) {
 				return null;
 			}
 
@@ -1405,27 +1342,37 @@ class App implements \ArrayAccess
 			]);
 		};
 
-		$container['bannedEmails'] = $this->fromRegistry('bannedEmails',
-			function(Container $c) { return $c['em']->getRepository('XF:Banning')->rebuildBannedEmailCache(); }
+		$container['bannedEmails'] = $this->fromRegistry(
+			'bannedEmails',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Banning')->rebuildBannedEmailCache();
+			}
 		);
 
-		$container['bannedIps'] = $this->fromRegistry('bannedIps',
-			function(Container $c) { return $c['em']->getRepository('XF:Banning')->rebuildBannedIpCache(); }
+		$container['bannedIps'] = $this->fromRegistry(
+			'bannedIps',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Banning')->rebuildBannedIpCache();
+			}
 		);
 
-		$container['discouragedIps'] = $this->fromRegistry('discouragedIps',
-			function(Container $c) { return $c['em']->getRepository('XF:Banning')->rebuildDiscouragedIpCache(); }
+		$container['discouragedIps'] = $this->fromRegistry(
+			'discouragedIps',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:Banning')->rebuildDiscouragedIpCache();
+			}
 		);
 
-		$container['forumTypes'] = $this->fromRegistry('forumTypes',
-			function(Container $c) { return $c['em']->getRepository('XF:ForumType')->rebuildForumTypeCache(); }
+		$container['forumTypes'] = $this->fromRegistry(
+			'forumTypes',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:ForumType')->rebuildForumTypeCache();
+			}
 		);
 
-		$container->factory('forumType', function($type, array $params, Container $c)
-		{
+		$container->factory('forumType', function ($type, array $params, Container $c) {
 			$forumTypes = $c['forumTypes'];
-			if (!isset($forumTypes[$type]))
-			{
+			if (!isset($forumTypes[$type])) {
 				return null;
 			}
 
@@ -1435,15 +1382,16 @@ class App implements \ArrayAccess
 			return new $typeClass($type);
 		});
 
-		$container['threadTypes'] = $this->fromRegistry('threadTypes',
-			function(Container $c) { return $c['em']->getRepository('XF:ThreadType')->rebuildThreadTypeCache(); }
+		$container['threadTypes'] = $this->fromRegistry(
+			'threadTypes',
+			function (Container $c) {
+				return $c['em']->getRepository('XF:ThreadType')->rebuildThreadTypeCache();
+			}
 		);
 
-		$container->factory('threadType', function($type, array $params, Container $c)
-		{
+		$container->factory('threadType', function ($type, array $params, Container $c) {
 			$threadTypes = $c['threadTypes'];
-			if (!isset($threadTypes[$type]))
-			{
+			if (!isset($threadTypes[$type])) {
 				return null;
 			}
 
@@ -1453,8 +1401,7 @@ class App implements \ArrayAccess
 			return new $typeClass($type);
 		});
 
-		$container['string.formatter'] = function(Container $c)
-		{
+		$container['string.formatter'] = function (Container $c) {
 			$class = $this->extendClass('XF\Str\Formatter');
 			/** @var \XF\Str\Formatter $formatter */
 			$formatter = new $class();
@@ -1463,8 +1410,7 @@ class App implements \ArrayAccess
 			$formatter->setCensorRules($options->censorWords ?: [], $options->censorCharacter);
 			$formatter->addSmilies($c['smilies']);
 			$formatter->setSmilieHtmlPather($c['request.pather']);
-			$formatter->setProxyHandler(function($type, $url, array $options = [])
-			{
+			$formatter->setProxyHandler(function ($type, $url, array $options = []) {
 				return $this->proxy()->generateExtended($type, $url, $options);
 			});
 
@@ -1473,36 +1419,34 @@ class App implements \ArrayAccess
 			return $formatter;
 		};
 
-		$container['bbCode'] = function($c)
-		{
+		$container['bbCode'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\BbCode');
 			return new $class($c, $this);
 		};
 
-		$container['apiDocs'] = function($c)
-		{
+		$container['apiDocs'] = function ($c) {
 			$class = $this->extendClass('XF\SubContainer\ApiDocs');
 			return new $class($c, $this);
 		};
 
-		$container['job.manager'] = function($c)
-		{
+		$container['job.manager'] = function ($c) {
 			$class = $this->extendClass('XF\Job\Manager');
 			return new $class($this, $c['job.manual.allow'], $c['job.manual.force']);
 		};
-		$container['job.runTime'] = $this->fromRegistry('autoJobRun',
-			function(Container $c) { return $c['job.manager']->updateNextRunTime(); }
+		$container['job.runTime'] = $this->fromRegistry(
+			'autoJobRun',
+			function (Container $c) {
+				return $c['job.manager']->updateNextRunTime();
+			}
 		);
 		$container['job.manual.allow'] = false;
 		$container['job.manual.force'] = false;
 
-		$container['development.output'] = function(Container $c)
-		{
+		$container['development.output'] = function (Container $c) {
 			$config = $c['config'];
 
 			$skip = $config['development']['skipAddOns'];
-			if (!is_array($skip))
-			{
+			if (!is_array($skip)) {
 				$skip = ['XF', 'XF*'];
 			}
 
@@ -1514,14 +1458,12 @@ class App implements \ArrayAccess
 			);
 		};
 
-		$container['development.jsResponse'] = function(Container $c)
-		{
+		$container['development.jsResponse'] = function (Container $c) {
 			$class = $this->extendClass('XF\DevJsResponse');
 			return new $class($this);
 		};
 
-		$container['designer.output'] = function(Container $c)
-		{
+		$container['designer.output'] = function (Container $c) {
 			$config = $c['config'];
 
 			$class = $this->extendClass('XF\DesignerOutput');
@@ -1531,22 +1473,17 @@ class App implements \ArrayAccess
 			);
 		};
 
-		$container['extension'] = function(Container $c)
-		{
+		$container['extension'] = function (Container $c) {
 			$config = $c['config'];
-			if (!$config['enableListeners'])
-			{
+			if (!$config['enableListeners']) {
 				// disable
 				return new \XF\Extension();
 			}
 
-			try
-			{
+			try {
 				$listeners = $c['extension.listeners'];
 				$classExtensions = $c['extension.classExtensions'];
-			}
-			catch (\XF\Db\Exception $e)
-			{
+			} catch (\XF\Db\Exception $e) {
 				$listeners = [];
 				$classExtensions = [];
 			}
@@ -1554,15 +1491,22 @@ class App implements \ArrayAccess
 			return new \XF\Extension($listeners, $classExtensions);
 		};
 		// note: these don't trigger normal rebuilds to prevent the possibility of an infinite loop
-		$container['extension.listeners'] = $this->fromRegistry('codeEventListeners',
-			function(Container $c) { $c['registry']->set('codeEventListeners', []); return []; }
+		$container['extension.listeners'] = $this->fromRegistry(
+			'codeEventListeners',
+			function (Container $c) {
+				$c['registry']->set('codeEventListeners', []);
+				return [];
+			}
 		);
-		$container['extension.classExtensions'] = $this->fromRegistry('classExtensions',
-			function(Container $c) { $c['registry']->set('classExtensions', []); return []; }
+		$container['extension.classExtensions'] = $this->fromRegistry(
+			'classExtensions',
+			function (Container $c) {
+				$c['registry']->set('classExtensions', []);
+				return [];
+			}
 		);
 
-		$container->factory('controller', function($class, array $params, Container $c)
-		{
+		$container->factory('controller', function ($class, array $params, Container $c) {
 			$class = \XF::stringToClass($class, '%s\%s\Controller\%s', $c['app.classType']);
 			$class = $this->extendClass($class);
 
@@ -1573,16 +1517,24 @@ class App implements \ArrayAccess
 			return $c->createObject($class, $passParams, true);
 		}, false);
 
-		$container->factory('renderer', function($type, array $params, Container $c)
-		{
+		$container->factory('renderer', function ($type, array $params, Container $c) {
 			$type = strtolower($type);
-			switch ($type)
-			{
-				case 'html': $class = 'Html'; break;
-				case 'json': $class = 'Json'; break;
-				case 'xml': $class = 'Xml'; break;
-				case 'raw': $class = 'Raw'; break;
-				case 'rss': $class = 'Rss'; break;
+			switch ($type) {
+				case 'html':
+					$class = 'Html';
+					break;
+				case 'json':
+					$class = 'Json';
+					break;
+				case 'xml':
+					$class = 'Xml';
+					break;
+				case 'raw':
+					$class = 'Raw';
+					break;
+				case 'rss':
+					$class = 'Rss';
+					break;
 				default:
 					$unknownCallback = $c['renderer.unknown'];
 					$class = $unknownCallback($type);
@@ -1593,8 +1545,7 @@ class App implements \ArrayAccess
 				$c['response'],
 				$c['templater']
 			];
-			if (strpos($class, '\\') === false)
-			{
+			if (strpos($class, '\\') === false) {
 				$class = 'XF\Mvc\Renderer\\' . $class;
 			}
 			$class = $this->extendClass($class);
@@ -1602,31 +1553,26 @@ class App implements \ArrayAccess
 			return $c->createObject($class, $params);
 		}, false);
 
-		$container['renderer.unknown'] = function()
-		{
-			return function($rendererType)
-			{
+		$container['renderer.unknown'] = function () {
+			return function ($rendererType) {
 				return 'Html';
 			};
 		};
 
 		$container['view.defaultClass'] = 'XF\Mvc\View';
 
-		$container->factory('view', function($class, array $params, Container $c)
-		{
+		$container->factory('view', function ($class, array $params, Container $c) {
 			$class = \XF::stringToClass($class, '%s\%s\View\%s', $c['app.classType']);
 			$class = $this->extendClass($class, $c['view.defaultClass']);
 
-			if (!$class || !class_exists($class))
-			{
+			if (!$class || !class_exists($class)) {
 				$class = $c['view.defaultClass'];
 			}
 
 			return $c->createObject($class, $params);
 		}, false);
 
-		$container->factory('job', function($class, array $params, Container $c)
-		{
+		$container->factory('job', function ($class, array $params, Container $c) {
 			$class = \XF::stringToClass($class, '\%s\Job\%s');
 			$class = $this->extendClass($class);
 
@@ -1635,8 +1581,7 @@ class App implements \ArrayAccess
 			return $c->createObject($class, $params, true);
 		}, false);
 
-		$container->factory('searcher', function($class, array $params, Container $c)
-		{
+		$container->factory('searcher', function ($class, array $params, Container $c) {
 			$class = \XF::stringToClass($class, '\%s\Searcher\%s');
 			$class = $this->extendClass($class);
 
@@ -1645,8 +1590,7 @@ class App implements \ArrayAccess
 			return $c->createObject($class, $params);
 		}, false);
 
-		$container->factory('auth', function($class, array $params, Container $c)
-		{
+		$container->factory('auth', function ($class, array $params, Container $c) {
 			$class = \XF::stringToClass($class, '\%s\Authentication\%s');
 			$class = $this->extendClass($class);
 
@@ -1655,8 +1599,7 @@ class App implements \ArrayAccess
 
 		$container['auth.default'] = 'XF:Core12';
 
-		$container->factory('service', function($class, array $params, Container $c)
-		{
+		$container->factory('service', function ($class, array $params, Container $c) {
 			$class = \XF::stringToClass($class, '\%s\Service\%s');
 			$class = $this->extendClass($class);
 
@@ -1665,18 +1608,15 @@ class App implements \ArrayAccess
 			return $c->createObject($class, $params);
 		}, false);
 
-		$container->factory('helper', function($class, array $params, Container $c)
-		{
+		$container->factory('helper', function ($class, array $params, Container $c) {
 			$class = \XF::stringToClass($class, '\%s\Helper\%s');
 			$class = $this->extendClass($class);
 
 			return $c->createObject($class, $params);
 		}, false);
 
-		$container->factory('validator', function($class, array $params, Container $c)
-		{
-			if (strpos($class, ':') === false && strpos($class, '\\') === false)
-			{
+		$container->factory('validator', function ($class, array $params, Container $c) {
+			if (strpos($class, ':') === false && strpos($class, '\\') === false) {
 				$class = "XF:$class";
 			}
 
@@ -1688,8 +1628,7 @@ class App implements \ArrayAccess
 			return $c->createObject($class, $params);
 		}, false);
 
-		$container->factory('data', function($class, array $params, Container $c)
-		{
+		$container->factory('data', function ($class, array $params, Container $c) {
 			$class = \XF::stringToClass($class, '\%s\Data\%s');
 			$class = $this->extendClass($class);
 
@@ -1698,15 +1637,12 @@ class App implements \ArrayAccess
 			return $c->createObject($class, $params);
 		}, true);
 
-		$container->factory('captcha', function($class, array $params, Container $c)
-		{
-			if (strpos($class, ':') === false && strpos($class, '\\') === false)
-			{
+		$container->factory('captcha', function ($class, array $params, Container $c) {
+			if (strpos($class, ':') === false && strpos($class, '\\') === false) {
 				$class = "XF:$class";
 			}
 			$class = \XF::stringToClass($class, '\%s\Captcha\%s');
-			if (!class_exists($class))
-			{
+			if (!class_exists($class)) {
 				$this->error()->logError('CAPTCHA class ' . htmlspecialchars($class) . ' does not exist. Falling back to default provider \\' . htmlspecialchars($c['captcha.default']) . '.');
 
 				$class = $c['captcha.default'];
@@ -1720,8 +1656,7 @@ class App implements \ArrayAccess
 
 		$container['captcha.default'] = 'XF\Captcha\ReCaptcha';
 
-		$container->factory('notifier', function($class, array $params, Container $c)
-		{
+		$container->factory('notifier', function ($class, array $params, Container $c) {
 			$class = \XF::stringToClass($class, '\%s\Notifier\%s');
 			$class = $this->extendClass($class);
 
@@ -1730,8 +1665,7 @@ class App implements \ArrayAccess
 			return $c->createObject($class, $params);
 		}, false);
 
-		if (function_exists('xdebug_disable'))
-		{
+		if (function_exists('xdebug_disable')) {
 			xdebug_disable(); // use PHP's own stack trace in case of errors
 		}
 
@@ -1748,12 +1682,10 @@ class App implements \ArrayAccess
 	 */
 	public function fromRegistry($key, \Closure $rebuildFunction, \Closure $decoratorFunction = null)
 	{
-		return function(Container $c) use ($key, $rebuildFunction, $decoratorFunction)
-		{
+		return function (Container $c) use ($key, $rebuildFunction, $decoratorFunction) {
 			$data = $this->container['registry'][$key];
 
-			if ($data === null)
-			{
+			if ($data === null) {
 				$data = $rebuildFunction($c, $key);
 			}
 
@@ -1784,12 +1716,10 @@ class App implements \ArrayAccess
 		$templater->addFilters($c['templater.config.filters']);
 		$templater->addFunctions($c['templater.config.functions']);
 		$templater->addTests($c['templater.config.tests']);
-		if ($config['development']['enabled'])
-		{
+		if ($config['development']['enabled']) {
 			$templater->addTemplateWatcher($c['development.output']->getHandler('XF:Template'));
 		}
-		if ($config['designer']['enabled'])
-		{
+		if ($config['designer']['enabled']) {
 			$templater->addTemplateWatcher($c['designer.output']->getHandler('XF:Template'));
 		}
 
@@ -1824,20 +1754,14 @@ class App implements \ArrayAccess
 	{
 		$config = $this->container('config');
 
-		if (!$config['exists'])
-		{
-			if ($config['legacyExists'])
-			{
+		if (!$config['exists']) {
+			if ($config['legacyExists']) {
 				echo 'The site is currently being upgraded. Please check back later.';
 				exit;
-			}
-			else if (\XF\Util\File::installLockExists())
-			{
+			} else if (\XF\Util\File::installLockExists()) {
 				echo "Couldn't load src/config.php file.";
 				exit;
-			}
-			else
-			{
+			} else {
 				header('Location: install/index.php');
 				exit;
 			}
@@ -1856,12 +1780,11 @@ class App implements \ArrayAccess
 
 	protected function preLoadData(array $typeSpecific = [])
 	{
-		try
-		{
+		try {
 			$keys = array_merge($this->preLoadShared, $this->preLoadLocal, $typeSpecific);
 			$this->registry()->get($keys);
+		} catch (\Exception $e) {
 		}
-		catch (\Exception $e) {}
 	}
 
 	public function start($allowShortCircuit = false)
@@ -1873,13 +1796,14 @@ class App implements \ArrayAccess
 	{
 		$userRepo = $this->repository('XF:User');
 		$sessionUserId = $session->userId;
+
 		$user = $userRepo->getVisitor($sessionUserId, $extraWith);
 
-		if ($user->user_id && $user->user_id == $sessionUserId)
-		{
+
+
+		if ($user->user_id && $user->user_id == $sessionUserId) {
 			$userPasswordDate = $user->Profile ? $user->Profile->password_date : 0;
-			if ($session->passwordDate != $userPasswordDate)
-			{
+			if ($session->passwordDate != $userPasswordDate) {
 				$session->logoutUser();
 				$user = $userRepo->getVisitor(0);
 			}
@@ -1890,12 +1814,10 @@ class App implements \ArrayAccess
 
 	public function preDispatch(RouteMatch $match)
 	{
-
 	}
 
 	public function postDispatch(AbstractReply $reply, RouteMatch $finalMatch, RouteMatch $originalMatch)
 	{
-
 	}
 
 	public function preRender(AbstractReply $reply, $responseType)
@@ -1908,23 +1830,19 @@ class App implements \ArrayAccess
 		/** @var \XF\CustomField\DefinitionSet $definitionSet */
 		$definitionSet = $this->container["customFields.$type"];
 
-		if (!$definitionSet)
-		{
+		if (!$definitionSet) {
 			return null;
 		}
 
-		if ($group !== null)
-		{
+		if ($group !== null) {
 			$definitionSet = $definitionSet->filterGroup($group);
 		}
 
-		if (is_array($onlyInclude))
-		{
+		if (is_array($onlyInclude)) {
 			$definitionSet = $definitionSet->filterOnly($onlyInclude);
 		}
 
-		if ($additionalFilters)
-		{
+		if ($additionalFilters) {
 			$definitionSet = $definitionSet->filter($additionalFilters);
 		}
 
@@ -1932,13 +1850,15 @@ class App implements \ArrayAccess
 	}
 
 	public function getCustomFieldsForEdit(
-		$type, \XF\CustomField\Set $set, $editMode = 'user',
-		$group = null, array $onlyInclude = null, array $additionalFilters = []
-	)
-	{
+		$type,
+		\XF\CustomField\Set $set,
+		$editMode = 'user',
+		$group = null,
+		array $onlyInclude = null,
+		array $additionalFilters = []
+	) {
 		$definitionSet = $this->getCustomFields($type, $group, $onlyInclude, $additionalFilters);
-		if (!$definitionSet)
-		{
+		if (!$definitionSet) {
 			return null;
 		}
 
@@ -1950,8 +1870,7 @@ class App implements \ArrayAccess
 		$request = $this->request();
 
 		$jobRunTime = null;
-		if (!empty($this->options()->jobRunTrigger) && $this->options()->jobRunTrigger == 'activity')
-		{
+		if (!empty($this->options()->jobRunTrigger) && $this->options()->jobRunTrigger == 'activity') {
 			// if activity based it is triggered by inclusion in the template - run time compared below
 			$jobRunTime = $this['job.runTime'];
 		}
@@ -1983,8 +1902,7 @@ class App implements \ArrayAccess
 			'isRtl' => $language->isRtl(),
 			'options' => $this->options(),
 			'reactions' => $this->get('reactions'),
-			'reactionsActive' => array_filter($this->get('reactions'), function(array $reaction)
-			{
+			'reactionsActive' => array_filter($this->get('reactions'), function (array $reaction) {
 				return ($reaction['active'] === true);
 			}),
 			'addOns' => $this->container['addon.cache'],
@@ -2002,8 +1920,7 @@ class App implements \ArrayAccess
 			'allowedAudioExtensions' => array_keys($this->container['inlineAudioTypes'])
 		];
 
-		if ($reply)
-		{
+		if ($reply) {
 			$replyData = [
 				'controller' => $reply->getControllerClass(),
 				'action' => $reply->getAction(),
@@ -2012,17 +1929,12 @@ class App implements \ArrayAccess
 				'contentKey' => $reply->getContentKey()
 			];
 
-			if ($reply instanceof \XF\Mvc\Reply\View)
-			{
+			if ($reply instanceof \XF\Mvc\Reply\View) {
 				$replyData['view'] = $reply->getViewClass();
 				$replyData['template'] = $reply->getTemplateName();
-			}
-			else if ($reply instanceof \XF\Mvc\Reply\Error || $reply->getResponseCode() >= 400)
-			{
+			} else if ($reply instanceof \XF\Mvc\Reply\Error || $reply->getResponseCode() >= 400) {
 				$replyData['template'] = 'error';
-			}
-			else if ($reply instanceof \XF\Mvc\Reply\Message)
-			{
+			} else if ($reply instanceof \XF\Mvc\Reply\Message) {
 				$replyData['template'] = 'message_page';
 			}
 
@@ -2043,40 +1955,39 @@ class App implements \ArrayAccess
 
 	public function complete(Http\Response $response)
 	{
-		if (!$response->headerExists('Expires'))
-		{
+
+
+		if (!$response->headerExists('Expires')) {
 			$response->header('Expires', 'Thu, 19 Nov 1981 08:52:00 GMT');
 		}
-		if (!$response->headerExists('Cache-control'))
-		{
+		if (!$response->headerExists('Cache-control')) {
 			$response->header('Cache-control', 'private, no-cache, max-age=0');
 		}
 
-		if ($this->updateCsrfCookie)
-		{
+
+
+		if ($this->updateCsrfCookie) {
 			$response->setCookie('csrf', $this->updateCsrfCookie, 0, null, false);
 		}
 
-		if ($this->container->isCached('db'))
-		{
+		if ($this->container->isCached('db')) {
 			$db = $this->db();
-			if ($db instanceof \XF\Db\ReplicationAdapterInterface && $db->isForcedToWriteServerExplicit())
-			{
+			if ($db instanceof \XF\Db\ReplicationAdapterInterface && $db->isForcedToWriteServerExplicit()) {
 				$forceTime = $db->getForceToWriteServerLength();
-				if ($forceTime > 0)
-				{
+				if ($forceTime > 0) {
 					$response->setCookie('dbWriteForced', time());
 				}
 			}
 		}
+
+
 
 		$this->fire('app_complete', [$this, &$response]);
 	}
 
 	public function finalOutputFilter(Http\Response $response)
 	{
-		if (\XF::$debugMode && $this->request()->get('_debug'))
-		{
+		if (\XF::$debugMode && $this->request()->get('_debug')) {
 			$response->contentType('text/html', 'utf-8');
 			$response->body($this->debugger()->getDebugPageHtml());
 		}
@@ -2093,19 +2004,15 @@ class App implements \ArrayAccess
 
 	public function renderPage($content, AbstractReply $reply, AbstractRenderer $renderer)
 	{
-		if ($reply instanceof Redirect)
-		{
+		if ($reply instanceof Redirect) {
 			return $content;
 		}
 
-		if ($renderer instanceof Mvc\Renderer\Html)
-		{
+		if ($renderer instanceof Mvc\Renderer\Html) {
 			$content = strval($content);
 			$pageParams = $renderer->getTemplater()->pageParams;
 			return $this->renderPageHtml($content, $pageParams, $reply, $renderer);
-		}
-		else
-		{
+		} else {
 			return $content;
 		}
 	}
@@ -2132,37 +2039,30 @@ class App implements \ArrayAccess
 		$request = $this->request();
 
 		$redirect = $request->filter('_xfRedirect', 'str');
-		if (!$redirect && $useReferrer)
-		{
+		if (!$redirect && $useReferrer) {
 			$redirect = $request->getServer('HTTP_X_AJAX_REFERER');
-			if (!$redirect)
-			{
+			if (!$redirect) {
 				$redirect = $request->getServer('HTTP_REFERER');
 			}
 		}
 
-		if ($redirect && preg_match('/./su', $redirect))
-		{
-			if (strpos($redirect, "\n") === false && strpos($redirect, "\r") === false)
-			{
+		if ($redirect && preg_match('/./su', $redirect)) {
+			if (strpos($redirect, "\n") === false && strpos($redirect, "\r") === false) {
 				$fullBasePath = $request->getFullBasePath();
 
 				$fullRedirect = $request->convertToAbsoluteUri($redirect);
 				$redirectParts = @parse_url($fullRedirect);
-				if ($redirectParts && !empty($redirectParts['host']))
-				{
+				if ($redirectParts && !empty($redirectParts['host'])) {
 					$pageParts = @parse_url($fullBasePath);
 
-					if ($pageParts && !empty($pageParts['host']) && $pageParts['host'] == $redirectParts['host'])
-					{
+					if ($pageParts && !empty($pageParts['host']) && $pageParts['host'] == $redirectParts['host']) {
 						return $fullRedirect;
 					}
 				}
 			}
 		}
 
-		if ($fallbackUrl === null)
-		{
+		if ($fallbackUrl === null) {
 			$fallbackUrl = $this->router()->buildLink('index');
 		}
 		return $fallbackUrl;
@@ -2175,18 +2075,14 @@ class App implements \ArrayAccess
 		$redirect = $this->getDynamicRedirect($fallbackUrl, $useReferrer);
 		$notUrl = $request->convertToAbsoluteUri($notUrl);
 
-		if (strpos($redirect, $notUrl) === 0)
-		{
+		if (strpos($redirect, $notUrl) === 0) {
 			// the URL we can't redirect to is at the start
-			if ($fallbackUrl === false)
-			{
+			if ($fallbackUrl === false) {
 				$fallbackUrl = $this->router()->buildLink('index');
 			}
 
 			return $request->convertToAbsoluteUri($fallbackUrl);
-		}
-		else
-		{
+		} else {
 			return $redirect;
 		}
 	}
@@ -2200,12 +2096,9 @@ class App implements \ArrayAccess
 	public function applyExternalDataUrlPathed($externalPath, $pathType)
 	{
 		$externalDataUrl = $this->config('externalDataUrl');
-		if ($externalDataUrl instanceof \Closure)
-		{
+		if ($externalDataUrl instanceof \Closure) {
 			$url = $externalDataUrl($externalPath, $pathType);
-		}
-		else
-		{
+		} else {
 			$url = "$externalDataUrl/$externalPath";
 		}
 
@@ -2217,8 +2110,7 @@ class App implements \ArrayAccess
 
 	public function assertConfigExists()
 	{
-		if (!$this->container['config']['exists'])
-		{
+		if (!$this->container['config']['exists']) {
 			echo 'Config.php does not exist.';
 			exit;
 		}
@@ -2227,14 +2119,12 @@ class App implements \ArrayAccess
 	public function checkDebugMode()
 	{
 		$config = $this->container['config'];
-		if ($config['development']['enabled'])
-		{
+		if ($config['development']['enabled']) {
 			$config['debug'] = true;
 			\XF::$developmentMode = true;
 		}
 
-		if ($config['debug'])
-		{
+		if ($config['debug']) {
 			\XF::$debugMode = true;
 			@ini_set('display_errors', true);
 		}
@@ -2245,23 +2135,17 @@ class App implements \ArrayAccess
 		// reading this cookie directly as we do this before the DB is initialized and therefore
 		// we haven't actually fetched things from the registry
 		$cookieName = $this->container['config']['cookie']['prefix'] . 'dbWriteForced';
-		if (isset($_COOKIE[$cookieName]) && is_scalar($_COOKIE[$cookieName]))
-		{
+		if (isset($_COOKIE[$cookieName]) && is_scalar($_COOKIE[$cookieName])) {
 			$writeForced = intval($_COOKIE[$cookieName]);
-		}
-		else
-		{
+		} else {
 			$writeForced = 0;
 		}
 
-		if ($writeForced)
-		{
+		if ($writeForced) {
 			$db = $this->db();
-			if ($db instanceof \XF\Db\ReplicationAdapterInterface)
-			{
+			if ($db instanceof \XF\Db\ReplicationAdapterInterface) {
 				$forceTime = $db->getForceToWriteServerLength();
-				if ($forceTime > 0 && $writeForced + $forceTime >= time())
-				{
+				if ($forceTime > 0 && $writeForced + $forceTime >= time()) {
 					$db->forceToWriteServer('implicit');
 				}
 			}
@@ -2270,8 +2154,7 @@ class App implements \ArrayAccess
 
 	public function setupAddOnComposerAutoload()
 	{
-		if (!$this->config('enableListeners'))
-		{
+		if (!$this->config('enableListeners')) {
 			return;
 		}
 
@@ -2279,10 +2162,8 @@ class App implements \ArrayAccess
 		$addOnManager = $this->container['addon.manager'];
 		$addOns = $this->container['addon.composer'];
 
-		foreach ($addOns AS $addOnId => $composerPath)
-		{
-			if ($addOnId == 'XF' || !$composerPath)
-			{
+		foreach ($addOns as $addOnId => $composerPath) {
+			if ($addOnId == 'XF' || !$composerPath) {
 				continue;
 			}
 
@@ -2293,15 +2174,28 @@ class App implements \ArrayAccess
 
 	public function run()
 	{
+
 		$response = $this->start(true);
-		if (!($response instanceof Http\Response))
-		{
+		if (!($response instanceof Http\Response)) {
 			$dispatcher = $this->dispatcher();
 			$response = $dispatcher->run();
 		}
 
+
+
+
+
 		$this->complete($response);
+
+
+
+
+		// echo $this->fire('app_complete', [$this, &$response]);
+		// var_dump('qwe123');
+		// exit;
+
 		$response = $this->finalOutputFilter($response);
+
 
 		return $response;
 	}
@@ -2391,12 +2285,9 @@ class App implements \ArrayAccess
 	{
 		$config = $this->container['config'];
 
-		if ($key)
-		{
+		if ($key) {
 			return $config[$key] ?? null;
-		}
-		else
-		{
+		} else {
 			return $config;
 		}
 	}
@@ -2460,8 +2351,7 @@ class App implements \ArrayAccess
 	public function cache($context = '', $fallbackToGlobal = true)
 	{
 		$cache = $this->container->create('cache', $context);
-		if (!$cache && $fallbackToGlobal && strlen($context))
-		{
+		if (!$cache && $fallbackToGlobal && strlen($context)) {
 			$cache = $this->container->create('cache', '');
 		}
 
@@ -2543,10 +2433,8 @@ class App implements \ArrayAccess
 	public function getContentTypeField($field)
 	{
 		$output = [];
-		foreach ($this->container['contentTypes'] AS $type => $fields)
-		{
-			if (isset($fields[$field]))
-			{
+		foreach ($this->container['contentTypes'] as $type => $fields) {
+			if (isset($fields[$field])) {
 				$output[$type] = $fields[$field];
 			}
 		}
@@ -2563,29 +2451,20 @@ class App implements \ArrayAccess
 	public function getContentTypePhraseName($type, $plural = false)
 	{
 		$types = $this->container['contentTypes'];
-		if (!isset($types[$type]))
-		{
+		if (!isset($types[$type])) {
 			return '';
 		}
 		$fields = $types[$type];
 
-		if ($plural)
-		{
-			if (isset($fields['phrase_plural']))
-			{
+		if ($plural) {
+			if (isset($fields['phrase_plural'])) {
 				return $fields['phrase_plural'];
-			}
-			else if (isset($fields['phrase']))
-			{
+			} else if (isset($fields['phrase'])) {
 				return $fields['phrase'] . 's';
-			}
-			else
-			{
+			} else {
 				return "{$type}s";
 			}
-		}
-		else
-		{
+		} else {
 			return $fields['phrase'] ?? $type;
 		}
 	}
@@ -2598,27 +2477,17 @@ class App implements \ArrayAccess
 	public function getContentTypePhrases($plural = false, $withField = null)
 	{
 		$output = [];
-		foreach ($this->container['contentTypes'] AS $type => $fields)
-		{
-			if (!$withField || isset($fields[$withField]))
-			{
-				if ($plural)
-				{
-					if (isset($fields['phrase_plural']))
-					{
+		foreach ($this->container['contentTypes'] as $type => $fields) {
+			if (!$withField || isset($fields[$withField])) {
+				if ($plural) {
+					if (isset($fields['phrase_plural'])) {
 						$phrase = $fields['phrase_plural'];
-					}
-					else if (isset($fields['phrase']))
-					{
+					} else if (isset($fields['phrase'])) {
 						$phrase = $fields['phrase'] . 's';
-					}
-					else
-					{
+					} else {
 						$phrase = "{$type}s";
 					}
-				}
-				else
-				{
+				} else {
 					$phrase = $fields['phrase'] ?? $type;
 				}
 				$output[$type] = \XF::phrase($phrase);
@@ -2668,12 +2537,9 @@ class App implements \ArrayAccess
 	{
 		$entity = $this->getContentTypeEntity($contentType);
 
-		if (is_array($contentId))
-		{
+		if (is_array($contentId)) {
 			return $this->em()->findByIds($entity, $contentId, $with);
-		}
-		else
-		{
+		} else {
 			return $this->em()->find($entity, $contentId, $with);
 		}
 	}
@@ -2687,8 +2553,7 @@ class App implements \ArrayAccess
 	public function getContentTypeEntity($contentType, $throw = true)
 	{
 		$entity = $this->getContentTypeFieldValue($contentType, 'entity');
-		if (!$entity && $throw)
-		{
+		if (!$entity && $throw) {
 			throw new \LogicException("Content type $contentType must define an 'entity' value");
 		}
 
@@ -2736,8 +2601,7 @@ class App implements \ArrayAccess
 	public function userLanguage(\XF\Entity\User $user)
 	{
 		$language = $this->language($user->language_id);
-		if (!$language->isUsable($user))
-		{
+		if (!$language->isUsable($user)) {
 			$language = $this->language(0);
 		}
 
@@ -2900,8 +2764,7 @@ class App implements \ArrayAccess
 	 */
 	public function auth($class, array $data = [])
 	{
-		if (!$class)
-		{
+		if (!$class) {
 			$class = $this->container['auth.default'];
 		}
 
@@ -2917,8 +2780,7 @@ class App implements \ArrayAccess
 	public function forumType($type, $throw = true)
 	{
 		$forumType = $this->container->create('forumType', $type);
-		if (!$forumType && $throw)
-		{
+		if (!$forumType && $throw) {
 			throw new \InvalidArgumentException("Invalid forum type '$type'");
 		}
 
@@ -2934,8 +2796,7 @@ class App implements \ArrayAccess
 	public function threadType($type, $throw = true)
 	{
 		$threadType = $this->container->create('threadType', $type);
-		if (!$threadType && $throw)
-		{
+		if (!$threadType && $throw) {
 			throw new \InvalidArgumentException("Invalid thread type '$type'");
 		}
 
@@ -2995,8 +2856,7 @@ class App implements \ArrayAccess
 		array $columns,
 		array $existingValues = [],
 		bool $isUpdating = false
-	): \XF\Mvc\Entity\ArrayValidator
-	{
+	): \XF\Mvc\Entity\ArrayValidator {
 		$valueFormatter = $this->get('em.valueFormatter');
 
 		$class = $this->extendClass('XF\Mvc\Entity\ArrayValidator');
@@ -3008,11 +2868,9 @@ class App implements \ArrayAccess
 	 */
 	public function captcha($class = null)
 	{
-		if ($class === null)
-		{
+		if ($class === null) {
 			$class = $this->options()->captcha;
-			if (!$class)
-			{
+			if (!$class) {
 				return false;
 			}
 		}
@@ -3119,7 +2977,7 @@ class App implements \ArrayAccess
 		return $this->container['import'];
 	}
 
-		/**
+	/**
 	 * @return \XF\Sitemap\Builder
 	 */
 	public function sitemapBuilder()
@@ -3150,8 +3008,7 @@ class App implements \ArrayAccess
 	public function formAction($inTransaction = true)
 	{
 		$formAction = new Mvc\FormAction();
-		if ($inTransaction)
-		{
+		if ($inTransaction) {
 			$formAction->applyInTransaction($this->db());
 		}
 		return $formAction;

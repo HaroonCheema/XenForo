@@ -24,8 +24,7 @@ class Statement extends \XF\Db\AbstractStatement
 	 */
 	public function prepare()
 	{
-		if ($this->statement)
-		{
+		if ($this->statement) {
 			throw new \LogicException("Statement has already been prepared");
 		}
 
@@ -33,10 +32,14 @@ class Statement extends \XF\Db\AbstractStatement
 		$connection = $this->adapter->getConnectionForQuery($this->query);
 
 		$this->statement = $connection->prepare($this->query);
-		if (!$this->statement)
-		{
+
+
+		if (!$this->statement) {
+
 			throw $this->getException(
-				"MySQL statement prepare error [$connection->errno]: $connection->error", $connection->errno, $connection->sqlstate
+				"MySQL statement prepare error [$connection->errno]: $connection->error",
+				$connection->errno,
+				$connection->sqlstate
 			);
 		}
 
@@ -49,38 +52,44 @@ class Statement extends \XF\Db\AbstractStatement
 	 */
 	public function execute()
 	{
-		if (!$this->statement)
-		{
+		if (!$this->statement) {
 			$this->prepare();
 		}
 
 		$statement = $this->statement;
 
-		if ($this->params)
-		{
+		if ($this->params) {
 			$bind = [str_repeat('s', count($this->params))];
-			foreach ($this->params AS &$param)
-			{
-				$bind[] =& $param;
+			foreach ($this->params as &$param) {
+				$bind[] = &$param;
 			}
 
 			call_user_func_array([$statement, 'bind_param'], $bind);
 		}
 
 		$this->adapter->logQueryExecution($this->query, $this->params);
+
 		$success = $statement->execute();
+
+
+
 		$this->adapter->logQueryStage('execute');
 
-		if (!$success)
-		{
+
+
+		if (!$success) {
+
 			throw $this->getException(
-				"MySQL query error [$statement->errno]: $statement->error", $statement->errno, $statement->sqlstate
+				"MySQL query error [$statement->errno]: $statement->error",
+				$statement->errno,
+				$statement->sqlstate
 			);
 		}
 
+
+
 		$meta = $statement->result_metadata();
-		if ($meta)
-		{
+		if ($meta) {
 			$this->metaFields = $meta->fetch_fields();
 
 			$statement->store_result();
@@ -90,11 +99,10 @@ class Statement extends \XF\Db\AbstractStatement
 			$refs = [];
 			$i = 0;
 
-			foreach ($this->metaFields AS $field)
-			{
+			foreach ($this->metaFields as $field) {
 				$keys[] = $field->name;
 				$refs[] = null;
-				$values[] =& $refs[$i];
+				$values[] = &$refs[$i];
 
 				$i++;
 			}
@@ -117,28 +125,27 @@ class Statement extends \XF\Db\AbstractStatement
 	public function fetchRowValues()
 	{
 		$statement = $this->statement;
-		if (!$statement)
-		{
+		if (!$statement) {
 			return false;
 		}
 
 		$success = $statement->fetch();
 
-		if ($success === null)
-		{
+
+
+		if ($success === null) {
 			return false;
-		}
-		else if ($success === false)
-		{
+		} else if ($success === false) {
 			throw $this->getException(
-				"MySQL fetch error [$statement->errno]: $statement->error", $statement->errno, $statement->sqlstate
+				"MySQL fetch error [$statement->errno]: $statement->error",
+				$statement->errno,
+				$statement->sqlstate
 			);
 		}
 
 		// need to dereference these values
 		$values = [];
-		foreach ($this->values AS $v)
-		{
+		foreach ($this->values as $v) {
 			$values[] = $v;
 		}
 
@@ -155,8 +162,7 @@ class Statement extends \XF\Db\AbstractStatement
 
 	public function reset()
 	{
-		if (!$this->statement)
-		{
+		if (!$this->statement) {
 			return;
 		}
 
@@ -165,8 +171,7 @@ class Statement extends \XF\Db\AbstractStatement
 
 	protected function closeStatement()
 	{
-		if ($this->statement)
-		{
+		if ($this->statement) {
 			$this->statement->free_result();
 			$this->statement->close();
 			$this->statement = null;
@@ -182,14 +187,20 @@ class Statement extends \XF\Db\AbstractStatement
 	 */
 	protected function getException($message, $code = 0, $sqlStateCode = null)
 	{
-		if (!$sqlStateCode || $sqlStateCode === '00000')
-		{
+
+
+		if (!$sqlStateCode || $sqlStateCode === '00000') {
 			// MySQL some times doesn't set a SQLSTATE so change it for common cases
-			switch ($code)
-			{
-				case 1062: $sqlStateCode = '23000'; break; // duplicate key
-				case 1064: $sqlStateCode = '42000'; break; // invalid query
-				case 1213: $sqlStateCode = '40001'; break; // deadlock
+			switch ($code) {
+				case 1062:
+					$sqlStateCode = '23000';
+					break; // duplicate key
+				case 1064:
+					$sqlStateCode = '42000';
+					break; // invalid query
+				case 1213:
+					$sqlStateCode = '40001';
+					break; // deadlock
 			}
 		}
 

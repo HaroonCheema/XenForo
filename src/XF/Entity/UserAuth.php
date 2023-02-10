@@ -20,8 +20,7 @@ class UserAuth extends Entity
 	public function authenticate($password)
 	{
 		$handler = $this->getAuthenticationHandler();
-		if (!$handler || !$handler->hasPassword())
-		{
+		if (!$handler || !$handler->hasPassword()) {
 			return false;
 		}
 		return $handler->authenticate($this->user_id, $password);
@@ -33,8 +32,7 @@ class UserAuth extends Entity
 	public function getAuthenticationHandler()
 	{
 		$class = $this->scheme_class;
-		if (!$class)
-		{
+		if (!$class) {
 			return null;
 		}
 
@@ -42,16 +40,14 @@ class UserAuth extends Entity
 		// but need to stay to ensure upgrades from versions older than
 		// 2.0.10 still work - without them, it may not be possible for
 		// some admins to log into the upgrade system.
-		if (substr($class, 0, 7) == 'XenForo')
-		{
+		if (substr($class, 0, 7) == 'XenForo') {
 			$class = 'XF' . substr($class, 7);
 		}
 
 		$class = str_replace('_', '\\', $class);
 		$class = str_replace('_Authentication_', ':', $class);
 
-		if ($class == 'XF:Default')
-		{
+		if ($class == 'XF:Default') {
 			$class = 'XF:Core';
 		}
 
@@ -70,8 +66,7 @@ class UserAuth extends Entity
 		$password = trim($password, '_-');
 
 		$isReset = $this->setPassword($password);
-		if ($isReset)
-		{
+		if ($isReset) {
 			return $password;
 		}
 
@@ -81,18 +76,15 @@ class UserAuth extends Entity
 	public function setPassword($password, $authClass = null, $updatePasswordDate = true, $allowReuse = true)
 	{
 		$password = strval($password);
-		if (!strlen($password))
-		{
+		if (!strlen($password)) {
 			$this->error(\XF::phrase('please_enter_valid_password'), 'password');
 			return false;
 		}
 
 		$auth = $this->app()->auth($authClass);
 
-		if ($auth->hasPassword() && !$allowReuse)
-		{
-			if ($this->authenticate($password))
-			{
+		if ($auth->hasPassword() && !$allowReuse) {
+			if ($this->authenticate($password)) {
 				$this->error(\XF::phrase('for_security_reasons_please_choose_different_password'));
 				return false;
 			}
@@ -101,8 +93,7 @@ class UserAuth extends Entity
 		$this->scheme_class = $auth->getAuthenticationName();
 		$this->data = $auth->generate($password);
 
-		if ($updatePasswordDate && $this->isUpdate() && isset($this->User->Profile))
-		{
+		if ($updatePasswordDate && $this->isUpdate() && isset($this->User->Profile)) {
 			$this->User->Profile->password_date = \XF::$time;
 			$this->addCascadedSave($this->User->Profile);
 		}
@@ -116,8 +107,7 @@ class UserAuth extends Entity
 		$this->scheme_class = $auth->getAuthenticationName();
 		$this->data = $auth->generate('');
 
-		if ($this->isUpdate() && isset($this->User->Profile))
-		{
+		if ($this->isUpdate() && isset($this->User->Profile)) {
 			$this->User->Profile->password_date = \XF::$time;
 			$this->addCascadedSave($this->User->Profile);
 		}
@@ -127,8 +117,7 @@ class UserAuth extends Entity
 
 	protected function _preSave()
 	{
-		if (!$this->scheme_class)
-		{
+		if (!$this->scheme_class) {
 			$this->error(\XF::phrase('please_enter_valid_password'), 'password', false);
 			// set these to prevent errors on the required fields
 			$this->scheme_class = 'invalid';
@@ -139,8 +128,7 @@ class UserAuth extends Entity
 	{
 		$changes = [];
 
-		if ($this->isUpdate() && $this->isChanged(['scheme_class', 'data']))
-		{
+		if ($this->isUpdate() && $this->isChanged(['scheme_class', 'data'])) {
 			$changes['password'] = ['******', '********'];
 		}
 
@@ -153,7 +141,7 @@ class UserAuth extends Entity
 		$structure->shortName = 'XF:UserAuth';
 		$structure->primaryKey = 'user_id';
 		$structure->columns = [
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'scheme_class' => ['type' => self::STR, 'maxLength' => 100, 'required' => true],
 			'data' => ['type' => self::SERIALIZED_ARRAY, 'default' => []]
 			// note: this is intentionally still serialized!

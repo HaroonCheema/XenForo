@@ -376,6 +376,18 @@ return function($__templater, $__selectedNav, array $__vars)
 		}
 	}
 
+	if ($__vars['xf']['session']['snogFormsCount']['total']) {
+		$__navTemp = [
+		'title' => \XF::phrase('nav.snog_forms_nav'),
+		'href' => $__templater->func('link', array('form', ), false),
+		'attributes' => [],
+	];
+		if ($__navTemp) {
+			$__tree['snog_forms_nav'] = $__navTemp;
+			$__flat['snog_forms_nav'] =& $__tree['snog_forms_nav'];
+		}
+	}
+
 	$__navTemp = [
 		'title' => \XF::phrase('nav.tournament_pub'),
 		'href' => $__templater->func('link', array('uptourn', ), false),
@@ -419,16 +431,6 @@ return function($__templater, $__selectedNav, array $__vars)
 		if (empty($__tree['demoPadNotes']['children'])) { $__tree['demoPadNotes']['children'] = []; }
 
 		$__navTemp = [
-		'title' => \XF::phrase('nav.demoPadNote'),
-		'href' => $__templater->func('link', array('notes/test', ), false),
-		'attributes' => [],
-	];
-		if ($__navTemp) {
-			$__tree['demoPadNotes']['children']['demoPadNote'] = $__navTemp;
-			$__flat['demoPadNote'] =& $__tree['demoPadNotes']['children']['demoPadNote'];
-		}
-
-		$__navTemp = [
 		'title' => \XF::phrase('nav.demoPadPassParams'),
 		'href' => $__templater->func('link', array('notes/pass-params', ), false),
 		'attributes' => [],
@@ -436,6 +438,16 @@ return function($__templater, $__selectedNav, array $__vars)
 		if ($__navTemp) {
 			$__tree['demoPadNotes']['children']['demoPadPassParams'] = $__navTemp;
 			$__flat['demoPadPassParams'] =& $__tree['demoPadNotes']['children']['demoPadPassParams'];
+		}
+
+		$__navTemp = [
+		'title' => \XF::phrase('nav.demoPadNote'),
+		'href' => $__templater->func('link', array('notes/test', ), false),
+		'attributes' => [],
+	];
+		if ($__navTemp) {
+			$__tree['demoPadNotes']['children']['demoPadNote'] = $__navTemp;
+			$__flat['demoPadNote'] =& $__tree['demoPadNotes']['children']['demoPadNote'];
 		}
 
 	}

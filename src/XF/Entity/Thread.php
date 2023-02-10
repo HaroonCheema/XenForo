@@ -1557,7 +1557,7 @@ class Thread extends Entity implements LinkableInterface
 			],
 			'reply_count' => ['type' => self::UINT, 'forced' => true, 'default' => 0, 'api' => true],
 			'view_count' => ['type' => self::UINT, 'forced' => true, 'default' => 0, 'api' => true],
-			'user_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'api' => true, 'max' => PHP_INT_MAX],
 			'username' => ['type' => self::STR, 'maxLength' => 50, 'required' => true, 'api' => true],
 			'post_date' => ['type' => self::UINT, 'default' => 0, 'api' => true],
 			'sticky' => ['type' => self::BOOL, 'default' => false, 'api' => true],

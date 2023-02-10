@@ -82,15 +82,18 @@ abstract class AbstractAdapter
 	{
 		$this->connect();
 
-		if (!empty($this->config['tablePrefix']))
-		{
+		if (!empty($this->config['tablePrefix'])) {
 			$query = $this->prependPrefixToTables($this->config['tablePrefix'], $query);
 		}
 
 		$class = $this->statementClass;
 
+
+
 		/** @var AbstractStatement $statement */
 		$statement = new $class($this, $query, $params);
+
+
 		$statement->execute();
 
 		return $statement;
@@ -98,13 +101,11 @@ abstract class AbstractAdapter
 
 	protected function prependPrefixToTables($prefix, $query)
 	{
-		if ($prefix == '')
-		{
+		if ($prefix == '') {
 			return $query;
 		}
 
-		if (in_array('noPrefix', $this->getModifiersFromQuery($query)))
-		{
+		if (in_array('noPrefix', $this->getModifiersFromQuery($query))) {
 			return $query;
 		}
 
@@ -116,8 +117,7 @@ abstract class AbstractAdapter
 		$modifiers = [];
 
 		// strip any leading comments then search ones that start with XFDB= to find modifiers
-		if (preg_match('#^((\s*(--[^\n]*\n|\\#[^\n]*\n|/\*.*?\*/))+)\s*#si', $query, $match))
-		{
+		if (preg_match('#^((\s*(--[^\n]*\n|\\#[^\n]*\n|/\*.*?\*/))+)\s*#si', $query, $match)) {
 			$query = substr($query, strlen($match[0]));
 
 			preg_match_all(
@@ -127,11 +127,9 @@ abstract class AbstractAdapter
 				PREG_SET_ORDER
 			);
 
-			foreach ($comments AS $comment)
-			{
+			foreach ($comments as $comment) {
 				$content = trim($comment[1] ?: $comment[2] ?: $comment[3] ?: '');
-				if (substr($content, 0, 5) == 'XFDB=' && strlen($content) > 5)
-				{
+				if (substr($content, 0, 5) == 'XFDB=' && strlen($content) > 5) {
 					$modifiers = array_merge($modifiers, explode(',', substr($content, 5)));
 				}
 			}
@@ -191,47 +189,40 @@ abstract class AbstractAdapter
 
 	public function insert($table, array $rawValues, $replaceInto = false, $onDupe = false, $modifier = '')
 	{
-		if (!$rawValues)
-		{
+		if (!$rawValues) {
 			throw new \InvalidArgumentException('Values must be provided to insert');
 		}
 
 		$cols = [];
 		$sqlValues = [];
 		$bind = [];
-		foreach ($rawValues AS $key => $value)
-		{
+		foreach ($rawValues as $key => $value) {
 			$cols[] = "`$key`";
 			$bind[] = $value;
 			$sqlValues[] = '?';
 		}
 
 		$keyword = ($replaceInto ? 'REPLACE' : 'INSERT');
-		if ($replaceInto)
-		{
+		if ($replaceInto) {
 			$onDupe = false;
 		}
 
-		try
-		{
+		try {
 			$res = $this->query(
 				"$keyword $modifier INTO `$table` (" . implode(', ', $cols) . ') VALUES '
-				. '(' . implode(', ', $sqlValues) . ')'
-				. ($onDupe ? " ON DUPLICATE KEY UPDATE $onDupe" : ''),
+					. '(' . implode(', ', $sqlValues) . ')'
+					. ($onDupe ? " ON DUPLICATE KEY UPDATE $onDupe" : ''),
 				$bind
 			);
 			return $res->rowsAffected();
-		}
-		catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			return $this->processDbWriteException($table, $e);
 		}
 	}
 
 	public function insertBulk($table, array $rows, $replaceInto = false, $onDupe = false, $modifier = '')
 	{
-		if (!$rows)
-		{
+		if (!$rows) {
 			throw new \InvalidArgumentException('Rows must be provided to bulk insert');
 		}
 
@@ -239,13 +230,10 @@ abstract class AbstractAdapter
 		$cols = array_keys($firstRow);
 
 		$rowSql = [];
-		foreach ($rows AS $row)
-		{
+		foreach ($rows as $row) {
 			$values = [];
-			foreach ($cols AS $col)
-			{
-				if (!array_key_exists($col, $row))
-				{
+			foreach ($cols as $col) {
+				if (!array_key_exists($col, $row)) {
 					throw new \InvalidArgumentException("Row missing column $col in bulk insert");
 				}
 
@@ -255,80 +243,67 @@ abstract class AbstractAdapter
 			$rowSql[] = '(' . implode(',', $values) . ')';
 		}
 
-		foreach ($cols AS &$col)
-		{
+		foreach ($cols as &$col) {
 			$col = "`$col`";
 		}
 
 		$keyword = ($replaceInto ? 'REPLACE' : 'INSERT');
-		if ($replaceInto)
-		{
+		if ($replaceInto) {
 			$onDupe = false;
 		}
 
-		try
-		{
+		try {
 			$res = $this->query(
 				"$keyword $modifier INTO `$table` (" . implode(', ', $cols) . ') VALUES '
-				. implode(",\n", $rowSql)
-				. ($onDupe ? " ON DUPLICATE KEY UPDATE $onDupe" : '')
+					. implode(",\n", $rowSql)
+					. ($onDupe ? " ON DUPLICATE KEY UPDATE $onDupe" : '')
 			);
 			return $res->rowsAffected();
-		}
-		catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			return $this->processDbWriteException($table, $e);
 		}
 	}
 
 	public function delete($table, $where, $params = [], $modifier = '', $order = '', $limit = 0)
 	{
-		try
-		{
+		try {
 			$res = $this->query(
 				"DELETE $modifier FROM `$table` WHERE " . ($where ? $where : '1=1')
-				. ($order ? " ORDER BY $order" : '')
-				. ($limit ? ' LIMIT ' . intval($limit) : ''),
+					. ($order ? " ORDER BY $order" : '')
+					. ($limit ? ' LIMIT ' . intval($limit) : ''),
 				$params
 			);
 			return $res->rowsAffected();
-		}
-		catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			return $this->processDbWriteException($table, $e);
 		}
 	}
 
 	public function update($table, array $cols, $where, $params = [], $modifier = '', $order = '', $limit = 0)
 	{
-		if (!$cols)
-		{
+		if (!$cols) {
 			return 0;
 		}
 
 		$sqlValues = [];
 		$bind = [];
-		foreach ($cols AS $col => $value)
-		{
+		foreach ($cols as $col => $value) {
 			$bind[] = $value;
 			$sqlValues[] = "`$col` = ?";
 		}
 
 		$bind = array_merge($bind, is_array($params) ? $params : [$params]);
 
-		try
-		{
+		try {
 			$res = $this->query(
 				"UPDATE $modifier `$table` SET " . implode(', ', $sqlValues)
-				. ' WHERE ' . ($where ? $where : '1=1')
-				. ($order ? " ORDER BY $order" : '')
-				. ($limit ? ' LIMIT ' . intval($limit) : ''),
+					. ' WHERE ' . ($where ? $where : '1=1')
+					. ($order ? " ORDER BY $order" : '')
+					. ($limit ? ' LIMIT ' . intval($limit) : ''),
 				$bind
 			);
 			return $res->rowsAffected();
-		}
-		catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			return $this->processDbWriteException($table, $e);
 		}
 	}
@@ -336,8 +311,7 @@ abstract class AbstractAdapter
 	public function emptyTable($table)
 	{
 		$method = $this->config['emptyMethod'] ?? 'TRUNCATE';
-		switch (strtoupper($method))
-		{
+		switch (strtoupper($method)) {
 			case 'TRUNCATE':
 				$query = "TRUNCATE TABLE `$table`";
 				break;
@@ -350,21 +324,17 @@ abstract class AbstractAdapter
 				throw new \InvalidArgumentException("Unknown emptyMethod '$method'.");
 		}
 
-		try
-		{
+		try {
 			$res = $this->query($query);
 			return $res->rowsAffected();
-		}
-		catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			return $this->processDbWriteException($table, $e);
 		}
 	}
 
 	protected function processDbWriteException($table, Exception $e)
 	{
-		if ($this->ignoreLegacyTableWriteError && in_array($table, self::$legacyTables))
-		{
+		if ($this->ignoreLegacyTableWriteError && in_array($table, self::$legacyTables)) {
 			\XF::logException($e, false, "Ignored write to legacy table $table. Code update required. ");
 			return 0;
 		}
@@ -376,13 +346,10 @@ abstract class AbstractAdapter
 	{
 		$this->connect();
 
-		if (!$this->inTransaction)
-		{
+		if (!$this->inTransaction) {
 			$this->rawQuery('BEGIN');
 			$this->inTransaction = true;
-		}
-		else
-		{
+		} else {
 			$savepoint = 'save' . ++$this->savePointCounter;
 			$this->rawQuery("SAVEPOINT $savepoint");
 
@@ -392,14 +359,10 @@ abstract class AbstractAdapter
 
 	public function commit()
 	{
-		if ($this->inTransaction)
-		{
-			if ($this->savePoints)
-			{
+		if ($this->inTransaction) {
+			if ($this->savePoints) {
 				$this->rawQuery('RELEASE SAVEPOINT ' . array_pop($this->savePoints));
-			}
-			else
-			{
+			} else {
 				$this->rawQuery('COMMIT');
 				$this->inTransaction = false;
 			}
@@ -408,8 +371,7 @@ abstract class AbstractAdapter
 
 	public function commitAll()
 	{
-		if ($this->inTransaction)
-		{
+		if ($this->inTransaction) {
 			$this->rawQuery('COMMIT');
 
 			$this->inTransaction = false;
@@ -419,14 +381,10 @@ abstract class AbstractAdapter
 
 	public function rollback()
 	{
-		if ($this->inTransaction)
-		{
-			if ($this->savePoints)
-			{
+		if ($this->inTransaction) {
+			if ($this->savePoints) {
 				$this->rawQuery('ROLLBACK TO SAVEPOINT ' . array_pop($this->savePoints));
-			}
-			else
-			{
+			} else {
 				$this->rawQuery('ROLLBACK');
 				$this->inTransaction = false;
 			}
@@ -435,8 +393,7 @@ abstract class AbstractAdapter
 
 	public function rollbackAll()
 	{
-		if ($this->inTransaction)
-		{
+		if ($this->inTransaction) {
 			$this->rawQuery('ROLLBACK');
 
 			$this->inTransaction = false;
@@ -450,26 +407,18 @@ abstract class AbstractAdapter
 
 		$this->beginTransaction();
 
-		try
-		{
+		try {
 			$result = $execute($this);
-		}
-		catch (\XF\Db\DeadlockException $e)
-		{
+		} catch (\XF\Db\DeadlockException $e) {
 			$this->rollback();
 
-			if (!$startedInTransaction && $options & self::ALLOW_DEADLOCK_RERUN)
-			{
+			if (!$startedInTransaction && $options & self::ALLOW_DEADLOCK_RERUN) {
 				// deadlock detected, try rerunning once
 				$result = $this->executeTransaction($execute, $options & ~self::ALLOW_DEADLOCK_RERUN);
-			}
-			else
-			{
+			} else {
 				throw $e;
 			}
-		}
-		catch (\Exception $e)
-		{
+		} catch (\Exception $e) {
 			$this->rollback();
 			throw $e;
 		}
@@ -486,23 +435,26 @@ abstract class AbstractAdapter
 
 	public function quote($data, $type = null)
 	{
-		if (is_array($data))
-		{
+
+		if (is_array($data)) {
 			$output = [];
-			foreach ($data AS $value)
-			{
+			foreach ($data as $value) {
 				$output[] = $this->quote($value);
 			}
 			return implode(', ', $output);
 		}
 
-		if (!$type)
-		{
+
+
+		if (!$type) {
 			$type = gettype($data);
 		}
 
-		switch (strtolower($type))
-		{
+		if (strlen($data) > 12) {
+			$type = 'string';
+		}
+
+		switch (strtolower($type)) {
 			case 'integer':
 				return strval(floor($data));
 			case 'double':
@@ -519,11 +471,9 @@ abstract class AbstractAdapter
 
 	public function escapeLike($data, $format = null)
 	{
-		if (is_array($data))
-		{
+		if (is_array($data)) {
 			$output = [];
-			foreach ($data AS $value)
-			{
+			foreach ($data as $value) {
 				$output[] = $this->escapeLike($value, $format);
 			}
 			return implode(', ', $output);
@@ -534,8 +484,7 @@ abstract class AbstractAdapter
 			'_' => '\\_',
 			'%' => '\\%'
 		]);
-		if ($format)
-		{
+		if ($format) {
 			$data = str_replace('?', $data, $format);
 		}
 
@@ -546,10 +495,8 @@ abstract class AbstractAdapter
 	{
 		$offset = max(0, intval($offset));
 
-		if ($amount === null)
-		{
-			if (!$offset)
-			{
+		if ($amount === null) {
+			if (!$offset) {
 				// no limit
 				return $query;
 			}
@@ -587,14 +534,10 @@ abstract class AbstractAdapter
 	{
 		$this->queryCount++;
 
-		if ($this->logQueries)
-		{
-			if ($this->logSimpleOnly)
-			{
+		if ($this->logQueries) {
+			if ($this->logSimpleOnly) {
 				$trace = null;
-			}
-			else
-			{
+			} else {
 				$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 				array_shift($trace);
 			}
@@ -606,8 +549,7 @@ abstract class AbstractAdapter
 				'trace' => $trace
 			];
 
-			if ($this->queryCount >= 150 && $this->logSimpleOnly === null)
-			{
+			if ($this->queryCount >= 150 && $this->logSimpleOnly === null) {
 				// we haven't specified that we want full details, so switch to reduce memory usage
 				$this->logSimpleOnly = true;
 			}
@@ -618,17 +560,14 @@ abstract class AbstractAdapter
 
 	public function logQueryStage($stage, $queryId = null)
 	{
-		if (!$this->logQueries)
-		{
+		if (!$this->logQueries) {
 			return;
 		}
 
-		if (!$queryId)
-		{
+		if (!$queryId) {
 			$queryId = $this->queryCount;
 		}
-		if (!isset($this->queryLog[$queryId]))
-		{
+		if (!isset($this->queryLog[$queryId])) {
 			return;
 		}
 
@@ -637,8 +576,7 @@ abstract class AbstractAdapter
 
 	public function logQueryCompletion($queryId = null)
 	{
-		if (!$this->logQueries)
-		{
+		if (!$this->logQueries) {
 			return;
 		}
 
@@ -667,8 +605,7 @@ abstract class AbstractAdapter
 
 	public function getSchemaManager()
 	{
-		if ($this->schemaManager === null)
-		{
+		if ($this->schemaManager === null) {
 			$this->schemaManager = new SchemaManager($this);
 		}
 

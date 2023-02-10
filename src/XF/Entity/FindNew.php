@@ -78,7 +78,7 @@ class FindNew extends Entity
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
 			'filters' => ['type' => self::JSON_ARRAY, 'default' => []],
 			'filter_hash' => ['type' => self::STR, 'maxLength' => 32, 'default' => ''],
-			'user_id' => ['type' => self::UINT, 'required' => true],
+			'user_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'results' => ['type' => self::LIST_COMMA, 'default' => []],
 			'cache_date' => ['type' => self::UINT, 'default' => \XF::$time],
 		];

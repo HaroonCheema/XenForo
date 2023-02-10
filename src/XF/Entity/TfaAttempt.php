@@ -23,7 +23,7 @@ class TfaAttempt extends Entity
 		$structure->primaryKey = 'attempt_id';
 		$structure->columns = [
 			'attempt_id' => ['type' => self::STR, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT,  'required' => true],
+			'user_id' => ['type' => self::UINT,  'required' => true, 'max' => PHP_INT_MAX],
 			'attempt_date' => ['type' => self::UINT, 'default' => time()]
 		];
 		$structure->getters = [];

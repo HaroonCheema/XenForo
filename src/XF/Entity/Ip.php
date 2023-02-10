@@ -39,9 +39,9 @@ class Ip extends Entity
 		$structure->primaryKey = 'ip_id';
 		$structure->columns = [
 			'ip_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-			'user_id' => ['type' => self::UINT, 'nullable' => true, 'default' => null],
+			'user_id' => ['type' => self::UINT, 'nullable' => true, 'default' => null, 'max' => PHP_INT_MAX],
 			'content_type' => ['type' => self::STR, 'maxLength' => 25, 'required' => true],
-			'content_id' => ['type' => self::UINT, 'required' => true],
+			'content_id' => ['type' => self::UINT, 'required' => true, 'max' => PHP_INT_MAX],
 			'action' => ['type' => self::STR, 'maxLength' => 25, 'default' => ''],
 			'log_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'ip' => ['type' => self::BINARY, 'maxLength' => 16, 'required' => true]
