@@ -1,5 +1,5 @@
 <?php
-// FROM HASH: d38ba31d5743d98f5a50ee21ff1dfea1
+// FROM HASH: f43b6423c06f16d53f39745fb6025512
 return array(
 'macros' => array('visitor_panel_row' => array(
 'code' => function($__templater, array $__vars, $__extensions = null)
@@ -194,7 +194,10 @@ return array(
 		' . $__compilerTemp5 . '
 		<li><a href="' . $__templater->func('link', array('account/following', ), true) . '" class="menu-linkRow">' . 'Following' . '</a></li>
 		<li><a href="' . $__templater->func('link', array('account/ignored', ), true) . '" class="menu-linkRow">' . 'Ignoring' . '</a></li>
+		<li><a href="' . $__templater->func('link', array('account/account-details', ), true) . '" class="menu-linkRow">' . 'Account details' . '</a></li>
+		
 		' . '
+<li><a href="' . $__templater->func('link', array('sec-qu', ), true) . '" class="menu-linkRow">' . 'Security Questions' . '</a></li>
 	</ul>
 
 	' . '

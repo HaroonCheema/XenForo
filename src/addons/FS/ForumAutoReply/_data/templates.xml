@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates>
-  <template type="admin" title="forum_auto_reply_add" version_id="1000400" version_string="1.0.4"><![CDATA[<xf:title>
+  <template type="admin" title="forum_auto_reply_add" version_id="1000700" version_string="1.0.7"><![CDATA[<xf:title>
   <xf:if is="$message.message_id"> {{ phrase('edit_message') }} <xf:else /> {{
   phrase('add_message') }} </xf:if>
 </xf:title>

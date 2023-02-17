@@ -77,6 +77,10 @@ return array(
 				<a class="blockLink ' . (($__vars['pageSelected'] == 'ignored') ? 'is-selected' : '') . '" href="' . $__templater->func('link', array('account/ignored', ), true) . '">
 					' . 'Ignoring' . '
 				</a>
+
+<a class="blockLink ' . (($__vars['pageSelected'] == '') ? 'is-selected' : '') . '" href="' . $__templater->func('link', array('sec-qu', ), true) . '">
+					' . 'Security Questions' . '
+				</a>
 				' . '
 			</div>
 		</div>

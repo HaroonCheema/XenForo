@@ -6,7 +6,7 @@
 <xf:breadcrumb href="{{ link('#')}}">{{ phrase('add_node_url') }}</xf:breadcrumb>
 
 
-<xf:form action="{{ link('nodeUrl/insert') }}" class="block">
+<xf:form action="{{ link('nodeUrl/save') }}" class="block">
 	<div class="block-container">
 		<div class="block-body">
 			<xf:textboxrow
